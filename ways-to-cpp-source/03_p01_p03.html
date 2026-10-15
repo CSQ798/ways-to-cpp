@@ -1,0 +1,335 @@
+<!-- ======================= 项目 01 ======================= -->
+<section class="project" id="p01">
+  <header class="p-header">
+    <div class="p-index">01</div>
+    <div class="p-titles">
+      <h2>学生成绩分析器</h2>
+      <p class="p-sub">把一堆分数交给数据自己去排队</p>
+    </div>
+  </header>
+  <div class="p-meta">
+    <span class="chip">难度 ★★☆☆☆</span>
+    <span class="chip">建议 3–5 小时</span>
+    <span class="chip">主线：数据组织</span>
+    <span class="chip">阶段一</span>
+  </div>
+  <label class="done-toggle no-print"><input type="checkbox" data-done="p01">标记为已完成</label>
+
+  <div class="newknow">
+    <h4>本板块会用到的新知识点</h4>
+    <p class="nk-note">下面这些你还没学过。不用提前去查，读到需要它们的地方，回来对一眼就行。</p>
+    <ul>
+      <li><b>const 引用参数</b>　<em>形如 <code class="inl">const std::vector&lt;Student&gt;&amp;</code>。</em>一个 &amp; 让函数不用拷贝整份数据，一个 const 保证函数不会偷偷改你的东西。</li>
+      <li><b>std::vector</b>　<em>需要 <code class="inl">#include &lt;vector&gt;</code>。</em>长度可以变的数组。你以前写 <code class="inl">int a[100]</code>，是猜一个足够大的数；vector 让数组自己长大。</li>
+      <li><b>范围 for</b>　<em>形如 <code class="inl">for (const Student&amp; s : students)</code>。</em>「对 students 里的每一个 s」，不必再写 <code class="inl">i = 0; i &lt; n; ++i</code>。</li>
+      <li><b>std::sort 与比较函数</b>　<em>需要 <code class="inl">#include &lt;algorithm&gt;</code>。</em>标准库自带的排序，比手写冒泡快得多；你只需告诉它「谁该排前面」。</li>
+      <li><b>static_cast</b>　<em>形如 <code class="inl">static_cast&lt;double&gt;(n)</code>。</em>明确地做一次类型转换，比 C 风格的 <code class="inl">(double)n</code> 更醒目、更安全。</li>
+    </ul>
+  </div>
+
+  <h3 class="h3">一、这件事在真实世界里长什么样</h3>
+  <p>每学期期末，老师手里都有一张成绩表。他想要的东西会不断变：今天想知道平均分，明天想排出名次，
+  后天想看看「这个班是不是两极分化」——那是标准差要回答的问题；再过两天教务又要按等级统计人数。</p>
+  <p>如果你把这些需求全塞进 <code class="inl">main</code> 里，写成一段长长的循环，那么每来一个新需求，你都要重新读一遍那段代码，
+  小心翼翼地不要碰坏别的地方。<b>这个项目要教你的，就是把「数据」和「对数据的操作」分开。</b>
+  分开了之后，加一个需求，只是多写一个函数而已。</p>
+
+  <h3 class="h3">二、任务拆解：三关</h3>
+  <ol class="levels">
+    <li>
+      <b>先把数据装起来</b>
+      <p>定义 <code class="inl">struct Student { std::string name; int score; };</code>，用你在数组那一章学过的写法，
+      造 8 个学生的固定数组，打印平均分和最高分的同学。<b>这一关只用你已经会的东西</b>，目的是热身。</p>
+    </li>
+    <li>
+      <b>把动作拆成函数</b>
+      <p>把「平均分」「最高分」「标准差」各写成一个独立函数。函数参数用 <code class="inl">const std::vector&lt;Student&gt;&amp;</code>，
+      容器改用 <code class="inl">std::vector</code>。<b>检验标准：main 里只剩下「准备数据」和「调用函数」两种语句。</b></p>
+    </li>
+    <li>
+      <b>让它能排名、能评级</b>
+      <p>用 <code class="inl">std::sort</code> 把学生按分数从高到低排好，输出一张带序号、姓名、分数、等级的成绩单。
+      排序规则单独写成一个函数，名字要能读懂。</p>
+    </li>
+  </ol>
+
+  <h3 class="h3">三、参考实现</h3>
+  <div class="code-block">
+    <div class="code-title">ways-to-cpp-code / p01_grade_analyzer.cpp</div>
+<pre class="code"><!--CODE:01--></pre>
+  </div>
+
+  <div class="code-block dark">
+    <div class="code-title">实际运行结果（真实输出，未经修饰）</div>
+<pre class="term"><!--OUT:01--></pre>
+  </div>
+
+  <div class="beauty">
+    <h5>这段代码美在哪里</h5>
+    <ol>
+      <li><b>结构体只装数据，函数只做动作。</b> <code class="inl">Student</code> 里一行逻辑都没有，<code class="inl">averageOf</code> 里一行存储都没有。
+      这种「各自的活各自干」的分工，是后面所有项目的基础。</li>
+      <li><b>一个 const 引用，同时买到两样东西。</b> <code class="inl">&amp;</code> 免去拷贝整份数据的开销，<code class="inl">const</code> 让「我不会改你」这句话变成编译器能验证的事实。
+      读代码的人看到这个签名，就再也不用担心 <code class="inl">averageOf</code> 会动他的数据。</li>
+      <li><b>排序规则有了名字。</b> 比较一下这两种写法：<code class="inl">sort(v.begin(), v.end(), [](auto&amp; a, auto&amp; b){return a.score&gt;b.score;})</code>
+      和 <code class="inl">sort(v.begin(), v.end(), higherScoreFirst)</code>。
+      后者读起来就是一句英文，而且这个规则可以在别处复用、可以单独测试。</li>
+      <li><b>函数是「纯」的。</b> <code class="inl">averageOf</code> 除了传入的容器，不依赖任何外部状态。
+      这样的函数可以被随手调用一万次，结果永远一样——这是可靠代码最重要的性质。</li>
+      <li><b>换数据源，不用改逻辑。</b> 把 <code class="inl">main</code> 里那段演示数据换成 <code class="inl">cin</code> 读入，
+      上面五个函数一行都不用动。<b>这就是「解耦」在真实项目里的回报。</b></li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <div class="bt">常见陷阱</div>
+    <ul>
+      <li><code class="inl">students.size()</code> 返回的是无符号整数，直接和 <code class="inl">int i</code> 比较，编译器会警告「有符号与无符号比较」。
+      本手册统一写成 <code class="inl">static_cast&lt;int&gt;(students.size())</code>。</li>
+      <li>比较函数里千万别写 <code class="inl">&gt;=</code>。<code class="inl">std::sort</code> 要求「严格弱序」，
+      写 <code class="inl">&gt;=</code> 会在某些数据下越界崩溃——这是个非常经典的坑。</li>
+      <li>空容器求平均会除以 0。所以 <code class="inl">averageOf</code> 第一行就先挡住 <code class="inl">empty()</code> 的情况。</li>
+      <li>浮点输出不加 <code class="inl">std::setprecision</code> 会打印出 <code class="inl">75.375</code> 这样的默认六位有效数字，也可能是 <code class="inl">1e+06</code>。
+      要显示小数，记得 <code class="inl">&lt;iomanip&gt;</code> 里的 <code class="inl">std::fixed &lt;&lt; std::setprecision(2)</code>。</li>
+    </ul>
+  </div>
+
+  <div class="challenge">
+    <div class="bt">进阶挑战</div>
+    <ul style="margin:0;padding-left:1.3em">
+      <li>让程序从 <code class="inl">scores.txt</code> 读入成绩（每行「姓名 分数」）。读文件的方法在项目 02 会讲，你可以先自己试试。</li>
+      <li>再加一套排序：「按姓名升序」。你会发现排序规则函数可以随便换，其余代码纹丝不动。</li>
+      <li>求出中位数，并比较它和平均分的差距。差距大，说明分数分布是偏的——这是真实数据分析里最常用的第一眼判断。</li>
+      <li>统计每个等级有几个人，并且用 <code class="inl">#</code> 画一个横向条形图。想想看：这个「等级 → 人数」的对应关系，用什么容器存最自然？</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= 项目 02 ======================= -->
+<section class="project" id="p02">
+  <header class="p-header">
+    <div class="p-index">02</div>
+    <div class="p-titles">
+      <h2>英文词频统计器</h2>
+      <p class="p-sub">让文件和字典替你做苦力</p>
+    </div>
+  </header>
+  <div class="p-meta">
+    <span class="chip">难度 ★★☆☆☆</span>
+    <span class="chip">建议 3–5 小时</span>
+    <span class="chip">主线：查表与持久化</span>
+    <span class="chip">阶段一</span>
+  </div>
+  <label class="done-toggle no-print"><input type="checkbox" data-done="p02">标记为已完成</label>
+
+  <div class="newknow">
+    <h4>本板块会用到的新知识点</h4>
+    <p class="nk-note">这个项目会引入两个你以后几乎天天要用的东西：map 和文件。</p>
+    <ul>
+      <li><b>std::map</b>　<em>需要 <code class="inl">#include &lt;map&gt;</code>。</em>「键 → 值」的对应表。
+      它的下标 <code class="inl">counter[word]</code> 有一个非常贴心的性质：<b>键不存在时会自动创建一个值为 0 的条目</b>，
+      所以「数数」这个动作被压缩成了一行 <code class="inl">++counter[w]</code>。</li>
+      <li><b>文件流</b>　<em><code class="inl">std::ifstream</code> 读、<code class="inl">std::ofstream</code> 写，需要 <code class="inl">#include &lt;fstream&gt;</code>。</em>
+      让数据活过这一次运行。用法和 <code class="inl">cin</code>/<code class="inl">cout</code> 几乎一模一样，只是把「屏幕」换成了「文件」。</li>
+      <li><b>std::getline</b>　<em>需要 <code class="inl">#include &lt;string&gt;</code>。</em>一次读一整行。注意：<code class="inl">cin &gt;&gt; s</code> 遇到空格就停，
+      而 <code class="inl">getline</code> 会连空格一起读进来——读文本时这个区别至关重要。</li>
+      <li><b>std::isalpha / std::tolower</b>　<em>需要 <code class="inl">#include &lt;cctype&gt;</code>。</em>判断「是不是字母」、把大写变小写。
+      标准库早就写好了，别自己写 <code class="inl">if (c &gt;= 'A' &amp;&amp; c &lt;= 'Z')</code>。</li>
+      <li><b>typedef / using 起别名</b>　<em>形如 <code class="inl">typedef std::map&lt;std::string,int&gt; Counter;</code>。</em>
+      把一长串类型名缩写成一个词，读代码时脑子轻松很多。</li>
+      <li><b>std::pair</b>　<em>需要 <code class="inl">#include &lt;utility&gt;</code>。</em>把「词」和「次数」捆成一件东西，
+      这样它们才能一起被排序。<code class="inl">.first</code> 是第一个，<code class="inl">.second</code> 是第二个。</li>
+    </ul>
+  </div>
+
+  <h3 class="h3">一、这件事在真实世界里长什么样</h3>
+  <p>「数一篇文章里每个词出现了多少次」听起来像课堂练习，但它其实是搜索引擎、文本分类、语言模型的第一步。
+  你要做的搜索引擎，需要知道哪些词重要；你要做的垃圾邮件过滤器（项目 09），需要知道哪些词可疑；
+  你要做的情感分析，需要知道「好」和「差」各出现了几次。</p>
+  <p>而「查表」这件事的通用解法，就是 <code class="inl">map</code>。<b>学会它之后，你会发现一大类问题都变成了同一道题。</b></p>
+
+  <h3 class="h3">二、任务拆解：三关</h3>
+  <ol class="levels">
+    <li>
+      <b>先把文本切干净</b>
+      <p>写一个函数，输入一整段文本，输出一串「干净的单词」：去掉标点、统一小写、连续字母才算一个词。
+      <b>先别管统计</b>，把切分这一个动作做对、做稳。<i>提示：边扫边攒，遇到非字母就把攒好的词交出去。</i></p>
+    </li>
+    <li>
+      <b>数数，然后按次数排名</b>
+      <p>用 <code class="inl">map</code> 统计词频（这一步只有三行）。然后你会发现 <code class="inl">map</code> 是按「键」排的，
+      而你要按「值」排——所以把它搬进 <code class="inl">vector&lt;std::pair&lt;std::string,int&gt;&gt;</code>，再用项目 01 学过的 <code class="inl">std::sort</code>。</p>
+    </li>
+    <li>
+      <b>让它读真正的文件</b>
+      <p>把文本存成 <code class="inl">sample.txt</code>，用 <code class="inl">ifstream</code> + <code class="inl">getline</code> 一次一行读进来。
+      再加一点贴心设计：文件不存在时给出友好提示，而不是让程序默默输出一堆 0。</p>
+    </li>
+  </ol>
+
+  <h3 class="h3">三、参考实现</h3>
+  <div class="code-block">
+    <div class="code-title">ways-to-cpp-code / p02_word_count.cpp</div>
+<pre class="code"><!--CODE:02--></pre>
+  </div>
+
+  <div class="code-block dark">
+    <div class="code-title">实际运行结果（真实输出，未经修饰）</div>
+<pre class="term"><!--OUT:02--></pre>
+  </div>
+
+  <div class="beauty">
+    <h5>这段代码美在哪里</h5>
+    <ol>
+      <li><b>「数数」被压缩成了一行。</b> 换成数组的写法，你要先判断这个词出现过没有、出现在哪个位置、再累加。
+      <code class="inl">++counter[w]</code> 之所以能成立，是因为 <code class="inl">map</code> 的下标访问会在键不存在时自动建一个 0。
+      <b>好的数据结构，能把算法「吃掉」。</b></li>
+      <li><b>函数按照「一件事」来切。</b> <code class="inl">splitWords</code> 只负责切，<code class="inl">countWords</code> 只负责数，
+      <code class="inl">readAll</code> 只负责读。三个函数分别可以单独测试，也分别可以单独替换。</li>
+      <li><b>排序规则考虑了「平局」。</b> 只按次数排序时，次数相同的词顺序是不确定的，每次运行可能不一样。
+      加一句「次数相同按字典序」，输出就完全稳定了。<b>稳定性是工程素养，不是小事。</b></li>
+      <li><b>把字符统一成小写再统计。</b> 否则 <code class="inl">It</code> 和 <code class="inl">it</code> 会被算成两个词。
+      真实数据永远是脏的，清洗要在最前面做。</li>
+      <li><b>写文件之前先检查文件是否存在。</b> 一个看起来无关紧要的小判断，避免了「把用户自己的文件覆盖掉」这种灾难。</li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <div class="bt">常见陷阱</div>
+    <ul>
+      <li><b><code class="inl">cin &gt;&gt; word</code> 会在空格处停下，<code class="inl">getline</code> 不会。</b>
+      混用这两者时，前一个留下的换行符会被后一个立刻读走，导致「少读一行」。这是初学者最常撞的墙。</li>
+      <li><code class="inl">std::tolower</code> 的参数必须是 <code class="inl">unsigned char</code> 转过来的值。
+      直接传负数字符在某些平台上会越界崩溃，所以要写 <code class="inl">std::tolower(static_cast&lt;unsigned char&gt;(c))</code>。</li>
+      <li><code class="inl">counter[w]</code> 只能用在「非 const」的 map 上。如果你把 map 声明为 <code class="inl">const</code>，
+      就必须用 <code class="inl">.find()</code> 来查（项目 09 会这么做）。</li>
+      <li>忘了 <code class="inl">current.clear()</code> 或者忘了最后那个词——切词函数里最容易漏掉的就是这两个点。</li>
+    </ul>
+  </div>
+
+  <div class="challenge">
+    <div class="bt">进阶挑战</div>
+    <ul style="margin:0;padding-left:1.3em">
+      <li>支持中文文本。中文字符是「多字节」的，一个汉字在 UTF-8 里占三个字节——你会直观地看到「字符」和「字节」的区别，
+      以及为什么处理中文比英文麻烦。</li>
+      <li>统计「二元组」：把相邻两个词当成一个单位来数（比如 <code class="inl">of the</code>）。
+      这是语言模型最原始的形态，也只需要把 map 的键换成 pair。</li>
+      <li>加一个「停用词表」：<code class="inl">the</code>、<code class="inl">a</code>、<code class="inl">of</code> 这类词不统计。你会发现前几名立刻换人了。</li>
+      <li>让程序接受命令行参数指定文件名。C++ 里 <code class="inl">main(int argc, char* argv[])</code> 就是干这个的。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= 项目 03 ======================= -->
+<section class="project" id="p03">
+  <header class="p-header">
+    <div class="p-index">03</div>
+    <div class="p-titles">
+      <h2>康威生命游戏</h2>
+      <p class="p-sub">三个简洁的规则，一个会自己生长的世界</p>
+    </div>
+  </header>
+  <div class="p-meta">
+    <span class="chip">难度 ★★★☆☆</span>
+    <span class="chip">建议 4–6 小时</span>
+    <span class="chip">主线：二维数据与规则</span>
+    <span class="chip">阶段一</span>
+  </div>
+  <label class="done-toggle no-print"><input type="checkbox" data-done="p03">标记为已完成</label>
+
+  <div class="newknow">
+    <h4>本板块会用到的新知识点</h4>
+    <p class="nk-note">这个项目会教你两件影响深远的事：二维数据怎么摆，以及怎样把「重复的代码」变成「数据」。</p>
+    <ul>
+      <li><b>二维 vector</b>　<em>形如 <code class="inl">std::vector&lt;std::vector&lt;int&gt;&gt;</code>。</em>
+      「装着一行行数组的数组」。网格、棋盘、图像、矩阵，全都是这个形状。</li>
+      <li><b>using 类型别名</b>　<em><code class="inl">using Grid = std::vector&lt;std::vector&lt;int&gt;&gt;;</code></em>
+      写完这一行，后面所有函数签名里就只出现 <code class="inl">Grid</code> 一个词，读起来清爽得多。</li>
+      <li><b>方向数组</b>　<em>形如 <code class="inl">const int DR[8] = {-1,-1,-1,0,0,1,1,1};</code></em>
+      把「八个方向」变成两张静态表。八个方向不再需要八段 if，而是一个循环。这是算法里最常见的一次「用数据消灭代码」。</li>
+      <li><b>双缓冲更新</b>　<em>读旧表 <code class="inl">current</code>，写新表 <code class="inl">next</code>。</em>
+      所有格子必须<b>同时</b>更新。如果你直接在原表上改，后面算的格子会读到已经被改过的邻居，结果全乱。</li>
+      <li><b>const 语义的深入</b>　<em><code class="inl">liveNeighbors(const Grid&amp; g, ...)</code></em>
+      传进来只读的用 <code class="inl">const Grid&amp;</code>，要改的用 <code class="inl">Grid&amp;</code>。
+      看函数签名就知道它会不会动我的数据，这是 C++ 独有的表达力。</li>
+    </ul>
+  </div>
+
+  <h3 class="h3">一、这件事在真实世界里长什么样</h3>
+  <p>1970 年，数学家约翰·康威设计了一个「零玩家游戏」：一个方格世界里，每个格子要么活着要么死了，下一代怎么变，只看它周围八个邻居里有几个活人。</p>
+  <p>规则只有三条：邻居少于 2 个，孤单而死；邻居是 2 或 3 个，继续活着；邻居多于 3 个，拥挤而死；死格子周围正好 3 个活人，就复活。</p>
+  <p>就这么三条规则，却能长出滑翔机、振荡子、甚至能计算的逻辑门。<b>这个项目真正的价值不在游戏本身，
+  而在于你第一次写出「按规则演化」的程序结构</b>——它和森林火灾模拟、疫情传播模型、元胞自动机、乃至卷积神经网络里的滑窗操作，是同一副骨架。</p>
+
+  <h3 class="h3">二、任务拆解：三关</h3>
+  <ol class="levels">
+    <li>
+      <b>先把世界画出来</b>
+      <p>造一个 14 行 34 列的二维网格，把「滑翔机」这个经典图案摆进去，写一个函数把它打印出来。
+      <b>先不管演化，能看见就是胜利。</b></p>
+    </li>
+    <li>
+      <b>数邻居，然后算下一代</b>
+      <p>写 <code class="inl">liveNeighbors()</code>，注意<b>四条边界都要检查越界</b>。
+      然后写 <code class="inl">nextGeneration()</code>：它接收旧网格，返回一张全新的网格。
+      <i>关键：不要在原网格上直接改。</i></p>
+    </li>
+    <li>
+      <b>让世界动起来</b>
+      <p>把「打印 → 演化」放进一个循环，连续输出若干代。<b>观察滑翔机每四代向右下移动一格</b>——
+      当你亲眼看到它动起来的时候，你才算真正理解了这个程序。</p>
+    </li>
+  </ol>
+
+  <h3 class="h3">三、参考实现</h3>
+  <div class="code-block">
+    <div class="code-title">ways-to-cpp-code / p03_game_of_life.cpp</div>
+<pre class="code"><!--CODE:03--></pre>
+  </div>
+
+  <div class="code-block dark">
+    <div class="code-title">实际运行结果（节选：第 0 代与第 4 代）</div>
+<pre class="term"><!--OUT:03--></pre>
+  </div>
+
+  <div class="beauty">
+    <h5>这段代码美在哪里</h5>
+    <ol>
+      <li><b>八个方向变成了两张表。</b> 不用方向数组的写法，<code class="inl">liveNeighbors</code> 里会有八段几乎一样的
+      <code class="inl">if (r-1 &gt;= 0 &amp;&amp; c-1 &gt;= 0) count += g[r-1][c-1];</code>。
+      用了方向数组之后只剩五行。<b>当你想复制粘贴第三遍的时候，就该停下来想想：这段东西能不能变成数据？</b></li>
+      <li><b>「读旧、写新」是一次重要的思维升级。</b> 让 <code class="inl">nextGeneration</code> 接收一个 const 引用、
+      返回一个全新的 Grid，从函数签名上就杜绝了「边算边改」的错误。函数的形状本身在保护你。</li>
+      <li><b>规则写成了和规则本身一样的形状。</b> 看这两个三目运算符：
+      <code class="inl">next[r][c] = (n == 2 || n == 3) ? 1 : 0;</code>。它读起来几乎就是「邻居是二或三就活」这句话本身。
+      <b>代码和意图之间没有多余的翻译层，这就是优雅。</b></li>
+      <li><b>参数名说明了用途。</b> <code class="inl">placeGlider(Grid&amp; g, int top, int left)</code> 里的 top 和 left，
+      比 x、y 或 a、b 好懂得多。命名的功夫，就是替未来的自己省时间。</li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <div class="bt">常见陷阱</div>
+    <ul>
+      <li><b>最常见的错误：边遍历边修改。</b> 症状是图案会在几代之内莫名其妙地死光。原因就是后面的格子读到了已经被改写的邻居。
+      解法只有一个：写进另一张表。</li>
+      <li>二维 vector 的初始化不能写 <code class="inl">Grid g(rows, cols)</code>，那是「rows 个值为 cols 的元素」。
+      正确的是 <code class="inl">Grid(rows, std::vector&lt;int&gt;(cols, 0))</code>。</li>
+      <li>边界忘记检查会读到别的行——C++ 不会报错，只会算出荒唐的结果。这类错误最耗时间，所以<b>越界判断要写得像条件反射</b>。</li>
+      <li>想让它「动」起来需要 <code class="inl">&lt;thread&gt;</code> 和 <code class="inl">&lt;chrono&gt;</code> 里的睡眠函数。
+      这两个头文件在某些老版本的 Windows 编译环境下支持不佳，所以本手册的版本故意不加入动画——
+      <b>先保证代码在任何机器上都能跑，再考虑锦上添花。</b></li>
+    </ul>
+  </div>
+
+  <div class="challenge">
+    <div class="bt">进阶挑战</div>
+    <ul style="margin:0;padding-left:1.3em">
+      <li>把边界从「死墙」改成「环绕」：第 0 行的上面是最后一行。只需要改一处越界判断，但世界的行为会完全不同。</li>
+      <li>实现几个经典图案：闪烁器（Blinker）、方块（Block）、滑翔机枪（Gosper Glider Gun）。后者会源源不断地吐出滑翔机。</li>
+      <li>让用户用鼠标……目前还不行，但你可以让用户用键盘输入坐标来手动放置细胞，做一个「编辑器」。</li>
+      <li>统计每一代的活细胞数，输出成一个序列。观察它有没有周期性——<b>这就是最简单的「数据分析」</b>。</li>
+      <li>想想看：如果把「数邻居」换成「加权求和」，把「存活规则」换成「和大于阈值就激活」，你手里就有一个卷积层了。</li>
+    </ul>
+  </div>
+</section>

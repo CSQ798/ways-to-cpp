@@ -1,0 +1,3289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ways to cpp · C++ 项目式训练手册</title>
+<style>
+/* ==========================================================================
+   Ways to cpp —— 单色（黑 / 白 / 灰）宋体排版
+   ========================================================================== */
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --ink:#000;--ink2:#1c1c1c;--ink3:#3d3d3d;--ink4:#666;--ink5:#8a8a8a;--ink6:#a8a8a8;
+  --line:#d5d5d5;--line2:#e8e8e8;--line3:#f1f1f1;
+  --paper:#ffffff;--paper2:#fafafa;--paper3:#f3f3f3;--paper4:#ebebeb;
+}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:"SimSun","宋体","Songti SC","Noto Serif CJK SC",serif;
+  font-size:16px;line-height:1.95;letter-spacing:.015em;
+  font-variant-ligatures:none;
+}
+p{margin:0 0 1.05em}
+a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line)}
+a:hover{border-bottom-color:var(--ink)}
+ul,ol{margin:0 0 1.05em;padding-left:1.5em}
+li{margin-bottom:.4em}
+code.inl{
+  background:var(--paper3);border:1px solid var(--line2);padding:0 5px;
+  font-family:inherit;font-size:.95em;white-space:nowrap;
+}
+hr.rule{border:0;border-top:1px solid var(--line);margin:52px 0}
+
+/* ---------- 骨架 ---------- */
+.layout{display:flex;align-items:stretch}
+.sidebar{
+  flex:0 0 272px;width:272px;height:100vh;position:sticky;top:0;overflow-y:auto;
+  border-right:1px solid var(--line);padding:34px 20px 70px;background:var(--paper);
+}
+.sidebar::-webkit-scrollbar{width:6px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--line)}
+.brand{padding:0 8px 16px;border-bottom:2px solid var(--ink);margin-bottom:14px}
+.brand-mark{font-size:19px;letter-spacing:.2em;font-weight:700;line-height:1.3}
+.brand-sub{font-size:11.5px;color:var(--ink5);letter-spacing:.14em;margin-top:5px}
+.toc{font-size:13.5px;line-height:1.55}
+.toc-group{font-size:10.5px;letter-spacing:.22em;color:var(--ink6);margin:22px 8px 7px}
+.toc a{display:block;padding:5px 8px 5px 10px;border-bottom:0;color:var(--ink3);border-left:2px solid transparent}
+.toc a:hover{background:var(--paper3);color:var(--ink)}
+.toc a.active{color:var(--ink);font-weight:700;border-left-color:var(--ink);background:var(--paper2)}
+.toc a .n{display:inline-block;width:26px;color:var(--ink6);font-size:11.5px;letter-spacing:.04em}
+.toc a.active .n{color:var(--ink)}
+.main{flex:1 1 auto;min-width:0;padding:0 52px 150px}
+.content{max-width:940px;margin:0 auto}
+
+/* ---------- 封面 ---------- */
+.hero{padding:100px 0 66px;border-bottom:3px double var(--ink)}
+.hero-kicker{font-size:11.5px;letter-spacing:.34em;color:var(--ink5);margin-bottom:32px}
+.hero h1{font-size:78px;line-height:1;margin:0;letter-spacing:.03em;font-weight:700}
+.hero-rule{width:92px;height:5px;background:var(--ink);margin:32px 0}
+.hero-lead{font-size:17.5px;color:var(--ink2);max-width:660px;line-height:2.1;margin-bottom:0}
+.hero-stats{display:flex;flex-wrap:wrap;margin-top:56px;border-top:1px solid var(--line)}
+.hero-stats>div{flex:1 1 168px;padding:22px 26px 18px 0;border-right:1px solid var(--line)}
+.hero-stats>div:last-child{border-right:0}
+.hero-stats b{display:block;font-size:36px;line-height:1.1;font-weight:700}
+.hero-stats span{font-size:12.5px;color:var(--ink5);letter-spacing:.1em}
+
+/* ---------- 章节 ---------- */
+.sec{padding-top:78px}
+.sec-kicker{font-size:11.5px;letter-spacing:.34em;color:var(--ink5);margin:0 0 12px}
+.sec h2{font-size:35px;margin:0 0 30px;letter-spacing:.05em;line-height:1.3;font-weight:700}
+.h3{font-size:19px;margin:48px 0 14px;letter-spacing:.06em;position:relative;padding-left:20px;font-weight:700}
+.h3::before{content:"";position:absolute;left:0;top:.72em;width:9px;height:2px;background:var(--ink)}
+.h4{font-size:15.5px;margin:30px 0 10px;letter-spacing:.08em;font-weight:700}
+
+/* ---------- 表格 ---------- */
+table{width:100%;border-collapse:collapse;font-size:14.5px;margin:24px 0 32px;line-height:1.7}
+th{background:var(--paper3);text-align:left;font-weight:700;letter-spacing:.07em;font-size:13.5px}
+th,td{border:1px solid var(--line);padding:10px 13px;vertical-align:top}
+tbody tr:nth-child(even){background:var(--paper2)}
+td.k{font-weight:700;white-space:nowrap}
+
+/* ---------- 项目头 ---------- */
+.project{border-top:3px solid var(--ink);margin-top:110px;padding-top:36px}
+.p-header{display:flex;gap:26px;align-items:flex-start}
+.p-index{font-size:56px;line-height:.88;letter-spacing:-.02em;color:var(--ink6);font-weight:700;min-width:82px}
+.p-titles h2{font-size:32px;margin:0 0 9px;letter-spacing:.05em;line-height:1.25;font-weight:700}
+.p-sub{margin:0;color:var(--ink4);font-size:15px;letter-spacing:.03em}
+.p-meta{display:flex;flex-wrap:wrap;gap:10px;margin:26px 0 0}
+.chip{font-size:12.5px;letter-spacing:.08em;border:1px solid var(--line);padding:4px 13px;color:var(--ink3);background:var(--paper2)}
+.done-toggle{display:flex;align-items:center;gap:8px;font-size:12.5px;letter-spacing:.1em;color:var(--ink5);margin-top:16px;cursor:pointer;user-select:none}
+.done-toggle input{appearance:none;width:14px;height:14px;border:1px solid var(--ink4);margin:0;position:relative;cursor:pointer;background:#fff}
+.done-toggle input:checked{background:var(--ink);border-color:var(--ink)}
+.done-toggle input:checked::after{content:"";position:absolute;left:4px;top:1px;width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+
+/* ---------- 新知识点 ---------- */
+.newknow{border:1px solid var(--ink);background:var(--paper2);padding:26px 30px 18px;margin:32px 0 40px}
+.newknow h4{margin:0 0 6px;font-size:13px;letter-spacing:.24em;font-weight:700}
+.newknow .nk-note{font-size:12.5px;color:var(--ink5);margin:0 0 14px;letter-spacing:.04em}
+.newknow ul{margin:0;padding:0;list-style:none}
+.newknow li{padding:11px 0 11px 26px;position:relative;border-top:1px dashed var(--line);font-size:14.8px;line-height:1.8;margin:0}
+.newknow li:first-child{border-top:0}
+.newknow li::before{content:"\25C6";position:absolute;left:2px;top:12px;font-size:9px;color:var(--ink5)}
+.newknow li b{letter-spacing:.02em}
+.newknow li em{font-style:normal;color:var(--ink4)}
+
+/* ---------- 任务关卡 ---------- */
+.levels{list-style:none;padding:0;margin:22px 0 10px;counter-reset:lv}
+.levels li{position:relative;padding:16px 0 16px 82px;border-top:1px solid var(--line2);margin:0}
+.levels li:first-child{border-top:0}
+.levels li::before{
+  counter-increment:lv;content:"Lv" counter(lv);
+  position:absolute;left:0;top:18px;font-size:12px;letter-spacing:.1em;
+  border:1px solid var(--ink);padding:1px 9px;line-height:1.5;
+}
+.levels li b{display:block;font-size:15.5px;margin-bottom:3px}
+.levels li p{margin:0;font-size:14.8px;color:var(--ink3);line-height:1.85}
+
+/* ---------- 代码 ---------- */
+.code-block{margin:26px 0 34px;border:1px solid var(--line);background:var(--paper2)}
+.code-title{font-size:12px;letter-spacing:.18em;color:var(--ink4);background:var(--paper3);border-bottom:1px solid var(--line);padding:8px 18px}
+pre{
+  margin:0;padding:20px 22px;overflow-x:auto;
+  font-family:"SimSun","宋体","Songti SC",monospace;
+  font-size:13.2px;line-height:1.72;letter-spacing:0;
+  background:var(--paper2);color:var(--ink);white-space:pre;tab-size:4;
+}
+.code-block.dark{border-color:#111}
+.code-block.dark .code-title{background:#111;color:#c9c9c9;border-bottom-color:#2e2e2e;letter-spacing:.18em}
+pre.term{background:#111;color:#e9e9e9;font-size:12.8px;line-height:1.68}
+.tok-k{font-weight:700;color:#000}
+.tok-t{color:#383838}
+.tok-s{color:#606060}
+.tok-n{color:#4a4a4a}
+.tok-c{color:#a6a6a6;font-style:italic}
+.tok-p{font-weight:700;color:#000}
+
+/* ---------- 评述类 ---------- */
+.beauty{border-left:3px solid var(--ink);padding:4px 0 4px 26px;margin:28px 0 36px}
+.beauty h5{margin:0 0 12px;font-size:13px;letter-spacing:.24em;font-weight:700}
+.beauty ol{margin:0;padding-left:1.35em}
+.beauty li{margin-bottom:10px;font-size:15px;line-height:1.85}
+.box{border:1px solid var(--line);background:var(--paper2);padding:22px 26px;margin:26px 0}
+.box .bt{font-size:12.5px;letter-spacing:.22em;color:var(--ink4);margin-bottom:12px;font-weight:700}
+.box ul{margin:0;padding-left:1.3em}
+.box li{font-size:14.8px;line-height:1.85}
+.box.dashed{border-style:dashed}
+.pull{font-size:17px;line-height:2;color:var(--ink2);border-left:3px solid var(--line);padding-left:22px;margin:30px 0}
+.challenge{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:20px 0;margin:30px 0}
+.challenge .bt{font-size:12.5px;letter-spacing:.22em;color:var(--ink4);margin-bottom:12px;font-weight:700}
+
+/* ---------- 打印目录（仅 PDF） ---------- */
+.print-toc{display:none}
+.print-toc h2{font-size:26px;letter-spacing:.2em;border-bottom:2px solid var(--ink);padding-bottom:14px}
+.print-toc ul{list-style:none;padding:0;font-size:14px}
+.print-toc li{padding:5px 0;border-bottom:1px dotted var(--line)}
+.print-toc li span{display:inline-block;width:44px;color:var(--ink5)}
+
+.footer{margin-top:110px;border-top:3px double var(--ink);padding-top:28px;font-size:13px;color:var(--ink5);letter-spacing:.06em}
+
+/* ---------- 自适应 ---------- */
+@media (max-width:1120px){
+  .sidebar{display:none}
+  .main{padding:0 28px 110px}
+  .hero h1{font-size:56px}
+}
+@media (max-width:640px){
+  body{font-size:15px}
+  .hero{padding:56px 0 44px}
+  .hero h1{font-size:38px}
+  .hero-stats b{font-size:27px}
+  .p-index{font-size:34px;min-width:52px}
+  .p-titles h2{font-size:23px}
+  .main{padding:0 18px 90px}
+  pre{font-size:11.4px;padding:14px 16px}
+  .content{max-width:100%}
+}
+
+/* ==========================================================================
+   打印 / PDF
+   ========================================================================== */
+@media print{
+  @page{size:A4;margin:17mm 15mm 16mm}
+  html,body{background:#fff}
+  body{font-size:10.4pt;line-height:1.72;letter-spacing:.01em;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .sidebar,.no-print{display:none!important}
+  .layout{display:block}
+  .main{padding:0;max-width:none}
+  .content{max-width:none;margin:0}
+
+  .hero{break-after:page;padding:22mm 0 0;border-bottom:0}
+  .hero h1{font-size:54pt;letter-spacing:.04em}
+  .hero-kicker{font-size:9pt}
+  .hero-rule{height:4px;width:70px;margin:22px 0}
+  .hero-lead{font-size:11.5pt;line-height:1.95}
+  .hero-stats{margin-top:34mm;border-top:1px solid var(--line)}
+  .hero-stats>div{padding:14px 16px 12px 0}
+  .hero-stats b{font-size:22pt}
+
+  .print-toc{display:block;break-after:page}
+  .sec{padding-top:0;break-before:page}
+  .sec:first-of-type{break-before:auto}
+  .project{break-before:page;margin-top:0;padding-top:0;border-top:3px solid var(--ink)}
+  .p-index{font-size:34pt;min-width:58px}
+  .p-titles h2{font-size:19pt}
+  .p-sub{font-size:10pt}
+  .p-meta{margin-top:14px}
+  .chip{font-size:8.5pt;padding:2px 9px}
+
+  h2,h3,h4,h5,.h3,.h4,.sec-kicker,.p-header{break-after:avoid}
+  .newknow,.beauty,.box,.challenge,.pull,.code-block{break-inside:avoid}
+  .newknow{break-inside:avoid;page-break-inside:avoid;padding:16px 20px 10px;margin:18px 0 24px}
+  .newknow li{padding:7px 0 7px 22px;font-size:9.8pt;line-height:1.62}
+  .levels li{padding:10px 0 10px 68px}
+  .levels li::before{top:12px;font-size:8.5pt}
+  .levels li p{font-size:9.8pt;line-height:1.7}
+  .beauty li,.box li{font-size:9.8pt;line-height:1.7}
+  .h3{font-size:12.5pt;margin:26px 0 8px}
+  table{font-size:9.4pt;margin:14px 0 22px}
+  th,td{padding:6px 9px}
+  pre{font-size:9.2pt;line-height:1.5;padding:14px 16px;overflow:visible;break-inside:auto}
+  .code-block{break-inside:auto}
+  .code-title{break-after:avoid;font-size:8.2pt;padding:5px 12px}
+  .code-block{margin:14px 0 20px}
+  a{color:#000;border-bottom:0}
+  .footer{break-before:avoid;margin-top:40px}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<aside class="sidebar no-print">
+  <div class="brand">
+    <div class="brand-mark">Ways&nbsp;to&nbsp;cpp</div>
+    <div class="brand-sub">C++ 项目式训练手册</div>
+  </div>
+  <nav class="toc">
+    <div class="toc-group">开始之前</div>
+    <a href="#intro"><span class="n">00</span>怎么用这本手册</a>
+    <a href="#map"><span class="n">00</span>学习地图</a>
+    <a href="#newtable"><span class="n">00</span>新知识点总表</a>
+
+    <div class="toc-group">第一篇 · 把数据管起来</div>
+    <a href="#p01"><span class="n">01</span>学生成绩分析器</a>
+    <a href="#p02"><span class="n">02</span>英文词频统计器</a>
+    <a href="#p03"><span class="n">03</span>康威生命游戏</a>
+
+    <div class="toc-group">第二篇 · 让程序会思考</div>
+    <a href="#p04"><span class="n">04</span>迷宫最短路径</a>
+    <a href="#p05"><span class="n">05</span>表达式求值器</a>
+    <a href="#p06"><span class="n">06</span>井字棋与极小极大</a>
+
+    <div class="toc-group">第三篇 · 用 C++ 写数学</div>
+    <a href="#p07"><span class="n">07</span>像数学一样的矩阵类</a>
+    <a href="#p08"><span class="n">08</span>训练第一个模型：感知机</a>
+    <a href="#p09"><span class="n">09</span>朴素贝叶斯分类器</a>
+
+    <div class="toc-group">第四篇 · 把产品做出来</div>
+    <a href="#p10"><span class="n">10</span>曼德博集合与图像</a>
+
+    <div class="toc-group">结束之前</div>
+    <a href="#apx-a"><span class="n">A</span>让代码优雅的十条习惯</a>
+    <a href="#apx-b"><span class="n">B</span>编译、调试与求助</a>
+    <a href="#apx-c"><span class="n">C</span>从这里走向 Python 与人工智能</a>
+  </nav>
+</aside>
+
+<main class="main">
+<div class="content">
+
+<!-- ======================= 封面 ======================= -->
+<section class="hero" id="top">
+  <div class="hero-kicker">C++ 项目式训练手册 · 为人工智能专业大一学生编写</div>
+  <h1>Ways&nbsp;to&nbsp;cpp</h1>
+  <div class="hero-rule"></div>
+  <p class="hero-lead">
+    你已经学完了变量、数据类型、运算符、输入输出、分支与循环、数组、字符串、结构、指针、函数。<br>
+    这本手册不想再把这些语法讲一遍。它想带你用手里已有的零件，做出十件真正能跑、能看、能用的东西——
+    然后在做的过程里，把语言知识变成工程直觉。
+  </p>
+  <div class="hero-stats">
+    <div><b>10</b><span>个完整项目</span></div>
+    <div><b>4</b><span>个循序渐进的阶段</span></div>
+    <div><b>30+</b><span>个新知识点</span></div>
+    <div><b>0</b><span>处为了炫技而写的代码</span></div>
+  </div>
+</section>
+
+<!-- ======================= 打印用目录 ======================= -->
+<nav class="print-toc">
+  <h2>目&nbsp;&nbsp;录</h2>
+  <ul>
+    <li><span>00</span>怎么用这本手册</li>
+    <li><span>00</span>学习地图</li>
+    <li><span>00</span>新知识点总表</li>
+    <li><span>01</span>学生成绩分析器 —— 用向量代替数组</li>
+    <li><span>02</span>英文词频统计器 —— 让文件与字典为你工作</li>
+    <li><span>03</span>康威生命游戏 —— 二维世界与规则的力量</li>
+    <li><span>04</span>迷宫最短路径 —— 广度优先搜索</li>
+    <li><span>05</span>表达式求值器 —— 递归下降分析</li>
+    <li><span>06</span>井字棋与极小极大 —— 会下棋的递归</li>
+    <li><span>07</span>像数学一样的矩阵类 —— 类与运算符重载</li>
+    <li><span>08</span>训练第一个模型：感知机</li>
+    <li><span>09</span>朴素贝叶斯分类器 —— 从数据里学概率</li>
+    <li><span>10</span>曼德博集合与图像 —— 把数学变成产品</li>
+    <li><span>A</span>让代码优雅的十条习惯</li>
+    <li><span>B</span>编译、调试与求助</li>
+    <li><span>C</span>从这里走向 Python 与人工智能</li>
+  </ul>
+</nav>
+
+<!-- ======================= 00 使用说明 ======================= -->
+<section class="sec" id="intro">
+  <p class="sec-kicker">BEFORE&nbsp;YOU&nbsp;START</p>
+  <h2>怎么用这本手册</h2>
+
+  <p>你说过一句话：语法都学过，但一到算法层面就无从下手。这不是你的问题，这是<b>所有只做课后题的人都会遇到的坎</b>。
+  课后题的形式是「输入 A，输出 B，用一个循环解决」，而真实程序的形式是「有一堆数据，我该怎么摆放它们，
+  该派哪些函数去处理，出错时谁来兜底」。这两件事用的是同一门语言，却是两种完全不同的思维方式。</p>
+
+  <p>所以这本手册的每一个项目，都按照同一套结构来写，你按这个顺序读、按这个顺序做，效果最好：</p>
+
+  <table>
+    <thead><tr><th style="width:150px">板块</th><th>它是干什么用的</th></tr></thead>
+    <tbody>
+      <tr><td class="k">项目背景</td><td>先告诉你这件事在真实世界里长什么样。你会知道自己在造什么，而不是在凑一个循环。</td></tr>
+      <tr><td class="k">本板块新知识点</td><td><b>每个项目开头都会先列出没学过的内容</b>。看到不认识的词不要慌，那是接下来要解决的问题的答案。</td></tr>
+      <tr><td class="k">任务拆解</td><td>把一个项目切成 Lv1 / Lv2 / Lv3 三关。<b>请务必先自己动手写，卡住了再看参考实现。</b></td></tr>
+      <tr><td class="k">参考实现</td><td>完整源码 + 真实运行结果。代码可以在 <code class="inl">ways-to-cpp-code/</code> 里找到，直接编译就能跑。</td></tr>
+      <tr><td class="k">美在哪里</td><td>逐条讲解这段代码为什么这样写更好看、更好改。<b>这是本手册最想给你的东西。</b></td></tr>
+      <tr><td class="k">常见陷阱 / 进阶挑战</td><td>前者帮你少走弯路，后者给你继续往前走的方向。</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="h3">三条硬规矩</h3>
+  <ol>
+    <li><b>先关掉参考实现，自己写四十分钟。</b>哪怕写得很丑、编译不过、逻辑全错，那四十分钟的价值也大于直接抄一遍。</li>
+    <li><b>每一关都要真的编译、真的运行。</b>看懂和写出来之间，隔着一次 <code class="inl">error: expected ';'</code>。</li>
+    <li><b>动手改。</b>把示例数据换成你自己的、把 10 改成 100、把升序改成降序。你对代码的掌控感是改出来的。</li>
+  </ol>
+
+  <div class="box">
+    <div class="bt">编译与运行环境</div>
+    <p style="margin-bottom:.6em">本手册所有代码都在 <b>C++11 / C++14</b> 标准下编写，任何一个现代编译器都能直接通过。以 MinGW 的 g++ 为例：</p>
+    <div class="code-block" style="margin:0">
+      <pre class="term">g++ -std=c++14 -Wall p01_grade_analyzer.cpp -o p01
+
+./p01          # 在 Linux / macOS / Git Bash 下
+p01.exe        # 在 Windows 的 cmd 或 PowerShell 下</pre>
+    </div>
+    <p style="margin:.9em 0 0"><code class="inl">-Wall</code> 的意思是「把该提醒我的都提醒我」。初学者最该养成的习惯之一，就是<b>永远带着它编译</b>——
+    编译器是你身边最便宜、最诚实的老师。</p>
+  </div>
+
+  <div class="box dashed">
+    <div class="bt">关于「新知识」的分寸</div>
+    <p style="margin:0">你希望少碰语言的高级特性，这个尺度我按下面的标准把握：</p>
+    <ul style="margin:.7em 0 0">
+      <li><b>收进来的</b>：标准库中真正日常的工具（<code class="inl">vector</code>、<code class="inl">map</code>、<code class="inl">sort</code>、文件流、<code class="inl">class</code> 与运算符重载），以及算法本身的思想（搜索、递归、概率）。它们是「做事要用的」，不是「考试要考的」。</li>
+      <li><b>挡在外面的</b>：模板元编程、移动语义与右值引用、智能指针、lambda 的进阶用法、多线程、编译期计算、C++20 概念等。这些是有价值的，但对你当前的阶段而言，投入产出比很低，而且 Python 与 AI 的路线用不上它们。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= 00 学习地图 ======================= -->
+<section class="sec" id="map">
+  <p class="sec-kicker">THE&nbsp;MAP</p>
+  <h2>学习地图</h2>
+
+  <p>十个项目分成四个阶段。阶段与阶段之间是<b>依赖关系</b>，不是并列关系——每一个项目都会用到前面项目教过的东西，
+  所以请按顺序走。难度用五星制表示，但请记住：<b>难度高的项目不一定花时间多，难度低的项目也值得做得漂亮。</b></p>
+
+  <table>
+    <thead>
+      <tr><th style="width:120px">阶段</th><th style="width:60px">编号</th><th style="width:190px">项目</th>
+      <th style="width:90px">难度</th><th>你会获得的能力</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="k" rowspan="3">第一篇<br>把数据管起来</td>
+        <td>01</td><td class="k">学生成绩分析器</td><td>★★☆☆☆</td>
+        <td>不再用固定长度的数组，学会用 <code class="inl">vector</code> 和标准库算法组织一批数据</td>
+      </tr>
+      <tr><td>02</td><td class="k">英文词频统计器</td><td>★★☆☆☆</td>
+        <td>让程序读写真实文件，用 <code class="inl">map</code> 完成「查表式」的统计</td></tr>
+      <tr><td>03</td><td class="k">康威生命游戏</td><td>★★★☆☆</td>
+        <td>驾驭二维数据与「按规则演化」的思维，这是所有仿真与元胞自动机的骨架</td></tr>
+
+      <tr>
+        <td class="k" rowspan="3">第二篇<br>让程序会思考</td>
+        <td>04</td><td class="k">迷宫最短路径</td><td>★★★☆☆</td>
+        <td>第一次真正意义上的「算法」：广度优先搜索与路径回溯</td>
+      </tr>
+      <tr><td>05</td><td class="k">表达式求值器</td><td>★★★☆☆</td>
+        <td>递归下降分析——用三十行代码理解编译器的入口，递归从此不再是「算阶乘」</td></tr>
+      <tr><td>06</td><td class="k">井字棋与极小极大</td><td>★★★★☆</td>
+        <td>把递归用于「对抗性搜索」，写出一个你赢不了的对手</td></tr>
+
+      <tr>
+        <td class="k" rowspan="3">第三篇<br>用 C++ 写数学</td>
+        <td>07</td><td class="k">像数学一样的矩阵类</td><td>★★★☆☆</td>
+        <td>定义自己的类型，让 <code class="inl">C = A * B</code> 直接可写。这是神经网络的第一块砖</td>
+      </tr>
+      <tr><td>08</td><td class="k">感知机</td><td>★★★★☆</td>
+        <td>完整走一遍「造数据—训练—评估—保存参数」的机器学习流程</td></tr>
+      <tr><td>09</td><td class="k">朴素贝叶斯分类器</td><td>★★★★☆</td>
+        <td>用你亲手写的代码，完成一次真实的文本分类</td></tr>
+
+      <tr>
+        <td class="k">第四篇<br>把产品做出来</td>
+        <td>10</td><td class="k">曼德博集合与图像</td><td>★★★☆☆</td>
+        <td>程序不再只输出文字，而是产出一个可以用眼睛看的文件——这就是「落地」</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="pull">建议节奏：一周一个项目，两天读、三天写、两天改。<br>
+  十周之后，你手里会有十个能跑的程序，和一套比语法重要得多的东西——<b>面对一个空白文件时知道从哪下手的底气。</b></p>
+</section>
+
+<!-- ======================= 00 新知识点总表 ======================= -->
+<section class="sec" id="newtable">
+  <p class="sec-kicker">WHAT&nbsp;IS&nbsp;NEW</p>
+  <h2>新知识点总表</h2>
+
+  <p>下面这张表是本手册的「新东西清单」。左边是知识点，中间告诉你它<b>为了解决什么问题</b>才出现，
+  右边一列是它<b>在 Python 里的近亲</b>——你是人工智能专业的学生，这条路迟早要走到 Python 上去，
+  提前建立这种对应关系，将来迁移会轻松得多。</p>
+
+  <table>
+    <thead>
+      <tr><th style="width:70px">项目</th><th style="width:210px">新知识点</th><th>它为什么存在</th><th style="width:170px">Python 里的对应物</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="k">01</td><td class="k">const 与 const 引用</td><td>告诉编译器也告诉读者：这个数据到此为止，不许改</td><td>约定俗成的常量命名</td></tr>
+      <tr><td class="k">01</td><td class="k">std::vector</td><td>可以随时长大的数组，长度不再是编译期就定死的数字</td><td>list</td></tr>
+      <tr><td class="k">01</td><td class="k">范围 for / std::sort</td><td>不再手写下标循环，也不再手写冒泡排序</td><td>for x in xs / sorted()</td></tr>
+      <tr><td class="k">02</td><td class="k">std::map</td><td>用「键」直接找到「值」，天生适合数数、查表、建索引</td><td>dict</td></tr>
+      <tr><td class="k">02</td><td class="k">文件流 fstream</td><td>让数据活过这次运行，能被下一次运行读到</td><td>open() / with 语句</td></tr>
+      <tr><td class="k">02</td><td class="k">字符分类函数</td><td>把「是不是字母」「转成小写」交给标准库，别自己写范围判断</td><td>str.isalpha() / str.lower()</td></tr>
+      <tr><td class="k">03</td><td class="k">二维 vector</td><td>表示网格、图像、棋盘、矩阵——一切有行有列的东西</td><td>嵌套 list</td></tr>
+      <tr><td class="k">03</td><td class="k">方向数组</td><td>把「八个方向」变成一张数据表，而不是八段重复的 if</td><td>方向元组列表</td></tr>
+      <tr><td class="k">03</td><td class="k">双缓冲更新</td><td>读旧状态、写新状态，避免「改到一半被自己影响」</td><td>list.copy() / 新建数组</td></tr>
+      <tr><td class="k">04</td><td class="k">std::queue 与 BFS</td><td>一层一层向外扩散，第一次到达即最短</td><td>collections.deque</td></tr>
+      <tr><td class="k">04</td><td class="k">std::pair 与前驱表</td><td>把两个值绑成一个、并记录「我是从哪来的」，用来复原路径</td><td>tuple / 字典记录父节点</td></tr>
+      <tr><td class="k">05</td><td class="k">递归下降分析</td><td>用一层层函数准确表达「优先级」这件事</td><td>递归下降解析器</td></tr>
+      <tr><td class="k">05</td><td class="k">引用参数共享状态</td><td>让几个函数共用同一个「光标」，不用全局变量</td><td>把对象传来传去</td></tr>
+      <tr><td class="k">06</td><td class="k">极小极大搜索</td><td>在「我走一步、对手走一步」的世界里找最优解</td><td>同样的算法，加缓存就是 α-β</td></tr>
+      <tr><td class="k">06</td><td class="k">按值传参</td><td>每次递归拿到一份自己的副本，撤销变得免费</td><td>切片复制 board[:]</td></tr>
+      <tr><td class="k">07</td><td class="k">class 与封装</td><td>把数据和操作它的函数捆在一起，外面只看得到接口</td><td>class</td></tr>
+      <tr><td class="k">07</td><td class="k">运算符重载</td><td>让自定义类型也能用 + 和 *，代码长得像数学公式</td><td>__add__ / __mul__</td></tr>
+      <tr><td class="k">07</td><td class="k">const 成员函数</td><td>承诺「这个函数不会改动对象」，编译器替你把关</td><td>没有直接对应，靠自觉</td></tr>
+      <tr><td class="k">08</td><td class="k">&lt;random&gt; 随机数引擎</td><td>造出可复现的假数据，机器学习的实验离不开它</td><td>random / numpy.random</td></tr>
+      <tr><td class="k">08</td><td class="k">训练循环</td><td>「预测—比较—修正」重复很多次，这就是学习的本质</td><td>for epoch in range(n)</td></tr>
+      <tr><td class="k">08</td><td class="k">参数持久化</td><td>把训练结果存成文件，下次不用重训</td><td>pickle / np.save</td></tr>
+      <tr><td class="k">09</td><td class="k">概率取对数</td><td>把连乘变成连加，避免小概率相乘变成 0</td><td>np.log 累加</td></tr>
+      <tr><td class="k">09</td><td class="k">拉普拉斯平滑</td><td>没见过的词也要给一点点概率，否则整条判断作废</td><td>加一平滑</td></tr>
+      <tr><td class="k">10</td><td class="k">二进制文件输出</td><td>把内存里的数字原样写进文件，于是程序能产出「作品」</td><td>open(..., 'wb')</td></tr>
+      <tr><td class="k">10</td><td class="k">坐标映射</td><td>把屏幕像素坐标翻译成数学坐标，这是可视化的第一步</td><td>同样的线性映射</td></tr>
+    </tbody>
+  </table>
+
+  <p class="pull">不要试图记住这张表。<b>知识点的价值不在于记住，而在于你在某个时刻真的需要它</b>——
+  那时的记忆，才是长在身上的。</p>
+</section>
+
+<!-- ======================= 项目 01 ======================= -->
+<section class="project" id="p01">
+  <header class="p-header">
+    <div class="p-index">01</div>
+    <div class="p-titles">
+      <h2>学生成绩分析器</h2>
+      <p class="p-sub">把一堆分数交给数据自己去排队</p>
+    </div>
+  </header>
+  <div class="p-meta">
+    <span class="chip">难度 ★★☆☆☆</span>
+    <span class="chip">建议 3–5 小时</span>
+    <span class="chip">主线：数据组织</span>
+    <span class="chip">阶段一</span>
+  </div>
+  <label class="done-toggle no-print"><input type="checkbox" data-done="p01">标记为已完成</label>
+
+  <div class="newknow">
+    <h4>本板块会用到的新知识点</h4>
+    <p class="nk-note">下面这些你还没学过。不用提前去查，读到需要它们的地方，回来对一眼就行。</p>
+    <ul>
+      <li><b>const 引用参数</b>　<em>形如 <code class="inl">const std::vector&lt;Student&gt;&amp;</code>。</em>一个 &amp; 让函数不用拷贝整份数据，一个 const 保证函数不会偷偷改你的东西。</li>
+      <li><b>std::vector</b>　<em>需要 <code class="inl">#include &lt;vector&gt;</code>。</em>长度可以变的数组。你以前写 <code class="inl">int a[100]</code>，是猜一个足够大的数；vector 让数组自己长大。</li>
+      <li><b>范围 for</b>　<em>形如 <code class="inl">for (const Student&amp; s : students)</code>。</em>「对 students 里的每一个 s」，不必再写 <code class="inl">i = 0; i &lt; n; ++i</code>。</li>
+      <li><b>std::sort 与比较函数</b>　<em>需要 <code class="inl">#include &lt;algorithm&gt;</code>。</em>标准库自带的排序，比手写冒泡快得多；你只需告诉它「谁该排前面」。</li>
+      <li><b>static_cast</b>　<em>形如 <code class="inl">static_cast&lt;double&gt;(n)</code>。</em>明确地做一次类型转换，比 C 风格的 <code class="inl">(double)n</code> 更醒目、更安全。</li>
+    </ul>
+  </div>
+
+  <h3 class="h3">一、这件事在真实世界里长什么样</h3>
+  <p>每学期期末，老师手里都有一张成绩表。他想要的东西会不断变：今天想知道平均分，明天想排出名次，
+  后天想看看「这个班是不是两极分化」——那是标准差要回答的问题；再过两天教务又要按等级统计人数。</p>
+  <p>如果你把这些需求全塞进 <code class="inl">main</code> 里，写成一段长长的循环，那么每来一个新需求，你都要重新读一遍那段代码，
+  小心翼翼地不要碰坏别的地方。<b>这个项目要教你的，就是把「数据」和「对数据的操作」分开。</b>
+  分开了之后，加一个需求，只是多写一个函数而已。</p>
+
+  <h3 class="h3">二、任务拆解：三关</h3>
+  <ol class="levels">
+    <li>
+      <b>先把数据装起来</b>
+      <p>定义 <code class="inl">struct Student { std::string name; int score; };</code>，用你在数组那一章学过的写法，
+      造 8 个学生的固定数组，打印平均分和最高分的同学。<b>这一关只用你已经会的东西</b>，目的是热身。</p>
+    </li>
+    <li>
+      <b>把动作拆成函数</b>
+      <p>把「平均分」「最高分」「标准差」各写成一个独立函数。函数参数用 <code class="inl">const std::vector&lt;Student&gt;&amp;</code>，
+      容器改用 <code class="inl">std::vector</code>。<b>检验标准：main 里只剩下「准备数据」和「调用函数」两种语句。</b></p>
+    </li>
+    <li>
+      <b>让它能排名、能评级</b>
+      <p>用 <code class="inl">std::sort</code> 把学生按分数从高到低排好，输出一张带序号、姓名、分数、等级的成绩单。
+      排序规则单独写成一个函数，名字要能读懂。</p>
+    </li>
+  </ol>
+
+  <h3 class="h3">三、参考实现</h3>
+  <div class="code-block">
+    <div class="code-title">ways-to-cpp-code / p01_grade_analyzer.cpp</div>
+<pre class="code"><span class="tok-c">// ============================================================</span>
+<span class="tok-c">//  Ways to cpp · 项目 01  学生成绩分析器</span>
+<span class="tok-c">//  编译： g++ -std=c++14 -Wall p01_grade_analyzer.cpp -o p01</span>
+<span class="tok-c">//  运行： ./p01        (Windows 下是 p01.exe)</span>
+<span class="tok-c">// ============================================================</span>
+
+<span class="tok-p">#include &lt;algorithm&gt;</span>
+<span class="tok-p">#include &lt;cmath&gt;</span>
+<span class="tok-p">#include &lt;iomanip&gt;</span>
+<span class="tok-p">#include &lt;iostream&gt;</span>
+<span class="tok-p">#include &lt;string&gt;</span>
+<span class="tok-p">#include &lt;vector&gt;</span>
+
+<span class="tok-c">// ---------- 1. 先描述"数据长什么样" ----------</span>
+<span class="tok-c">// 结构体只负责装数据，不负责做事，这是最省心的分工。</span>
+<span class="tok-k">struct</span> <span class="tok-t">Student</span> {
+    <span class="tok-t">std</span>::<span class="tok-t">string</span> name;
+    <span class="tok-k">int</span>         score;
+};
+
+<span class="tok-c">// ---------- 2. 再做"数据上的动作"，一个函数只做一件事 ----------</span>
+
+<span class="tok-c">// const 引用：既不拷贝（快），又向读代码的人承诺"我不会改你"</span>
+<span class="tok-k">double</span> averageOf(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-t">Student</span>&gt;&amp; students) {
+    <span class="tok-k">if</span> (students.empty()) <span class="tok-k">return</span> <span class="tok-n">0.0</span>;
+    <span class="tok-k">double</span> sum = <span class="tok-n">0.0</span>;
+    <span class="tok-k">for</span> (<span class="tok-k">const</span> <span class="tok-t">Student</span>&amp; s : students) {   <span class="tok-c">// 范围 for：不用再关心下标</span>
+        sum += s.score;
+    }
+    <span class="tok-k">return</span> sum / static_cast&lt;<span class="tok-k">double</span>&gt;(students.size());
+}
+
+<span class="tok-c">// 返回最高分学生的下标；调用者保证容器非空</span>
+<span class="tok-k">int</span> indexOfBest(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-t">Student</span>&gt;&amp; students) {
+    <span class="tok-k">int</span> best = <span class="tok-n">0</span>;
+    <span class="tok-k">for</span> (<span class="tok-k">int</span> i = <span class="tok-n">1</span>; i &lt; static_cast&lt;<span class="tok-k">int</span>&gt;(students.size()); ++i) {
+        <span class="tok-k">if</span> (students[i].score &gt; students[best].score) best = i;
+    }
+    <span class="tok-k">return</span> best;
+}
+
+<span class="tok-c">// 标准差：衡量"分数有多散"。这就是算法，只不过只有六行。</span>
+<span class="tok-k">double</span> deviationOf(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-t">Student</span>&gt;&amp; students) {
+    <span class="tok-k">if</span> (students.size() &lt; <span class="tok-n">2</span>) <span class="tok-k">return</span> <span class="tok-n">0.0</span>;
+    <span class="tok-k">const</span> <span class="tok-k">double</span> mean = averageOf(students);
+    <span class="tok-k">double</span> acc = <span class="tok-n">0.0</span>;
+    <span class="tok-k">for</span> (<span class="tok-k">const</span> <span class="tok-t">Student</span>&amp; s : students) {
+        <span class="tok-k">const</span> <span class="tok-k">double</span> d = s.score - mean;
+        acc += d * d;
+    }
+    <span class="tok-k">return</span> <span class="tok-t">std</span>::sqrt(acc / static_cast&lt;<span class="tok-k">double</span>&gt;(students.size()));
+}
+
+<span class="tok-c">// 排序规则单独写成函数，名字就是说它的那句话，比写在调用处好读得多</span>
+<span class="tok-k">bool</span> higherScoreFirst(<span class="tok-k">const</span> <span class="tok-t">Student</span>&amp; a, <span class="tok-k">const</span> <span class="tok-t">Student</span>&amp; b) {
+    <span class="tok-k">return</span> a.score &gt; b.score;
+}
+
+<span class="tok-c">// 一条 if-else 链，其实就是一张查表</span>
+<span class="tok-t">std</span>::<span class="tok-t">string</span> gradeOf(<span class="tok-k">int</span> score) {
+    <span class="tok-k">if</span> (score &gt;= <span class="tok-n">90</span>) <span class="tok-k">return</span> <span class="tok-s">"A"</span>;
+    <span class="tok-k">if</span> (score &gt;= <span class="tok-n">80</span>) <span class="tok-k">return</span> <span class="tok-s">"B"</span>;
+    <span class="tok-k">if</span> (score &gt;= <span class="tok-n">70</span>) <span class="tok-k">return</span> <span class="tok-s">"C"</span>;
+    <span class="tok-k">if</span> (score &gt;= <span class="tok-n">60</span>) <span class="tok-k">return</span> <span class="tok-s">"D"</span>;
+    <span class="tok-k">return</span> <span class="tok-s">"F"</span>;
+}
+
+<span class="tok-k">void</span> printTable(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-t">Student</span>&gt;&amp; students) {
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"----- Ranked -----\n"</span>;
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-t">std</span>::left  &lt;&lt; <span class="tok-t">std</span>::setw(<span class="tok-n">4</span>)  &lt;&lt; <span class="tok-s">"#"</span>
+              &lt;&lt; <span class="tok-t">std</span>::left  &lt;&lt; <span class="tok-t">std</span>::setw(<span class="tok-n">10</span>) &lt;&lt; <span class="tok-s">"Name"</span>
+              &lt;&lt; <span class="tok-t">std</span>::right &lt;&lt; <span class="tok-t">std</span>::setw(<span class="tok-n">6</span>)  &lt;&lt; <span class="tok-s">"Score"</span>
+              &lt;&lt; <span class="tok-t">std</span>::right &lt;&lt; <span class="tok-t">std</span>::setw(<span class="tok-n">7</span>)  &lt;&lt; <span class="tok-s">"Grade"</span> &lt;&lt; <span class="tok-s">"\n"</span>;
+    <span class="tok-k">for</span> (<span class="tok-k">int</span> i = <span class="tok-n">0</span>; i &lt; static_cast&lt;<span class="tok-k">int</span>&gt;(students.size()); ++i) {
+        <span class="tok-k">const</span> <span class="tok-t">Student</span>&amp; s = students[i];
+        <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-t">std</span>::left  &lt;&lt; <span class="tok-t">std</span>::setw(<span class="tok-n">4</span>)  &lt;&lt; (i + <span class="tok-n">1</span>)
+                  &lt;&lt; <span class="tok-t">std</span>::left  &lt;&lt; <span class="tok-t">std</span>::setw(<span class="tok-n">10</span>) &lt;&lt; s.name
+                  &lt;&lt; <span class="tok-t">std</span>::right &lt;&lt; <span class="tok-t">std</span>::setw(<span class="tok-n">6</span>)  &lt;&lt; s.score
+                  &lt;&lt; <span class="tok-t">std</span>::right &lt;&lt; <span class="tok-t">std</span>::setw(<span class="tok-n">7</span>)  &lt;&lt; gradeOf(s.score) &lt;&lt; <span class="tok-s">"\n"</span>;
+    }
+}
+
+<span class="tok-k">int</span> main() {
+    <span class="tok-c">// 演示数据。真实使用时，把这一段换成 cin 读入即可，</span>
+    <span class="tok-c">// 上面所有函数一行都不用改 —— 这就是"把数据和逻辑分开"的回报。</span>
+    <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-t">Student</span>&gt; students = {
+        {<span class="tok-s">"Alice"</span>,  <span class="tok-n">92</span>}, {<span class="tok-s">"Bob"</span>,    <span class="tok-n">67</span>}, {<span class="tok-s">"Cathy"</span>,  <span class="tok-n">85</span>},
+        {<span class="tok-s">"David"</span>,  <span class="tok-n">58</span>}, {<span class="tok-s">"Eve"</span>,   <span class="tok-n">100</span>}, {<span class="tok-s">"Frank"</span>,  <span class="tok-n">74</span>},
+        {<span class="tok-s">"Grace"</span>,  <span class="tok-n">81</span>}, {<span class="tok-s">"Henry"</span>,  <span class="tok-n">46</span>}
+    };
+
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-t">std</span>::fixed &lt;&lt; <span class="tok-t">std</span>::setprecision(<span class="tok-n">2</span>);
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"Students : "</span> &lt;&lt; students.size() &lt;&lt; <span class="tok-s">"\n"</span>;
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"Average  : "</span> &lt;&lt; averageOf(students) &lt;&lt; <span class="tok-s">"\n"</span>;
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"StdDev   : "</span> &lt;&lt; deviationOf(students) &lt;&lt; <span class="tok-s">"\n"</span>;
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"Best     : "</span> &lt;&lt; students[indexOfBest(students)].name
+              &lt;&lt; <span class="tok-s">" ("</span> &lt;&lt; students[indexOfBest(students)].score &lt;&lt; <span class="tok-s">")\n\n"</span>;
+
+    <span class="tok-t">std</span>::sort(students.begin(), students.end(), higherScoreFirst);
+    printTable(students);
+    <span class="tok-k">return</span> <span class="tok-n">0</span>;
+}</pre>
+  </div>
+
+  <div class="code-block dark">
+    <div class="code-title">实际运行结果（真实输出，未经修饰）</div>
+<pre class="term">Students : 8
+Average  : 75.38
+StdDev   : 16.75
+Best     : Eve (100)
+
+----- Ranked -----
+#   Name       Score  Grade
+1   Eve          100      A
+2   Alice         92      A
+3   Cathy         85      B
+4   Grace         81      B
+5   Frank         74      C
+6   Bob           67      D
+7   David         58      F
+8   Henry         46      F</pre>
+  </div>
+
+  <div class="beauty">
+    <h5>这段代码美在哪里</h5>
+    <ol>
+      <li><b>结构体只装数据，函数只做动作。</b> <code class="inl">Student</code> 里一行逻辑都没有，<code class="inl">averageOf</code> 里一行存储都没有。
+      这种「各自的活各自干」的分工，是后面所有项目的基础。</li>
+      <li><b>一个 const 引用，同时买到两样东西。</b> <code class="inl">&amp;</code> 免去拷贝整份数据的开销，<code class="inl">const</code> 让「我不会改你」这句话变成编译器能验证的事实。
+      读代码的人看到这个签名，就再也不用担心 <code class="inl">averageOf</code> 会动他的数据。</li>
+      <li><b>排序规则有了名字。</b> 比较一下这两种写法：<code class="inl">sort(v.begin(), v.end(), [](auto&amp; a, auto&amp; b){return a.score&gt;b.score;})</code>
+      和 <code class="inl">sort(v.begin(), v.end(), higherScoreFirst)</code>。
+      后者读起来就是一句英文，而且这个规则可以在别处复用、可以单独测试。</li>
+      <li><b>函数是「纯」的。</b> <code class="inl">averageOf</code> 除了传入的容器，不依赖任何外部状态。
+      这样的函数可以被随手调用一万次，结果永远一样——这是可靠代码最重要的性质。</li>
+      <li><b>换数据源，不用改逻辑。</b> 把 <code class="inl">main</code> 里那段演示数据换成 <code class="inl">cin</code> 读入，
+      上面五个函数一行都不用动。<b>这就是「解耦」在真实项目里的回报。</b></li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <div class="bt">常见陷阱</div>
+    <ul>
+      <li><code class="inl">students.size()</code> 返回的是无符号整数，直接和 <code class="inl">int i</code> 比较，编译器会警告「有符号与无符号比较」。
+      本手册统一写成 <code class="inl">static_cast&lt;int&gt;(students.size())</code>。</li>
+      <li>比较函数里千万别写 <code class="inl">&gt;=</code>。<code class="inl">std::sort</code> 要求「严格弱序」，
+      写 <code class="inl">&gt;=</code> 会在某些数据下越界崩溃——这是个非常经典的坑。</li>
+      <li>空容器求平均会除以 0。所以 <code class="inl">averageOf</code> 第一行就先挡住 <code class="inl">empty()</code> 的情况。</li>
+      <li>浮点输出不加 <code class="inl">std::setprecision</code> 会打印出 <code class="inl">75.375</code> 这样的默认六位有效数字，也可能是 <code class="inl">1e+06</code>。
+      要显示小数，记得 <code class="inl">&lt;iomanip&gt;</code> 里的 <code class="inl">std::fixed &lt;&lt; std::setprecision(2)</code>。</li>
+    </ul>
+  </div>
+
+  <div class="challenge">
+    <div class="bt">进阶挑战</div>
+    <ul style="margin:0;padding-left:1.3em">
+      <li>让程序从 <code class="inl">scores.txt</code> 读入成绩（每行「姓名 分数」）。读文件的方法在项目 02 会讲，你可以先自己试试。</li>
+      <li>再加一套排序：「按姓名升序」。你会发现排序规则函数可以随便换，其余代码纹丝不动。</li>
+      <li>求出中位数，并比较它和平均分的差距。差距大，说明分数分布是偏的——这是真实数据分析里最常用的第一眼判断。</li>
+      <li>统计每个等级有几个人，并且用 <code class="inl">#</code> 画一个横向条形图。想想看：这个「等级 → 人数」的对应关系，用什么容器存最自然？</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= 项目 02 ======================= -->
+<section class="project" id="p02">
+  <header class="p-header">
+    <div class="p-index">02</div>
+    <div class="p-titles">
+      <h2>英文词频统计器</h2>
+      <p class="p-sub">让文件和字典替你做苦力</p>
+    </div>
+  </header>
+  <div class="p-meta">
+    <span class="chip">难度 ★★☆☆☆</span>
+    <span class="chip">建议 3–5 小时</span>
+    <span class="chip">主线：查表与持久化</span>
+    <span class="chip">阶段一</span>
+  </div>
+  <label class="done-toggle no-print"><input type="checkbox" data-done="p02">标记为已完成</label>
+
+  <div class="newknow">
+    <h4>本板块会用到的新知识点</h4>
+    <p class="nk-note">这个项目会引入两个你以后几乎天天要用的东西：map 和文件。</p>
+    <ul>
+      <li><b>std::map</b>　<em>需要 <code class="inl">#include &lt;map&gt;</code>。</em>「键 → 值」的对应表。
+      它的下标 <code class="inl">counter[word]</code> 有一个非常贴心的性质：<b>键不存在时会自动创建一个值为 0 的条目</b>，
+      所以「数数」这个动作被压缩成了一行 <code class="inl">++counter[w]</code>。</li>
+      <li><b>文件流</b>　<em><code class="inl">std::ifstream</code> 读、<code class="inl">std::ofstream</code> 写，需要 <code class="inl">#include &lt;fstream&gt;</code>。</em>
+      让数据活过这一次运行。用法和 <code class="inl">cin</code>/<code class="inl">cout</code> 几乎一模一样，只是把「屏幕」换成了「文件」。</li>
+      <li><b>std::getline</b>　<em>需要 <code class="inl">#include &lt;string&gt;</code>。</em>一次读一整行。注意：<code class="inl">cin &gt;&gt; s</code> 遇到空格就停，
+      而 <code class="inl">getline</code> 会连空格一起读进来——读文本时这个区别至关重要。</li>
+      <li><b>std::isalpha / std::tolower</b>　<em>需要 <code class="inl">#include &lt;cctype&gt;</code>。</em>判断「是不是字母」、把大写变小写。
+      标准库早就写好了，别自己写 <code class="inl">if (c &gt;= 'A' &amp;&amp; c &lt;= 'Z')</code>。</li>
+      <li><b>typedef / using 起别名</b>　<em>形如 <code class="inl">typedef std::map&lt;std::string,int&gt; Counter;</code>。</em>
+      把一长串类型名缩写成一个词，读代码时脑子轻松很多。</li>
+      <li><b>std::pair</b>　<em>需要 <code class="inl">#include &lt;utility&gt;</code>。</em>把「词」和「次数」捆成一件东西，
+      这样它们才能一起被排序。<code class="inl">.first</code> 是第一个，<code class="inl">.second</code> 是第二个。</li>
+    </ul>
+  </div>
+
+  <h3 class="h3">一、这件事在真实世界里长什么样</h3>
+  <p>「数一篇文章里每个词出现了多少次」听起来像课堂练习，但它其实是搜索引擎、文本分类、语言模型的第一步。
+  你要做的搜索引擎，需要知道哪些词重要；你要做的垃圾邮件过滤器（项目 09），需要知道哪些词可疑；
+  你要做的情感分析，需要知道「好」和「差」各出现了几次。</p>
+  <p>而「查表」这件事的通用解法，就是 <code class="inl">map</code>。<b>学会它之后，你会发现一大类问题都变成了同一道题。</b></p>
+
+  <h3 class="h3">二、任务拆解：三关</h3>
+  <ol class="levels">
+    <li>
+      <b>先把文本切干净</b>
+      <p>写一个函数，输入一整段文本，输出一串「干净的单词」：去掉标点、统一小写、连续字母才算一个词。
+      <b>先别管统计</b>，把切分这一个动作做对、做稳。<i>提示：边扫边攒，遇到非字母就把攒好的词交出去。</i></p>
+    </li>
+    <li>
+      <b>数数，然后按次数排名</b>
+      <p>用 <code class="inl">map</code> 统计词频（这一步只有三行）。然后你会发现 <code class="inl">map</code> 是按「键」排的，
+      而你要按「值」排——所以把它搬进 <code class="inl">vector&lt;std::pair&lt;std::string,int&gt;&gt;</code>，再用项目 01 学过的 <code class="inl">std::sort</code>。</p>
+    </li>
+    <li>
+      <b>让它读真正的文件</b>
+      <p>把文本存成 <code class="inl">sample.txt</code>，用 <code class="inl">ifstream</code> + <code class="inl">getline</code> 一次一行读进来。
+      再加一点贴心设计：文件不存在时给出友好提示，而不是让程序默默输出一堆 0。</p>
+    </li>
+  </ol>
+
+  <h3 class="h3">三、参考实现</h3>
+  <div class="code-block">
+    <div class="code-title">ways-to-cpp-code / p02_word_count.cpp</div>
+<pre class="code"><span class="tok-c">// ============================================================</span>
+<span class="tok-c">//  Ways to cpp · 项目 02  英文词频统计器</span>
+<span class="tok-c">//  编译： g++ -std=c++14 -Wall p02_word_count.cpp -o p02</span>
+<span class="tok-c">//  运行： ./p02</span>
+<span class="tok-c">//  说明： 第一次运行会在当前目录生成 sample.txt，然后统计它。</span>
+<span class="tok-c">// ============================================================</span>
+
+<span class="tok-p">#include &lt;algorithm&gt;</span>
+<span class="tok-p">#include &lt;cctype&gt;</span>
+<span class="tok-p">#include &lt;fstream&gt;</span>
+<span class="tok-p">#include &lt;iomanip&gt;</span>
+<span class="tok-p">#include &lt;iostream&gt;</span>
+<span class="tok-p">#include &lt;map&gt;</span>
+<span class="tok-p">#include &lt;string&gt;</span>
+<span class="tok-p">#include &lt;utility&gt;</span>
+<span class="tok-p">#include &lt;vector&gt;</span>
+
+<span class="tok-c">// 词 -&gt; 次数。map 的下标访问会自动建表，天生适合数数。</span>
+<span class="tok-k">typedef</span> <span class="tok-t">std</span>::<span class="tok-t">map</span>&lt;<span class="tok-t">std</span>::<span class="tok-t">string</span>, <span class="tok-k">int</span>&gt; <span class="tok-t">Counter</span>;
+<span class="tok-k">typedef</span> <span class="tok-t">std</span>::<span class="tok-t">pair</span>&lt;<span class="tok-t">std</span>::<span class="tok-t">string</span>, <span class="tok-k">int</span>&gt; <span class="tok-t">WordCount</span>;
+
+<span class="tok-c">// ---------- 一、把一坨文本切成一个个小写单词 ----------</span>
+<span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-t">std</span>::<span class="tok-t">string</span>&gt; splitWords(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; text) {
+    <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-t">std</span>::<span class="tok-t">string</span>&gt; words;
+    <span class="tok-t">std</span>::<span class="tok-t">string</span> current;
+    <span class="tok-k">for</span> (<span class="tok-k">char</span> raw : text) {
+        <span class="tok-k">const</span> <span class="tok-k">unsigned</span> <span class="tok-k">char</span> ch = static_cast&lt;<span class="tok-k">unsigned</span> <span class="tok-k">char</span>&gt;(raw);
+        <span class="tok-k">if</span> (<span class="tok-t">std</span>::isalpha(ch)) {
+            current += static_cast&lt;<span class="tok-k">char</span>&gt;(<span class="tok-t">std</span>::tolower(ch));  <span class="tok-c">// 统一成小写</span>
+        } <span class="tok-k">else</span> <span class="tok-k">if</span> (!current.empty()) {
+            words.push_back(current);
+            current.clear();
+        }
+    }
+    <span class="tok-k">if</span> (!current.empty()) words.push_back(current);   <span class="tok-c">// 别忘了最后一个</span>
+    <span class="tok-k">return</span> words;
+}
+
+<span class="tok-c">// ---------- 二、数数本身就是一行 ----------</span>
+<span class="tok-t">Counter</span> countWords(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-t">std</span>::<span class="tok-t">string</span>&gt;&amp; words) {
+    <span class="tok-t">Counter</span> counter;
+    <span class="tok-k">for</span> (<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; w : words) {
+        ++counter[w];              <span class="tok-c">// 第一次见到它是 0 -&gt; 1，之后一直加</span>
+    }
+    <span class="tok-k">return</span> counter;
+}
+
+<span class="tok-c">// ---------- 三、排序规则：次数多的在前，同次数按字典序，保证输出稳定 ----------</span>
+<span class="tok-k">bool</span> moreFrequentFirst(<span class="tok-k">const</span> <span class="tok-t">WordCount</span>&amp; a, <span class="tok-k">const</span> <span class="tok-t">WordCount</span>&amp; b) {
+    <span class="tok-k">if</span> (a.second != b.second) <span class="tok-k">return</span> a.second &gt; b.second;
+    <span class="tok-k">return</span> a.first &lt; b.first;
+}
+
+<span class="tok-c">// ---------- 四、文件读写：先把素材落盘，再读回来 ----------</span>
+<span class="tok-k">void</span> saveSampleIfMissing(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; path) {
+    <span class="tok-t">std</span>::<span class="tok-t">ifstream</span> probe(path);
+    <span class="tok-k">if</span> (probe.good()) <span class="tok-k">return</span>;          <span class="tok-c">// 已经存在就不覆盖，免得改坏你的文件</span>
+
+    <span class="tok-t">std</span>::<span class="tok-t">ofstream</span> fout(path);
+    fout &lt;&lt; <span class="tok-s">"It was the best of times, it was the worst of times.\n"</span>
+            <span class="tok-s">"It was the age of wisdom, it was the age of foolishness.\n"</span>
+            <span class="tok-s">"It was the season of light, it was the season of darkness.\n"</span>
+            <span class="tok-s">"We had everything before us, we had nothing before us.\n"</span>;
+}
+
+<span class="tok-t">std</span>::<span class="tok-t">string</span> readAll(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; path) {
+    <span class="tok-t">std</span>::<span class="tok-t">ifstream</span> fin(path);
+    <span class="tok-k">if</span> (!fin) <span class="tok-k">return</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>();    <span class="tok-c">// 空串表示读失败</span>
+
+    <span class="tok-t">std</span>::<span class="tok-t">string</span> all, line;
+    <span class="tok-k">while</span> (<span class="tok-t">std</span>::getline(fin, line)) {  <span class="tok-c">// 一行一行读，不会吞掉换行</span>
+        all += line;
+        all += <span class="tok-s">' '</span>;
+    }
+    <span class="tok-k">return</span> all;
+}
+
+<span class="tok-k">int</span> main() {
+    <span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span> path = <span class="tok-s">"sample.txt"</span>;
+    saveSampleIfMissing(path);
+
+    <span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span> text = readAll(path);
+    <span class="tok-k">if</span> (text.empty()) {
+        <span class="tok-t">std</span>::<span class="tok-t">cerr</span> &lt;&lt; <span class="tok-s">"Cannot read "</span> &lt;&lt; path &lt;&lt; <span class="tok-s">"\n"</span>;
+        <span class="tok-k">return</span> <span class="tok-n">1</span>;
+    }
+
+    <span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-t">std</span>::<span class="tok-t">string</span>&gt; words = splitWords(text);
+    <span class="tok-k">const</span> <span class="tok-t">Counter</span> counter = countWords(words);
+
+    <span class="tok-c">// map 天生按 key 有序，但我们要按"次数"排，于是搬进 vector 再排</span>
+    <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-t">WordCount</span>&gt; ranked(counter.begin(), counter.end());
+    <span class="tok-t">std</span>::sort(ranked.begin(), ranked.end(), moreFrequentFirst);
+
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"File      : "</span> &lt;&lt; path &lt;&lt; <span class="tok-s">"\n"</span>;
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"Words     : "</span> &lt;&lt; words.size() &lt;&lt; <span class="tok-s">"\n"</span>;
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"Distinct  : "</span> &lt;&lt; counter.size() &lt;&lt; <span class="tok-s">"\n\n"</span>;
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"----- Top 10 -----\n"</span>;
+
+    <span class="tok-k">const</span> <span class="tok-k">int</span> top = (ranked.size() &lt; <span class="tok-n">10</span>) ? static_cast&lt;<span class="tok-k">int</span>&gt;(ranked.size()) : <span class="tok-n">10</span>;
+    <span class="tok-k">for</span> (<span class="tok-k">int</span> i = <span class="tok-n">0</span>; i &lt; top; ++i) {
+        <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-t">std</span>::left  &lt;&lt; <span class="tok-t">std</span>::setw(<span class="tok-n">14</span>) &lt;&lt; ranked[i].first
+                  &lt;&lt; <span class="tok-t">std</span>::right &lt;&lt; <span class="tok-t">std</span>::setw(<span class="tok-n">3</span>)  &lt;&lt; ranked[i].second &lt;&lt; <span class="tok-s">"  "</span>
+                  &lt;&lt; <span class="tok-t">std</span>::<span class="tok-t">string</span>(ranked[i].second, <span class="tok-s">'#'</span>) &lt;&lt; <span class="tok-s">"\n"</span>;
+    }
+    <span class="tok-k">return</span> <span class="tok-n">0</span>;
+}</pre>
+  </div>
+
+  <div class="code-block dark">
+    <div class="code-title">实际运行结果（真实输出，未经修饰）</div>
+<pre class="term">File      : sample.txt
+Words     : 46
+Distinct  : 19
+
+----- Top 10 -----
+it              6  ######
+of              6  ######
+the             6  ######
+was             6  ######
+age             2  ##
+before          2  ##
+had             2  ##
+season          2  ##
+times           2  ##
+us              2  ##</pre>
+  </div>
+
+  <div class="beauty">
+    <h5>这段代码美在哪里</h5>
+    <ol>
+      <li><b>「数数」被压缩成了一行。</b> 换成数组的写法，你要先判断这个词出现过没有、出现在哪个位置、再累加。
+      <code class="inl">++counter[w]</code> 之所以能成立，是因为 <code class="inl">map</code> 的下标访问会在键不存在时自动建一个 0。
+      <b>好的数据结构，能把算法「吃掉」。</b></li>
+      <li><b>函数按照「一件事」来切。</b> <code class="inl">splitWords</code> 只负责切，<code class="inl">countWords</code> 只负责数，
+      <code class="inl">readAll</code> 只负责读。三个函数分别可以单独测试，也分别可以单独替换。</li>
+      <li><b>排序规则考虑了「平局」。</b> 只按次数排序时，次数相同的词顺序是不确定的，每次运行可能不一样。
+      加一句「次数相同按字典序」，输出就完全稳定了。<b>稳定性是工程素养，不是小事。</b></li>
+      <li><b>把字符统一成小写再统计。</b> 否则 <code class="inl">It</code> 和 <code class="inl">it</code> 会被算成两个词。
+      真实数据永远是脏的，清洗要在最前面做。</li>
+      <li><b>写文件之前先检查文件是否存在。</b> 一个看起来无关紧要的小判断，避免了「把用户自己的文件覆盖掉」这种灾难。</li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <div class="bt">常见陷阱</div>
+    <ul>
+      <li><b><code class="inl">cin &gt;&gt; word</code> 会在空格处停下，<code class="inl">getline</code> 不会。</b>
+      混用这两者时，前一个留下的换行符会被后一个立刻读走，导致「少读一行」。这是初学者最常撞的墙。</li>
+      <li><code class="inl">std::tolower</code> 的参数必须是 <code class="inl">unsigned char</code> 转过来的值。
+      直接传负数字符在某些平台上会越界崩溃，所以要写 <code class="inl">std::tolower(static_cast&lt;unsigned char&gt;(c))</code>。</li>
+      <li><code class="inl">counter[w]</code> 只能用在「非 const」的 map 上。如果你把 map 声明为 <code class="inl">const</code>，
+      就必须用 <code class="inl">.find()</code> 来查（项目 09 会这么做）。</li>
+      <li>忘了 <code class="inl">current.clear()</code> 或者忘了最后那个词——切词函数里最容易漏掉的就是这两个点。</li>
+    </ul>
+  </div>
+
+  <div class="challenge">
+    <div class="bt">进阶挑战</div>
+    <ul style="margin:0;padding-left:1.3em">
+      <li>支持中文文本。中文字符是「多字节」的，一个汉字在 UTF-8 里占三个字节——你会直观地看到「字符」和「字节」的区别，
+      以及为什么处理中文比英文麻烦。</li>
+      <li>统计「二元组」：把相邻两个词当成一个单位来数（比如 <code class="inl">of the</code>）。
+      这是语言模型最原始的形态，也只需要把 map 的键换成 pair。</li>
+      <li>加一个「停用词表」：<code class="inl">the</code>、<code class="inl">a</code>、<code class="inl">of</code> 这类词不统计。你会发现前几名立刻换人了。</li>
+      <li>让程序接受命令行参数指定文件名。C++ 里 <code class="inl">main(int argc, char* argv[])</code> 就是干这个的。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= 项目 03 ======================= -->
+<section class="project" id="p03">
+  <header class="p-header">
+    <div class="p-index">03</div>
+    <div class="p-titles">
+      <h2>康威生命游戏</h2>
+      <p class="p-sub">三个简洁的规则，一个会自己生长的世界</p>
+    </div>
+  </header>
+  <div class="p-meta">
+    <span class="chip">难度 ★★★☆☆</span>
+    <span class="chip">建议 4–6 小时</span>
+    <span class="chip">主线：二维数据与规则</span>
+    <span class="chip">阶段一</span>
+  </div>
+  <label class="done-toggle no-print"><input type="checkbox" data-done="p03">标记为已完成</label>
+
+  <div class="newknow">
+    <h4>本板块会用到的新知识点</h4>
+    <p class="nk-note">这个项目会教你两件影响深远的事：二维数据怎么摆，以及怎样把「重复的代码」变成「数据」。</p>
+    <ul>
+      <li><b>二维 vector</b>　<em>形如 <code class="inl">std::vector&lt;std::vector&lt;int&gt;&gt;</code>。</em>
+      「装着一行行数组的数组」。网格、棋盘、图像、矩阵，全都是这个形状。</li>
+      <li><b>using 类型别名</b>　<em><code class="inl">using Grid = std::vector&lt;std::vector&lt;int&gt;&gt;;</code></em>
+      写完这一行，后面所有函数签名里就只出现 <code class="inl">Grid</code> 一个词，读起来清爽得多。</li>
+      <li><b>方向数组</b>　<em>形如 <code class="inl">const int DR[8] = {-1,-1,-1,0,0,1,1,1};</code></em>
+      把「八个方向」变成两张静态表。八个方向不再需要八段 if，而是一个循环。这是算法里最常见的一次「用数据消灭代码」。</li>
+      <li><b>双缓冲更新</b>　<em>读旧表 <code class="inl">current</code>，写新表 <code class="inl">next</code>。</em>
+      所有格子必须<b>同时</b>更新。如果你直接在原表上改，后面算的格子会读到已经被改过的邻居，结果全乱。</li>
+      <li><b>const 语义的深入</b>　<em><code class="inl">liveNeighbors(const Grid&amp; g, ...)</code></em>
+      传进来只读的用 <code class="inl">const Grid&amp;</code>，要改的用 <code class="inl">Grid&amp;</code>。
+      看函数签名就知道它会不会动我的数据，这是 C++ 独有的表达力。</li>
+    </ul>
+  </div>
+
+  <h3 class="h3">一、这件事在真实世界里长什么样</h3>
+  <p>1970 年，数学家约翰·康威设计了一个「零玩家游戏」：一个方格世界里，每个格子要么活着要么死了，下一代怎么变，只看它周围八个邻居里有几个活人。</p>
+  <p>规则只有三条：邻居少于 2 个，孤单而死；邻居是 2 或 3 个，继续活着；邻居多于 3 个，拥挤而死；死格子周围正好 3 个活人，就复活。</p>
+  <p>就这么三条规则，却能长出滑翔机、振荡子、甚至能计算的逻辑门。<b>这个项目真正的价值不在游戏本身，
+  而在于你第一次写出「按规则演化」的程序结构</b>——它和森林火灾模拟、疫情传播模型、元胞自动机、乃至卷积神经网络里的滑窗操作，是同一副骨架。</p>
+
+  <h3 class="h3">二、任务拆解：三关</h3>
+  <ol class="levels">
+    <li>
+      <b>先把世界画出来</b>
+      <p>造一个 14 行 34 列的二维网格，把「滑翔机」这个经典图案摆进去，写一个函数把它打印出来。
+      <b>先不管演化，能看见就是胜利。</b></p>
+    </li>
+    <li>
+      <b>数邻居，然后算下一代</b>
+      <p>写 <code class="inl">liveNeighbors()</code>，注意<b>四条边界都要检查越界</b>。
+      然后写 <code class="inl">nextGeneration()</code>：它接收旧网格，返回一张全新的网格。
+      <i>关键：不要在原网格上直接改。</i></p>
+    </li>
+    <li>
+      <b>让世界动起来</b>
+      <p>把「打印 → 演化」放进一个循环，连续输出若干代。<b>观察滑翔机每四代向右下移动一格</b>——
+      当你亲眼看到它动起来的时候，你才算真正理解了这个程序。</p>
+    </li>
+  </ol>
+
+  <h3 class="h3">三、参考实现</h3>
+  <div class="code-block">
+    <div class="code-title">ways-to-cpp-code / p03_game_of_life.cpp</div>
+<pre class="code"><span class="tok-c">// ============================================================</span>
+<span class="tok-c">//  Ways to cpp · 项目 03  康威生命游戏</span>
+<span class="tok-c">//  编译： g++ -std=c++14 -Wall p03_game_of_life.cpp -o p03</span>
+<span class="tok-c">//  运行： ./p03</span>
+<span class="tok-c">// ============================================================</span>
+
+<span class="tok-p">#include &lt;iostream&gt;</span>
+<span class="tok-p">#include &lt;string&gt;</span>
+<span class="tok-p">#include &lt;vector&gt;</span>
+
+<span class="tok-c">// 给类型起个好名字：以后看到 Grid 就知道是"细胞的方阵"</span>
+<span class="tok-k">using</span> <span class="tok-t">Grid</span> = <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-k">int</span>&gt; &gt;;
+
+<span class="tok-k">const</span> <span class="tok-k">int</span> ROWS = <span class="tok-n">14</span>;
+<span class="tok-k">const</span> <span class="tok-k">int</span> COLS = <span class="tok-n">34</span>;
+
+<span class="tok-c">// ---------- 一、造一块空棋盘 ----------</span>
+<span class="tok-t">Grid</span> makeGrid(<span class="tok-k">int</span> rows, <span class="tok-k">int</span> cols) {
+    <span class="tok-k">return</span> <span class="tok-t">Grid</span>(rows, <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-k">int</span>&gt;(cols, <span class="tok-n">0</span>));
+}
+
+<span class="tok-c">// ---------- 二、八个方向，写成一张表 ----------</span>
+<span class="tok-c">// 把"八个方向"变成数据而不是八段 if，这是算法里非常常用的一步。</span>
+<span class="tok-k">const</span> <span class="tok-k">int</span> DR[<span class="tok-n">8</span>] = {-<span class="tok-n">1</span>, -<span class="tok-n">1</span>, -<span class="tok-n">1</span>,  <span class="tok-n">0</span>, <span class="tok-n">0</span>,  <span class="tok-n">1</span>, <span class="tok-n">1</span>, <span class="tok-n">1</span>};
+<span class="tok-k">const</span> <span class="tok-k">int</span> DC[<span class="tok-n">8</span>] = {-<span class="tok-n">1</span>,  <span class="tok-n">0</span>,  <span class="tok-n">1</span>, -<span class="tok-n">1</span>, <span class="tok-n">1</span>, -<span class="tok-n">1</span>, <span class="tok-n">0</span>, <span class="tok-n">1</span>};
+
+<span class="tok-k">int</span> liveNeighbors(<span class="tok-k">const</span> <span class="tok-t">Grid</span>&amp; g, <span class="tok-k">int</span> r, <span class="tok-k">int</span> c) {
+    <span class="tok-k">int</span> count = <span class="tok-n">0</span>;
+    <span class="tok-k">for</span> (<span class="tok-k">int</span> k = <span class="tok-n">0</span>; k &lt; <span class="tok-n">8</span>; ++k) {
+        <span class="tok-k">const</span> <span class="tok-k">int</span> nr = r + DR[k];
+        <span class="tok-k">const</span> <span class="tok-k">int</span> nc = c + DC[k];
+        <span class="tok-k">if</span> (nr &gt;= <span class="tok-n">0</span> &amp;&amp; nr &lt; ROWS &amp;&amp; nc &gt;= <span class="tok-n">0</span> &amp;&amp; nc &lt; COLS) {  <span class="tok-c">// 越界就跳过</span>
+            count += g[nr][nc];
+        }
+    }
+    <span class="tok-k">return</span> count;
+}
+
+<span class="tok-c">// ---------- 三、下一代：读旧格子，写新格子 ----------</span>
+<span class="tok-c">// 关键在于"整体同时更新"。若在原地改，后面的格子会读到已经变过的邻居。</span>
+<span class="tok-t">Grid</span> nextGeneration(<span class="tok-k">const</span> <span class="tok-t">Grid</span>&amp; current) {
+    <span class="tok-t">Grid</span> next = makeGrid(ROWS, COLS);
+    <span class="tok-k">for</span> (<span class="tok-k">int</span> r = <span class="tok-n">0</span>; r &lt; ROWS; ++r) {
+        <span class="tok-k">for</span> (<span class="tok-k">int</span> c = <span class="tok-n">0</span>; c &lt; COLS; ++c) {
+            <span class="tok-k">const</span> <span class="tok-k">int</span> n = liveNeighbors(current, r, c);
+            <span class="tok-k">if</span> (current[r][c] == <span class="tok-n">1</span>) {
+                next[r][c] = (n == <span class="tok-n">2</span> || n == <span class="tok-n">3</span>) ? <span class="tok-n">1</span> : <span class="tok-n">0</span>;   <span class="tok-c">// 活细胞：太挤或太孤单都会死</span>
+            } <span class="tok-k">else</span> {
+                next[r][c] = (n == <span class="tok-n">3</span>) ? <span class="tok-n">1</span> : <span class="tok-n">0</span>;             <span class="tok-c">// 死细胞：正好三个邻居就复活</span>
+            }
+        }
+    }
+    <span class="tok-k">return</span> next;
+}
+
+<span class="tok-c">// ---------- 四、打印 ----------</span>
+<span class="tok-k">void</span> printGrid(<span class="tok-k">const</span> <span class="tok-t">Grid</span>&amp; g, <span class="tok-k">int</span> generation) {
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"generation "</span> &lt;&lt; generation &lt;&lt; <span class="tok-s">"\n"</span>;
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"+"</span> &lt;&lt; <span class="tok-t">std</span>::<span class="tok-t">string</span>(COLS, <span class="tok-s">'-'</span>) &lt;&lt; <span class="tok-s">"+\n"</span>;
+    <span class="tok-k">for</span> (<span class="tok-k">int</span> r = <span class="tok-n">0</span>; r &lt; ROWS; ++r) {
+        <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"|"</span>;
+        <span class="tok-k">for</span> (<span class="tok-k">int</span> c = <span class="tok-n">0</span>; c &lt; COLS; ++c) {
+            <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; (g[r][c] ? <span class="tok-s">'#'</span> : <span class="tok-s">'.'</span>);
+        }
+        <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"|\n"</span>;
+    }
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"+"</span> &lt;&lt; <span class="tok-t">std</span>::<span class="tok-t">string</span>(COLS, <span class="tok-s">'-'</span>) &lt;&lt; <span class="tok-s">"+\n\n"</span>;
+}
+
+<span class="tok-c">// ---------- 五、一块著名的初始图案：滑翔机 ----------</span>
+<span class="tok-k">void</span> placeGlider(<span class="tok-t">Grid</span>&amp; g, <span class="tok-k">int</span> top, <span class="tok-k">int</span> left) {
+    <span class="tok-k">const</span> <span class="tok-k">int</span> pattern[<span class="tok-n">3</span>][<span class="tok-n">3</span>] = {
+        {<span class="tok-n">0</span>, <span class="tok-n">1</span>, <span class="tok-n">0</span>},
+        {<span class="tok-n">0</span>, <span class="tok-n">0</span>, <span class="tok-n">1</span>},
+        {<span class="tok-n">1</span>, <span class="tok-n">1</span>, <span class="tok-n">1</span>}
+    };
+    <span class="tok-k">for</span> (<span class="tok-k">int</span> r = <span class="tok-n">0</span>; r &lt; <span class="tok-n">3</span>; ++r) {
+        <span class="tok-k">for</span> (<span class="tok-k">int</span> c = <span class="tok-n">0</span>; c &lt; <span class="tok-n">3</span>; ++c) {
+            g[top + r][left + c] = pattern[r][c];
+        }
+    }
+}
+
+<span class="tok-k">int</span> main() {
+    <span class="tok-t">Grid</span> grid = makeGrid(ROWS, COLS);
+    placeGlider(grid, <span class="tok-n">1</span>, <span class="tok-n">1</span>);
+
+    <span class="tok-k">for</span> (<span class="tok-k">int</span> generation = <span class="tok-n">0</span>; generation &lt;= <span class="tok-n">4</span>; ++generation) {
+        printGrid(grid, generation);
+        grid = nextGeneration(grid);
+    }
+    <span class="tok-k">return</span> <span class="tok-n">0</span>;
+}</pre>
+  </div>
+
+  <div class="code-block dark">
+    <div class="code-title">实际运行结果（节选：第 0 代与第 4 代）</div>
+<pre class="term">generation 0
++----------------------------------+
+|..................................|
+|..#...............................|
+|...#..............................|
+|.###..............................|
+|..................................|
+|..................................|
+|..................................|
+|..................................|
+|..................................|
+|..................................|
+|..................................|
+|..................................|
+|..................................|
+|..................................|
++----------------------------------+
+
+
+        ( ...... 中间第 1 ~ 3 代略 ...... )
+
+
+generation 4
++----------------------------------+
+|..................................|
+|..................................|
+|...#..............................|
+|....#.............................|
+|..###.............................|
+|..................................|
+|..................................|
+|..................................|
+|..................................|
+|..................................|
+|..................................|
+|..................................|
+|..................................|
+|..................................|
++----------------------------------+</pre>
+  </div>
+
+  <div class="beauty">
+    <h5>这段代码美在哪里</h5>
+    <ol>
+      <li><b>八个方向变成了两张表。</b> 不用方向数组的写法，<code class="inl">liveNeighbors</code> 里会有八段几乎一样的
+      <code class="inl">if (r-1 &gt;= 0 &amp;&amp; c-1 &gt;= 0) count += g[r-1][c-1];</code>。
+      用了方向数组之后只剩五行。<b>当你想复制粘贴第三遍的时候，就该停下来想想：这段东西能不能变成数据？</b></li>
+      <li><b>「读旧、写新」是一次重要的思维升级。</b> 让 <code class="inl">nextGeneration</code> 接收一个 const 引用、
+      返回一个全新的 Grid，从函数签名上就杜绝了「边算边改」的错误。函数的形状本身在保护你。</li>
+      <li><b>规则写成了和规则本身一样的形状。</b> 看这两个三目运算符：
+      <code class="inl">next[r][c] = (n == 2 || n == 3) ? 1 : 0;</code>。它读起来几乎就是「邻居是二或三就活」这句话本身。
+      <b>代码和意图之间没有多余的翻译层，这就是优雅。</b></li>
+      <li><b>参数名说明了用途。</b> <code class="inl">placeGlider(Grid&amp; g, int top, int left)</code> 里的 top 和 left，
+      比 x、y 或 a、b 好懂得多。命名的功夫，就是替未来的自己省时间。</li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <div class="bt">常见陷阱</div>
+    <ul>
+      <li><b>最常见的错误：边遍历边修改。</b> 症状是图案会在几代之内莫名其妙地死光。原因就是后面的格子读到了已经被改写的邻居。
+      解法只有一个：写进另一张表。</li>
+      <li>二维 vector 的初始化不能写 <code class="inl">Grid g(rows, cols)</code>，那是「rows 个值为 cols 的元素」。
+      正确的是 <code class="inl">Grid(rows, std::vector&lt;int&gt;(cols, 0))</code>。</li>
+      <li>边界忘记检查会读到别的行——C++ 不会报错，只会算出荒唐的结果。这类错误最耗时间，所以<b>越界判断要写得像条件反射</b>。</li>
+      <li>想让它「动」起来需要 <code class="inl">&lt;thread&gt;</code> 和 <code class="inl">&lt;chrono&gt;</code> 里的睡眠函数。
+      这两个头文件在某些老版本的 Windows 编译环境下支持不佳，所以本手册的版本故意不加入动画——
+      <b>先保证代码在任何机器上都能跑，再考虑锦上添花。</b></li>
+    </ul>
+  </div>
+
+  <div class="challenge">
+    <div class="bt">进阶挑战</div>
+    <ul style="margin:0;padding-left:1.3em">
+      <li>把边界从「死墙」改成「环绕」：第 0 行的上面是最后一行。只需要改一处越界判断，但世界的行为会完全不同。</li>
+      <li>实现几个经典图案：闪烁器（Blinker）、方块（Block）、滑翔机枪（Gosper Glider Gun）。后者会源源不断地吐出滑翔机。</li>
+      <li>让用户用鼠标……目前还不行，但你可以让用户用键盘输入坐标来手动放置细胞，做一个「编辑器」。</li>
+      <li>统计每一代的活细胞数，输出成一个序列。观察它有没有周期性——<b>这就是最简单的「数据分析」</b>。</li>
+      <li>想想看：如果把「数邻居」换成「加权求和」，把「存活规则」换成「和大于阈值就激活」，你手里就有一个卷积层了。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= 项目 04 ======================= -->
+<section class="project" id="p04">
+  <header class="p-header">
+    <div class="p-index">04</div>
+    <div class="p-titles">
+      <h2>迷宫最短路径</h2>
+      <p class="p-sub">像水波一样，一圈一圈地扩散</p>
+    </div>
+  </header>
+  <div class="p-meta">
+    <span class="chip">难度 ★★★☆☆</span>
+    <span class="chip">建议 5–7 小时</span>
+    <span class="chip">主线：广度优先搜索</span>
+    <span class="chip">阶段二</span>
+  </div>
+  <label class="done-toggle no-print"><input type="checkbox" data-done="p04">标记为已完成</label>
+
+  <div class="newknow">
+    <h4>本板块会用到的新知识点</h4>
+    <p class="nk-note">从这里开始，你正式进入「算法」。好消息是：这个算法只有二十行。</p>
+    <ul>
+      <li><b>std::queue 队列</b>　<em>需要 <code class="inl">#include &lt;queue&gt;</code>。</em>
+      「先进先出」的容器。用 <code class="inl">push()</code> 从队尾放进，用 <code class="inl">front()</code> 看队首、<code class="inl">pop()</code> 弹出队首。
+      <b>它和栈（后进先出）的区别，就是「一圈一圈扩散」和「一条路走到黑」的区别。</b></li>
+      <li><b>std::pair</b>　<em>需要 <code class="inl">#include &lt;utility&gt;</code>。</em>
+      把两个值捆成一件东西，比如一个坐标 <code class="inl">Cell(3, 5)</code>。
+      它可以直接用 <code class="inl">==</code> 比较，所以写 <code class="inl">if (cur == goal)</code> 就够了。</li>
+      <li><b>广度优先搜索（BFS）</b>　这是思想，不是语法：<b>把起点放进队列，每次取出一个，把它的所有「下一步」放到队尾。</b>
+      因为队列是先进先出的，所以所有距离为 1 的格子会先被处理完，才轮到距离为 2 的。
+      于是——<b>第一次到达终点时走的路，一定是最短的。</b></li>
+      <li><b>visited / dist 表</b>　<em>形如 <code class="inl">std::vector&lt;std::vector&lt;int&gt;&gt; dist</code>。</em>
+      一张和地图同样大的表，记录「到每个格子最少要几步」。它顺便还兼任了「来没来过」的标记。</li>
+      <li><b>前驱表与路径回溯</b>　<em>代码里的 <code class="inl">parent</code>。</em>
+      BFS 只告诉你「最短是 128 步」，不告诉你「怎么走」。于是我们顺手记下「我是从哪个格子来的」，
+      最后从终点一路倒推回起点，路就出来了。</li>
+    </ul>
+  </div>
+
+  <h3 class="h3">一、这件事在真实世界里长什么样</h3>
+  <p>你手机里的导航软件规划的路线、游戏里 NPC 找到你的路径、社交网络里「你和某个人隔了几度」、
+  网络数据包经过了几台路由器——这些问题的数学形式完全一样：<b>一张图，从一点到另一点，最少几步。</b></p>
+  <p>解决办法朴素得让人意外：<b>从起点开始一圈一圈往外扩散，扩散到终点为止</b>。
+  这不就是往平静的水面丢一颗石子吗？最先漫到岸边的那个水波，走的一定是最直的路线。</p>
+
+  <h3 class="h3">二、任务拆解：三关</h3>
+  <ol class="levels">
+    <li>
+      <b>把地图读进来，把规则写清楚</b>
+      <p>用 <code class="inl">std::vector&lt;std::string&gt;</code> 存地图（<code class="inl">#</code> 是墙，<code class="inl">.</code> 是路）。
+      写一个打印函数，再写一个「这个格子能不能走」的判断。<b>这一关只是把问题描述清楚，还没开始搜索。</b></p>
+    </li>
+    <li>
+      <b>算出最短步数</b>
+      <p>建一个和地图等大的 <code class="inl">dist</code> 表，全部填 <code class="inl">-1</code> 表示「没去过」。
+      起点入队、距离记 0，然后开始循环：取出队首，把四个方向上「能走且没去过」的邻格记上「当前距离 + 1」并入队。
+      <b>能打印出 128 这个数字，这一关就过了。</b></p>
+    </li>
+    <li>
+      <b>把路画出来</b>
+      <p>再加一张 <code class="inl">parent</code> 表，入队时顺便记下「我是从哪来的」。
+      搜索结束后，从终点一路顺着 parent 往回走，把沿途的 <code class="inl">.</code> 改成 <code class="inl">*</code>。</p>
+    </li>
+  </ol>
+
+  <h3 class="h3">三、参考实现</h3>
+  <div class="code-block">
+    <div class="code-title">ways-to-cpp-code / p04_maze_bfs.cpp</div>
+<pre class="code"><span class="tok-c">// ============================================================</span>
+<span class="tok-c">//  Ways to cpp · 项目 04  迷宫最短路径（广度优先搜索）</span>
+<span class="tok-c">//  编译： g++ -std=c++14 -Wall p04_maze_bfs.cpp -o p04</span>
+<span class="tok-c">//  运行： ./p04</span>
+<span class="tok-c">// ============================================================</span>
+
+<span class="tok-p">#include &lt;iostream&gt;</span>
+<span class="tok-p">#include &lt;queue&gt;</span>
+<span class="tok-p">#include &lt;string&gt;</span>
+<span class="tok-p">#include &lt;utility&gt;</span>
+<span class="tok-p">#include &lt;vector&gt;</span>
+
+<span class="tok-k">using</span> <span class="tok-t">Grid</span> = <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-t">std</span>::<span class="tok-t">string</span>&gt;;
+<span class="tok-k">using</span> <span class="tok-t">Cell</span> = <span class="tok-t">std</span>::<span class="tok-t">pair</span>&lt;<span class="tok-k">int</span>, <span class="tok-k">int</span>&gt;;          <span class="tok-c">// (行, 列)</span>
+
+<span class="tok-k">const</span> <span class="tok-k">int</span> DR[<span class="tok-n">4</span>] = {-<span class="tok-n">1</span>, <span class="tok-n">1</span>, <span class="tok-n">0</span>, <span class="tok-n">0</span>};           <span class="tok-c">// 上 下 左 右</span>
+<span class="tok-k">const</span> <span class="tok-k">int</span> DC[<span class="tok-n">4</span>] = {<span class="tok-n">0</span>, <span class="tok-n">0</span>, -<span class="tok-n">1</span>, <span class="tok-n">1</span>};
+
+<span class="tok-k">void</span> printGrid(<span class="tok-k">const</span> <span class="tok-t">Grid</span>&amp; g) {
+    <span class="tok-k">for</span> (<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; row : g) {
+        <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"  "</span> &lt;&lt; row &lt;&lt; <span class="tok-s">"\n"</span>;
+    }
+}
+
+<span class="tok-c">// 广度优先搜索：像往水里丢石头，一圈一圈向外扩散。</span>
+<span class="tok-c">// 第一次到达终点时走过的圈数，就是最短路的长度。</span>
+<span class="tok-k">int</span> shortestPath(<span class="tok-t">Grid</span>&amp; grid, <span class="tok-t">Cell</span> start, <span class="tok-t">Cell</span> goal) {
+    <span class="tok-k">const</span> <span class="tok-k">int</span> rows = static_cast&lt;<span class="tok-k">int</span>&gt;(grid.size());
+    <span class="tok-k">const</span> <span class="tok-k">int</span> cols = static_cast&lt;<span class="tok-k">int</span>&gt;(grid[<span class="tok-n">0</span>].size());
+
+    <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-k">int</span>&gt; &gt; dist(rows, <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-k">int</span>&gt;(cols, -<span class="tok-n">1</span>));
+    <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-t">Cell</span>&gt; &gt; parent(rows, <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-t">Cell</span>&gt;(cols, <span class="tok-t">Cell</span>(-<span class="tok-n">1</span>, -<span class="tok-n">1</span>)));
+
+    <span class="tok-t">std</span>::<span class="tok-t">queue</span>&lt;<span class="tok-t">Cell</span>&gt; frontier;
+    frontier.push(start);
+    dist[start.first][start.second] = <span class="tok-n">0</span>;
+
+    <span class="tok-k">while</span> (!frontier.empty()) {
+        <span class="tok-k">const</span> <span class="tok-t">Cell</span> cur = frontier.front();   <span class="tok-c">// 取出队首（先进先出）</span>
+        frontier.pop();
+
+        <span class="tok-k">if</span> (cur == goal) <span class="tok-k">break</span>;              <span class="tok-c">// 到终点了，可以收工</span>
+
+        <span class="tok-k">for</span> (<span class="tok-k">int</span> k = <span class="tok-n">0</span>; k &lt; <span class="tok-n">4</span>; ++k) {
+            <span class="tok-k">const</span> <span class="tok-k">int</span> nr = cur.first + DR[k];
+            <span class="tok-k">const</span> <span class="tok-k">int</span> nc = cur.second + DC[k];
+
+            <span class="tok-k">const</span> <span class="tok-k">bool</span> inside = (nr &gt;= <span class="tok-n">0</span> &amp;&amp; nr &lt; rows &amp;&amp; nc &gt;= <span class="tok-n">0</span> &amp;&amp; nc &lt; cols);
+            <span class="tok-k">if</span> (!inside) <span class="tok-k">continue</span>;                        <span class="tok-c">// 撞墙外</span>
+            <span class="tok-k">if</span> (grid[nr][nc] == <span class="tok-s">'#'</span>) <span class="tok-k">continue</span>;            <span class="tok-c">// 撞墙</span>
+            <span class="tok-k">if</span> (dist[nr][nc] != -<span class="tok-n">1</span>) <span class="tok-k">continue</span>;             <span class="tok-c">// 已经来过（这才是 BFS 不绕圈的关键）</span>
+
+            dist[nr][nc] = dist[cur.first][cur.second] + <span class="tok-n">1</span>;
+            parent[nr][nc] = cur;
+            frontier.push(<span class="tok-t">Cell</span>(nr, nc));
+        }
+    }
+
+    <span class="tok-k">if</span> (dist[goal.first][goal.second] == -<span class="tok-n">1</span>) <span class="tok-k">return</span> -<span class="tok-n">1</span>;   <span class="tok-c">// 走不到</span>
+
+    <span class="tok-c">// 从终点顺着 parent 一路回溯到起点，把路画在图上</span>
+    <span class="tok-t">Cell</span> step = goal;
+    <span class="tok-k">while</span> (!(step == start)) {
+        <span class="tok-k">if</span> (grid[step.first][step.second] == <span class="tok-s">'.'</span>) grid[step.first][step.second] = <span class="tok-s">'*'</span>;
+        step = parent[step.first][step.second];
+    }
+    <span class="tok-k">return</span> dist[goal.first][goal.second];
+}
+
+<span class="tok-k">int</span> main() {
+    <span class="tok-t">Grid</span> grid = {
+        <span class="tok-s">"###############################"</span>,
+        <span class="tok-s">"#S..#.......#.....#...........#"</span>,
+        <span class="tok-s">"###.#####.#.###.#.#######.###.#"</span>,
+        <span class="tok-s">"#.#.#.....#...#.#...#.....#...#"</span>,
+        <span class="tok-s">"#.#.#.#######.#.###.#.#####.###"</span>,
+        <span class="tok-s">"#.#.#.#.#.....#...#...#...#...#"</span>,
+        <span class="tok-s">"#.#.#.#.#.#####.#.#####.#.###.#"</span>,
+        <span class="tok-s">"#...#.#...#...#.#.....#.#.....#"</span>,
+        <span class="tok-s">"#.###.#.###.#.#######.#.#######"</span>,
+        <span class="tok-s">"#.....#.....#.........#......E#"</span>,
+        <span class="tok-s">"###############################"</span>
+    };
+
+    <span class="tok-k">const</span> <span class="tok-t">Cell</span> start(<span class="tok-n">1</span>, <span class="tok-n">1</span>);
+    <span class="tok-k">const</span> <span class="tok-t">Cell</span> goal(<span class="tok-n">9</span>, <span class="tok-n">29</span>);
+
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"Maze:\n"</span>;
+    printGrid(grid);
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"\n"</span>;
+
+    <span class="tok-k">const</span> <span class="tok-k">int</span> steps = shortestPath(grid, start, goal);
+
+    <span class="tok-k">if</span> (steps &lt; <span class="tok-n">0</span>) {
+        <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"No path found.\n"</span>;
+    } <span class="tok-k">else</span> {
+        <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"Shortest distance : "</span> &lt;&lt; steps &lt;&lt; <span class="tok-s">" steps\n\n"</span>;
+        <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"One shortest path ('*'):\n"</span>;
+        printGrid(grid);
+    }
+    <span class="tok-k">return</span> <span class="tok-n">0</span>;
+}</pre>
+  </div>
+
+  <div class="code-block dark">
+    <div class="code-title">实际运行结果（真实输出，未经修饰）</div>
+<pre class="term">Maze:
+  ###############################
+  #S..#.......#.....#...........#
+  ###.#####.#.###.#.#######.###.#
+  #.#.#.....#...#.#...#.....#...#
+  #.#.#.#######.#.###.#.#####.###
+  #.#.#.#.#.....#...#...#...#...#
+  #.#.#.#.#.#####.#.#####.#.###.#
+  #...#.#...#...#.#.....#.#.....#
+  #.###.#.###.#.#######.#.#######
+  #.....#.....#.........#......E#
+  ###############################
+
+Shortest distance : 128 steps
+
+One shortest path ('*'):
+  ###############################
+  #S**#....***#..***#......*****#
+  ###*#####*#*###*#*#######*###*#
+  #.#*#*****#***#*#***#*****#***#
+  #.#*#*#######*#*###*#*#####*###
+  #.#*#*#.#*****#***#***#***#***#
+  #.#*#*#.#*#####.#*#####*#*###*#
+  #***#*#***#***#.#*****#*#*****#
+  #*###*#*###*#*#######*#*#######
+  #*****#*****#*********#******E#
+  ###############################</pre>
+  </div>
+
+  <div class="beauty">
+    <h5>这段代码美在哪里</h5>
+    <ol>
+      <li><b>「最短」这个要求，被策略本身免费满足了。</b> 代码里没有任何一行在比较「哪条路更短」。
+      它只是在扩散。扩散的顺序天然保证了先到的一定最短。<b>这就是算法的美：不是算得更快，而是想得更对。</b></li>
+      <li><b>一张表干了两件事。</b> <code class="inl">dist[r][c]</code> 是 <code class="inl">-1</code>，
+      既表示「没访问过」，也表示「到不了」。一个哨兵值同时承担两种含义，于是 <code class="inl">if (dist[nr][nc] != -1) continue;</code>
+      这一行就同时挡住了「重复访问」和「绕圈」。</li>
+      <li><b>「算距离」和「还原路径」是分开的。</b> BFS 只负责填 <code class="inl">dist</code>，
+      回溯只负责读 <code class="inl">parent</code>。两段逻辑互不干扰，各自都能单独看懂。<b>把「求解」和「呈现」分开，是工程上极重要的一刀。</b></li>
+      <li><b>方向数组思想在项目 03 出现过，这里又出现了。</b> 四个方向写成 <code class="inl">DR/DC</code> 两张表，
+      于是「上、下、左、右」变成一次循环。<b>好思想会被反复用到——这正是它们值得被记住的原因。</b></li>
+      <li><b>传引用还是传 const 引用，取决于你要不要改它。</b>
+      <code class="inl">shortestPath(Grid&amp; grid, ...)</code> 用的是普通引用，因为它要在地图上画 <code class="inl">*</code>；
+      而 <code class="inl">printGrid(const Grid&amp; g)</code> 用 const，因为它只看不改。<b>两个函数签名放在一起，就把意图说完了。</b></li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <div class="bt">常见陷阱</div>
+    <ul>
+      <li><b>标记「已访问」必须在入队时，不能等到出队时。</b> 如果在出队时才标记，同一个格子会被好几个邻居重复入队，
+      队列会膨胀几倍，代码依然能跑对，但慢得莫名其妙。这是个很隐蔽的坑。</li>
+      <li><code class="inl">queue</code> 取队首用 <code class="inl">front()</code>，不是 <code class="inl">back()</code>。
+      用错就变成了深度优先——结果不再是「一圈一圈」，最短性立刻失效。</li>
+      <li><code class="inl">pop()</code> 的返回值是 <code class="inl">void</code>，它只负责扔掉。
+      想取值必须先 <code class="inl">front()</code> 再 <code class="inl">pop()</code>。</li>
+      <li>网格的行是 <code class="inl">std::string</code>，所以 <code class="inl">grid[r][c]</code> 取出来的是 <code class="inl">char</code>，比较时要用 <code class="inl">'#'</code> 而不是 <code class="inl">"#"</code>。</li>
+      <li>起点就等于终点、或者终点被墙包死——这两种情况都要能优雅处理，而不是崩溃。</li>
+    </ul>
+  </div>
+
+  <div class="challenge">
+    <div class="bt">进阶挑战</div>
+    <ul style="margin:0;padding-left:1.3em">
+      <li>把所有最短路径全部打印出来。你会发现从「记录一个父亲」变成「记录所有父亲」，再改成深度优先输出。</li>
+      <li>允许斜着走（八个方向）。最短步数会变吗？如果斜走一步和直走一步「代价」不一样呢？</li>
+      <li>给每个格子加上不同的通行代价（草地慢、大路快），这时 BFS 就不够用了，你需要 <b>Dijkstra 算法</b>——
+      它和 BFS 只差一个数据结构：把队列换成优先队列。</li>
+      <li>再加一个「离终点还有多远」的估计值，优先搜索离终点近的方向，这就是 <b>A* 算法</b>，游戏工业里的寻路基石。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= 项目 05 ======================= -->
+<section class="project" id="p05">
+  <header class="p-header">
+    <div class="p-index">05</div>
+    <div class="p-titles">
+      <h2>表达式求值器</h2>
+      <p class="p-sub">用函数的调用层次，表达运算的优先级</p>
+    </div>
+  </header>
+  <div class="p-meta">
+    <span class="chip">难度 ★★★☆☆</span>
+    <span class="chip">建议 5–8 小时</span>
+    <span class="chip">主线：递归下降分析</span>
+    <span class="chip">阶段二</span>
+  </div>
+  <label class="done-toggle no-print"><input type="checkbox" data-done="p05">标记为已完成</label>
+
+  <div class="newknow">
+    <h4>本板块会用到的新知识点</h4>
+    <p class="nk-note">你会第一次遇到「递归不只是算阶乘」这件事。这个项目的代码量比前几个都少，但思想密度最高。</p>
+    <ul>
+      <li><b>递归下降分析</b>　这是本项目的灵魂。核心想法只有一句：<b>用函数的调用层次来表达运算的优先级。</b>
+      加法函数会去调用乘法函数，所以乘法天生就比加法先算——优先级不再是一张需要查的表，而是程序的形状本身。</li>
+      <li><b>函数前置声明</b>　<em>形如在文件上方写 <code class="inl">double parseTerm(const std::string&amp;, size_t&amp;);</code></em>
+      C++ 要求「先声明后使用」。而这三个函数互相调用，谁也无法排在第一个，所以必须先声明、后定义。</li>
+      <li><b>引用参数共享状态</b>　<em><code class="inl">size_t&amp; pos</code></em>
+      三个函数需要共享同一个「读到哪了」的光标。用引用而不是全局变量，既不破坏封装，也不需要写一个类。</li>
+      <li><b>std::atof</b>　<em>需要 <code class="inl">#include &lt;cstdlib&gt;</code>。</em>
+      把一段字符串转成 <code class="inl">double</code>。有了它，我们不必手写「数位乘十累加」。</li>
+      <li><b>size_t</b>　无符号整数类型，专门用来表示「长度」和「下标」。标准库容器的下标就是它。</li>
+    </ul>
+  </div>
+
+  <h3 class="h3">一、这件事在真实世界里长什么样</h3>
+  <p>你在计算器里敲下 <code class="inl">1 + 2 * 3</code>，它回给你 <code class="inl">7</code>。为什么不是 <code class="inl">9</code>？因为你默认了乘号先算。
+  可计算机只会从左往右读字符，它凭什么知道该先算哪一段？</p>
+  <p>这个问题是编译器技术的起点。JavaScript 引擎要理解你的代码、Excel 要计算公式、SQL 要解析查询语句，
+  走的都是同一条路：<b>先把表达式理解成一棵树，再算这棵树。</b></p>
+  <p>而写这棵树最短的写法，叫递归下降——<b>三十行代码，三个函数，就能把一个完整的四则运算表达式吃透。</b></p>
+
+  <h3 class="h3">二、任务拆解：三关</h3>
+  <ol class="levels">
+    <li>
+      <b>只会加法</b>
+      <p>写一个函数，只处理「数字 + 数字 + 数字」这种形式。<b>先跑通「读一个数字」和「吃掉一个加号」这两件事</b>，
+      不要贪多。这一步的目的是想清楚「光标 pos 是共享的」。</p>
+    </li>
+    <li>
+      <b>加入乘除，让优先级自然出现</b>
+      <p>把原来的函数拆成两个：一个只管加减，一个只管乘除。让「加减函数」在需要操作数时去调用「乘除函数」。
+      <b>体会一下：你一行优先级判断都没写，但 <code class="inl">1 + 2 * 3</code> 已经等于 7 了。</b></p>
+    </li>
+    <li>
+      <b>加入括号和负号</b>
+      <p>再加最里层的第三个函数：它负责「读一个数字」「处理括号」「处理负号」。
+      遇到左括号时，它递归调用最外层的加减函数——<b>于是括号里的世界重新开始，任何复杂度都被这一行递归抹平了。</b></p>
+    </li>
+  </ol>
+
+  <h3 class="h3">三、参考实现</h3>
+  <div class="code-block">
+    <div class="code-title">ways-to-cpp-code / p05_calculator.cpp</div>
+<pre class="code"><span class="tok-c">// ============================================================</span>
+<span class="tok-c">//  Ways to cpp · 项目 05  表达式求值器（递归下降）</span>
+<span class="tok-c">//  编译： g++ -std=c++14 -Wall p05_calculator.cpp -o p05</span>
+<span class="tok-c">//  运行： ./p05</span>
+<span class="tok-c">//  支持： + - * / ( ) 与小数</span>
+<span class="tok-c">// ============================================================</span>
+
+<span class="tok-p">#include &lt;cctype&gt;</span>
+<span class="tok-p">#include &lt;cmath&gt;</span>
+<span class="tok-p">#include &lt;cstdlib&gt;</span>
+<span class="tok-p">#include &lt;iomanip&gt;</span>
+<span class="tok-p">#include &lt;iostream&gt;</span>
+<span class="tok-p">#include &lt;string&gt;</span>
+
+<span class="tok-c">// 三个函数互相调用，所以先在这里"报个到"（函数声明）</span>
+<span class="tok-k">double</span> parseExpression(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; s, <span class="tok-t">size_t</span>&amp; pos);
+<span class="tok-k">double</span> parseTerm(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; s, <span class="tok-t">size_t</span>&amp; pos);
+<span class="tok-k">double</span> parseFactor(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; s, <span class="tok-t">size_t</span>&amp; pos);
+
+<span class="tok-k">void</span> skipSpaces(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; s, <span class="tok-t">size_t</span>&amp; pos) {
+    <span class="tok-k">while</span> (pos &lt; s.size() &amp;&amp; <span class="tok-t">std</span>::isspace(static_cast&lt;<span class="tok-k">unsigned</span> <span class="tok-k">char</span>&gt;(s[pos]))) ++pos;
+}
+
+<span class="tok-c">// 最外层：只认加号减号。位置 pos 用引用传递，于是三个函数共享同一个"光标"。</span>
+<span class="tok-k">double</span> parseExpression(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; s, <span class="tok-t">size_t</span>&amp; pos) {
+    <span class="tok-k">double</span> value = parseTerm(s, pos);
+    <span class="tok-k">while</span> (<span class="tok-k">true</span>) {
+        skipSpaces(s, pos);
+        <span class="tok-k">if</span> (pos &lt; s.size() &amp;&amp; (s[pos] == <span class="tok-s">'+'</span> || s[pos] == <span class="tok-s">'-'</span>)) {
+            <span class="tok-k">const</span> <span class="tok-k">char</span> op = s[pos];
+            ++pos;                                    <span class="tok-c">// 吃掉这个运算符</span>
+            <span class="tok-k">const</span> <span class="tok-k">double</span> rhs = parseTerm(s, pos);
+            value = (op == <span class="tok-s">'+'</span>) ? value + rhs : value - rhs;
+        } <span class="tok-k">else</span> {
+            <span class="tok-k">return</span> value;
+        }
+    }
+}
+
+<span class="tok-c">// 中间层：只认乘号除号。它的优先级天生比加减高，因为它被更里层调用。</span>
+<span class="tok-k">double</span> parseTerm(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; s, <span class="tok-t">size_t</span>&amp; pos) {
+    <span class="tok-k">double</span> value = parseFactor(s, pos);
+    <span class="tok-k">while</span> (<span class="tok-k">true</span>) {
+        skipSpaces(s, pos);
+        <span class="tok-k">if</span> (pos &lt; s.size() &amp;&amp; (s[pos] == <span class="tok-s">'*'</span> || s[pos] == <span class="tok-s">'/'</span>)) {
+            <span class="tok-k">const</span> <span class="tok-k">char</span> op = s[pos];
+            ++pos;
+            <span class="tok-k">const</span> <span class="tok-k">double</span> rhs = parseFactor(s, pos);
+            value = (op == <span class="tok-s">'*'</span>) ? value * rhs : value / rhs;
+        } <span class="tok-k">else</span> {
+            <span class="tok-k">return</span> value;
+        }
+    }
+}
+
+<span class="tok-c">// 最里层：数字、括号、负号</span>
+<span class="tok-k">double</span> parseFactor(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; s, <span class="tok-t">size_t</span>&amp; pos) {
+    skipSpaces(s, pos);
+
+    <span class="tok-k">if</span> (pos &lt; s.size() &amp;&amp; s[pos] == <span class="tok-s">'('</span>) {
+        ++pos;                                        <span class="tok-c">// 跳过 '('</span>
+        <span class="tok-k">const</span> <span class="tok-k">double</span> value = parseExpression(s, pos); <span class="tok-c">// 括号里重新从最外层开始</span>
+        skipSpaces(s, pos);
+        <span class="tok-k">if</span> (pos &lt; s.size() &amp;&amp; s[pos] == <span class="tok-s">')'</span>) ++pos;   <span class="tok-c">// 跳过 ')'</span>
+        <span class="tok-k">return</span> value;
+    }
+
+    <span class="tok-k">if</span> (pos &lt; s.size() &amp;&amp; (s[pos] == <span class="tok-s">'-'</span> || s[pos] == <span class="tok-s">'+'</span>)) {
+        <span class="tok-k">const</span> <span class="tok-k">bool</span> negative = (s[pos] == <span class="tok-s">'-'</span>);
+        ++pos;
+        <span class="tok-k">const</span> <span class="tok-k">double</span> value = parseFactor(s, pos);     <span class="tok-c">// 允许 --3、-(1+2) 这种写法</span>
+        <span class="tok-k">return</span> negative ? -value : value;
+    }
+
+    <span class="tok-c">// 读一个数字：整数部分.小数部分</span>
+    <span class="tok-t">size_t</span> begin = pos;
+    <span class="tok-k">while</span> (pos &lt; s.size() &amp;&amp; (<span class="tok-t">std</span>::isdigit(static_cast&lt;<span class="tok-k">unsigned</span> <span class="tok-k">char</span>&gt;(s[pos])) || s[pos] == <span class="tok-s">'.'</span>)) {
+        ++pos;
+    }
+    <span class="tok-k">if</span> (begin == pos) <span class="tok-k">return</span> <span class="tok-n">0.0</span>;                     <span class="tok-c">// 没读到数字，交给上层收尾</span>
+    <span class="tok-k">return</span> <span class="tok-t">std</span>::atof(s.substr(begin, pos - begin).c_str());
+}
+
+<span class="tok-k">double</span> evaluate(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; expression) {
+    <span class="tok-t">size_t</span> pos = <span class="tok-n">0</span>;
+    <span class="tok-k">return</span> parseExpression(expression, pos);
+}
+
+<span class="tok-k">int</span> main() {
+    <span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span> tests[] = {
+        <span class="tok-s">"1 + 2 * 3"</span>,
+        <span class="tok-s">"(1 + 2) * 3"</span>,
+        <span class="tok-s">"2 * (3 + 4) - 5"</span>,
+        <span class="tok-s">"10 / 4"</span>,
+        <span class="tok-s">"-3 + 10"</span>,
+        <span class="tok-s">"1 + 2 * (3 + 4 * (5 - 2))"</span>,
+        <span class="tok-s">"((2 + 3) * (7 - 4)) / 3"</span>
+    };
+
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-t">std</span>::fixed &lt;&lt; <span class="tok-t">std</span>::setprecision(<span class="tok-n">4</span>);
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"----- Expression Evaluator -----\n"</span>;
+    <span class="tok-k">for</span> (<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; t : tests) {
+        <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-t">std</span>::left &lt;&lt; <span class="tok-t">std</span>::setw(<span class="tok-n">28</span>) &lt;&lt; t
+                  &lt;&lt; <span class="tok-s">" = "</span> &lt;&lt; evaluate(t) &lt;&lt; <span class="tok-s">"\n"</span>;
+    }
+    <span class="tok-k">return</span> <span class="tok-n">0</span>;
+}</pre>
+  </div>
+
+  <div class="code-block dark">
+    <div class="code-title">实际运行结果（真实输出，未经修饰）</div>
+<pre class="term">----- Expression Evaluator -----
+1 + 2 * 3                    = 7.0000
+(1 + 2) * 3                  = 9.0000
+2 * (3 + 4) - 5              = 9.0000
+10 / 4                       = 2.5000
+-3 + 10                      = 7.0000
+1 + 2 * (3 + 4 * (5 - 2))    = 31.0000
+((2 + 3) * (7 - 4)) / 3      = 5.0000</pre>
+  </div>
+
+  <div class="beauty">
+    <h5>这段代码美在哪里</h5>
+    <ol>
+      <li><b>优先级变成了结构，而不是规则。</b> 传统写法要先做「中缀转后缀」，还要维护一个运算符栈、
+      查一张优先级表。而这里，<b>优先级就是「谁调用谁」</b>：加减在顶层、乘除在中间、括号和数字在最里面。
+      越靠里，越先被算出来。代码的层次结构，直接对应了数学的结构。</li>
+      <li><b>一个引用参数替代了一个类。</b> 三个函数共享 <code class="inl">size_t&amp; pos</code>，
+      没有全局变量、没有对象、没有成员函数。对于这么小的一个问题，这是最轻的表达方式。
+      <b>「够用就好」本身就是一种优雅。</b></li>
+      <li><b>三个函数，每个都短到一屏能看完。</b> 而且它们的名字就是它们的职责：<code class="inl">parseExpression</code> 管整个表达式，
+      <code class="inl">parseTerm</code> 管一个项，<code class="inl">parseFactor</code> 管一个因子。
+      <b>能一句话说清的函数，才配拥有一个好名字。</b></li>
+      <li><b>递归在这里不是炫技，而是唯一的自然写法。</b> 括号可以套括号，套多少层事先并不知道——
+      这正好是递归天生要解决的问题。</li>
+      <li><b>「吃掉一个字符」这个动作被写得非常明确。</b> <code class="inl">const char op = s[pos]; ++pos;</code>
+      先把记下来，再前进。<b>把「读」和「移动」分开写，能避免绝大多数「少读一个字符」的 bug。</b></li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <div class="bt">常见陷阱</div>
+    <ul>
+      <li><b>忘记 <code class="inl">++pos</code> 会导致死循环。</b> 函数不再前进，<code class="inl">while</code> 就永远转下去。
+      第一次写的时候几乎一定会遇到，遇到之后你会永远记住它。</li>
+      <li>括号不匹配时，这个简版实现会安静地返回一个错误结果，而不是报错。
+      <b>「出错时大声说出来」是工程代码的基本原则</b>——这里留给你在进阶挑战里补上。</li>
+      <li>三个函数互相调用，<b>前置声明一个都不能少</b>，而且声明和定义的签名必须完全一致，否则链接时会报「未定义」。</li>
+      <li>这里全程用 <code class="inl">double</code>，所以 <code class="inl">10 / 4</code> 得到 <code class="inl">2.5</code>。
+      如果换成 <code class="inl">int</code>，得到的就是 <code class="inl">2</code>——整数除法截断是初学者永恒的坑。</li>
+    </ul>
+  </div>
+
+  <div class="challenge">
+    <div class="bt">进阶挑战</div>
+    <ul style="margin:0;padding-left:1.3em">
+      <li>加上乘方 <code class="inl">^</code>。注意它是<b>右结合</b>的：<code class="inl">2^3^2</code> 应该是 <code class="inl">2^9 = 512</code> 而不是 <code class="inl">8^2 = 64</code>。
+      你会发现自己需要把某个 <code class="inl">while</code> 改成递归调用。</li>
+      <li>支持变量 <code class="inl">x</code>，并用项目 02 学过的 <code class="inl">map&lt;std::string,double&gt;</code> 存变量表。
+      <b>做完这一步，你手里就有了一个「公式引擎」</b>——Excel 的一小部分。</li>
+      <li>加入函数调用：<code class="inl">sin(0)</code>、<code class="inl">max(3, 5)</code>。你需要处理逗号分隔的多个参数。</li>
+      <li>把「解析」和「计算」彻底分开：先解析成一棵树（结构体 + 指针就是天然的树），再写一个 <code class="inl">evaluate</code> 去遍历它。
+      <b>这一步做完，你就摸到了编译器的门。</b></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= 项目 06 ======================= -->
+<section class="project" id="p06">
+  <header class="p-header">
+    <div class="p-index">06</div>
+    <div class="p-titles">
+      <h2>井字棋与极小极大</h2>
+      <p class="p-sub">写一个你永远赢不了的对手</p>
+    </div>
+  </header>
+  <div class="p-meta">
+    <span class="chip">难度 ★★★★☆</span>
+    <span class="chip">建议 6–9 小时</span>
+    <span class="chip">主线：对抗性搜索</span>
+    <span class="chip">阶段二</span>
+  </div>
+  <label class="done-toggle no-print"><input type="checkbox" data-done="p06">标记为已完成</label>
+
+  <div class="newknow">
+    <h4>本板块会用到的新知识点</h4>
+    <p class="nk-note">这是第二阶段的高潮。递归在这里第一次用来「思考」，而不只是用来「遍历」。</p>
+    <ul>
+      <li><b>极小极大搜索（Minimax）</b>　思想：<b>我走一步时，假设我选最好的；对手走一步时，假设他选对我最坏的。</b>
+      递归下去，每个局面都会得到一个分数，我选分数最高的那一手。这套逻辑适用于一切「有对手」的场景，也是早期国际象棋程序的基础。</li>
+      <li><b>按值传参</b>　<em>形如 <code class="inl">int minimax(std::vector&lt;char&gt; board, ...)</code>，注意 board 前面没有 &amp;。</em>
+      每次递归都拿到棋盘的一份独立副本。于是「试走一步」和「撤销这一步」变成了天然的动作——
+      <b>函数返回时副本自动消失，外面的棋盘毫发无损。</b>这是用一点点拷贝开销买来的、极干净的一段递归。</li>
+      <li><b>std::numeric_limits</b>　<em>需要 <code class="inl">#include &lt;limits&gt;</code>。</em>
+      <code class="inl">std::numeric_limits&lt;int&gt;::min()</code> 就是 int 能表示的最小值。
+      求最大值时把初值设为它，比硬编码一个 <code class="inl">-999999</code> 更安全、也更说明意图。</li>
+      <li><b>std::min / std::max</b>　<em>需要 <code class="inl">#include &lt;algorithm&gt;</code>。</em>
+      极小极大的核心操作就是取最小或取最大，标准库直接给你了。</li>
+      <li><b>递归中的「试—评—撤」模式</b>　这是回溯算法的通用骨架，八皇后、数独、全排列，用的都是它。</li>
+    </ul>
+  </div>
+
+  <h3 class="h3">一、这件事在真实世界里长什么样</h3>
+  <p>井字棋只有九个格子，规则简单到小孩都会玩。但正因为简单，它成了「机器如何做决策」最好的教具：
+  <b>它小到可以穷举所有未来，又大到不能一眼看穿。</b></p>
+  <p>一九五零年代，程序第一次在井字棋上做到了不败。从那里出发，加上更聪明的剪枝、更准确的局面评估，
+  才有了后来的跳棋程序、国际象棋的深蓝，直到 AlphaGo。<b>你接下来写下的这二十行递归，是那整条路的起点。</b></p>
+
+  <h3 class="h3">二、任务拆解：三关</h3>
+  <ol class="levels">
+    <li>
+      <b>先把规则写清楚</b>
+      <p>用 <code class="inl">std::vector&lt;char&gt;</code> 表示九宫格。写三个函数：<b>打印棋盘</b>、
+      <b>判断谁赢了</b>（八条连线，用一张表存起来）、<b>判断是否下满</b>。<b>这一关没有递归，全是基本功。</b></p>
+    </li>
+    <li>
+      <b>做一个「随便下」的对手</b>
+      <p>写一个函数，在所有空位里随便挑一个落子。<b>先让它能陪你下完一整局</b>——
+      你会立刻发现：随便下的 AI 输得很难看。这个落差，就是第三关的动力。</p>
+    </li>
+    <li>
+      <b>把「随便」换成「算尽」</b>
+      <p>写 <code class="inl">minimax(board, player, depth)</code>：
+      如果已经分出胜负，返回一个带深度的分数；否则轮到谁走，就把每个空位都试一遍，递归拿到分数，
+      我方取最大、对方取最小。最后用 <code class="inl">bestMove</code> 在根节点挑出最好的那一手。</p>
+    </li>
+  </ol>
+
+  <h3 class="h3">三、参考实现</h3>
+  <div class="code-block">
+    <div class="code-title">ways-to-cpp-code / p06_tictactoe.cpp</div>
+<pre class="code"><span class="tok-c">// ============================================================</span>
+<span class="tok-c">//  Ways to cpp · 项目 06  井字棋与极小极大搜索</span>
+<span class="tok-c">//  编译： g++ -std=c++14 -Wall p06_tictactoe.cpp -o p06</span>
+<span class="tok-c">//  运行： ./p06</span>
+<span class="tok-c">// ============================================================</span>
+
+<span class="tok-p">#include &lt;algorithm&gt;</span>
+<span class="tok-p">#include &lt;iostream&gt;</span>
+<span class="tok-p">#include &lt;limits&gt;</span>
+<span class="tok-p">#include &lt;string&gt;</span>
+<span class="tok-p">#include &lt;vector&gt;</span>
+
+<span class="tok-k">const</span> <span class="tok-k">char</span> EMPTY = <span class="tok-s">'.'</span>;
+<span class="tok-k">const</span> <span class="tok-k">char</span> HUMAN = <span class="tok-s">'X'</span>;   <span class="tok-c">// 先手</span>
+<span class="tok-k">const</span> <span class="tok-k">char</span> AI    = <span class="tok-s">'O'</span>;
+
+<span class="tok-k">const</span> <span class="tok-k">int</span> LINES[<span class="tok-n">8</span>][<span class="tok-n">3</span>] = {
+    {<span class="tok-n">0</span>, <span class="tok-n">1</span>, <span class="tok-n">2</span>}, {<span class="tok-n">3</span>, <span class="tok-n">4</span>, <span class="tok-n">5</span>}, {<span class="tok-n">6</span>, <span class="tok-n">7</span>, <span class="tok-n">8</span>},   <span class="tok-c">// 三行</span>
+    {<span class="tok-n">0</span>, <span class="tok-n">3</span>, <span class="tok-n">6</span>}, {<span class="tok-n">1</span>, <span class="tok-n">4</span>, <span class="tok-n">7</span>}, {<span class="tok-n">2</span>, <span class="tok-n">5</span>, <span class="tok-n">8</span>},   <span class="tok-c">// 三列</span>
+    {<span class="tok-n">0</span>, <span class="tok-n">4</span>, <span class="tok-n">8</span>}, {<span class="tok-n">2</span>, <span class="tok-n">4</span>, <span class="tok-n">6</span>}               <span class="tok-c">// 两条对角线</span>
+};
+
+<span class="tok-k">char</span> winnerOf(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-k">char</span>&gt;&amp; b) {
+    <span class="tok-k">for</span> (<span class="tok-k">int</span> i = <span class="tok-n">0</span>; i &lt; <span class="tok-n">8</span>; ++i) {
+        <span class="tok-k">const</span> <span class="tok-k">int</span> a = LINES[i][<span class="tok-n">0</span>], m = LINES[i][<span class="tok-n">1</span>], c = LINES[i][<span class="tok-n">2</span>];
+        <span class="tok-k">if</span> (b[a] != EMPTY &amp;&amp; b[a] == b[m] &amp;&amp; b[m] == b[c]) <span class="tok-k">return</span> b[a];
+    }
+    <span class="tok-k">return</span> EMPTY;                       <span class="tok-c">// 没人赢</span>
+}
+
+<span class="tok-k">bool</span> boardFull(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-k">char</span>&gt;&amp; b) {
+    <span class="tok-k">for</span> (<span class="tok-k">char</span> c : b) {
+        <span class="tok-k">if</span> (c == EMPTY) <span class="tok-k">return</span> <span class="tok-k">false</span>;
+    }
+    <span class="tok-k">return</span> <span class="tok-k">true</span>;
+}
+
+<span class="tok-k">void</span> printBoard(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-k">char</span>&gt;&amp; b) {
+    <span class="tok-k">for</span> (<span class="tok-k">int</span> r = <span class="tok-n">0</span>; r &lt; <span class="tok-n">3</span>; ++r) {
+        <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"  "</span>;
+        <span class="tok-k">for</span> (<span class="tok-k">int</span> c = <span class="tok-n">0</span>; c &lt; <span class="tok-n">3</span>; ++c) {
+            <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; b[r * <span class="tok-n">3</span> + c];
+            <span class="tok-k">if</span> (c &lt; <span class="tok-n">2</span>) <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">" | "</span>;
+        }
+        <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"\n"</span>;
+        <span class="tok-k">if</span> (r &lt; <span class="tok-n">2</span>) <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">" ---+---+---\n"</span>;
+    }
+}
+
+<span class="tok-c">// ---------- 极小极大搜索 ----------</span>
+<span class="tok-c">// board 是"按值传递"的：每次递归都拿到一份自己的副本，</span>
+<span class="tok-c">// 于是我们可以在里面随便改，返回时外面的世界毫发无损。</span>
+<span class="tok-c">// 这是用拷贝换来的、极其干净的一段递归。</span>
+<span class="tok-k">int</span> minimax(<span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-k">char</span>&gt; board, <span class="tok-k">char</span> player, <span class="tok-k">int</span> depth) {
+    <span class="tok-k">const</span> <span class="tok-k">char</span> w = winnerOf(board);
+    <span class="tok-k">if</span> (w == AI)    <span class="tok-k">return</span> <span class="tok-n">10</span> - depth;      <span class="tok-c">// 赢得越早，分数越高</span>
+    <span class="tok-k">if</span> (w == HUMAN) <span class="tok-k">return</span> depth - <span class="tok-n">10</span>;      <span class="tok-c">// 输得越晚，分数越接近 0</span>
+    <span class="tok-k">if</span> (boardFull(board)) <span class="tok-k">return</span> <span class="tok-n">0</span>;         <span class="tok-c">// 平局</span>
+
+    <span class="tok-k">const</span> <span class="tok-k">char</span> next = (player == AI) ? HUMAN : AI;
+    <span class="tok-k">int</span> best = (player == AI) ? <span class="tok-t">std</span>::<span class="tok-t">numeric_limits</span>&lt;<span class="tok-k">int</span>&gt;::min()
+                              : <span class="tok-t">std</span>::<span class="tok-t">numeric_limits</span>&lt;<span class="tok-k">int</span>&gt;::max();
+
+    <span class="tok-k">for</span> (<span class="tok-k">int</span> i = <span class="tok-n">0</span>; i &lt; <span class="tok-n">9</span>; ++i) {
+        <span class="tok-k">if</span> (board[i] != EMPTY) <span class="tok-k">continue</span>;
+
+        board[i] = player;                          <span class="tok-c">// 试着走一步</span>
+        <span class="tok-k">const</span> <span class="tok-k">int</span> score = minimax(board, next, depth + <span class="tok-n">1</span>);
+        board[i] = EMPTY;                           <span class="tok-c">// 撤销这一步</span>
+
+        <span class="tok-k">if</span> (player == AI) best = <span class="tok-t">std</span>::max(best, score);   <span class="tok-c">// 我尽力拿高分</span>
+        <span class="tok-k">else</span>              best = <span class="tok-t">std</span>::min(best, score);   <span class="tok-c">// 对手尽力压低我的分</span>
+    }
+    <span class="tok-k">return</span> best;
+}
+
+<span class="tok-c">// 在所有空位里挑一个"最坏情况下的最好结果"</span>
+<span class="tok-k">int</span> bestMove(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-k">char</span>&gt;&amp; board, <span class="tok-k">char</span> player, <span class="tok-k">int</span>&amp; outScore) {
+    <span class="tok-k">const</span> <span class="tok-k">char</span> next = (player == AI) ? HUMAN : AI;
+    <span class="tok-k">int</span> bestIndex = -<span class="tok-n">1</span>;
+    <span class="tok-k">int</span> best = (player == AI) ? <span class="tok-t">std</span>::<span class="tok-t">numeric_limits</span>&lt;<span class="tok-k">int</span>&gt;::min()
+                              : <span class="tok-t">std</span>::<span class="tok-t">numeric_limits</span>&lt;<span class="tok-k">int</span>&gt;::max();
+
+    <span class="tok-k">for</span> (<span class="tok-k">int</span> i = <span class="tok-n">0</span>; i &lt; <span class="tok-n">9</span>; ++i) {
+        <span class="tok-k">if</span> (board[i] != EMPTY) <span class="tok-k">continue</span>;
+        <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-k">char</span>&gt; trial = board;
+        trial[i] = player;
+        <span class="tok-k">const</span> <span class="tok-k">int</span> score = minimax(trial, next, <span class="tok-n">1</span>);
+        <span class="tok-k">const</span> <span class="tok-k">bool</span> better = (player == AI) ? (score &gt; best) : (score &lt; best);
+        <span class="tok-k">if</span> (better) {
+            best = score;
+            bestIndex = i;
+        }
+    }
+    outScore = best;
+    <span class="tok-k">return</span> bestIndex;
+}
+
+<span class="tok-k">int</span> main() {
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"----- Demo 1 : must block -----\n"</span>;
+    <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-k">char</span>&gt; mid = {
+        <span class="tok-s">'X'</span>, <span class="tok-s">'.'</span>, <span class="tok-s">'.'</span>,
+        <span class="tok-s">'.'</span>, <span class="tok-s">'X'</span>, <span class="tok-s">'.'</span>,
+        <span class="tok-s">'O'</span>, <span class="tok-s">'.'</span>, <span class="tok-s">'.'</span>
+    };
+    printBoard(mid);
+    <span class="tok-k">int</span> score = <span class="tok-n">0</span>;
+    <span class="tok-k">const</span> <span class="tok-k">int</span> move = bestMove(mid, AI, score);
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"AI ('O') chooses cell "</span> &lt;&lt; move
+              &lt;&lt; <span class="tok-s">" (row "</span> &lt;&lt; (move / <span class="tok-n">3</span> + <span class="tok-n">1</span>) &lt;&lt; <span class="tok-s">", col "</span> &lt;&lt; (move % <span class="tok-n">3</span> + <span class="tok-n">1</span>) &lt;&lt; <span class="tok-s">")"</span>
+              &lt;&lt; <span class="tok-s">", evaluated score = "</span> &lt;&lt; score &lt;&lt; <span class="tok-s">"\n\n"</span>;
+
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"----- Demo 2 : perfect vs perfect -----\n"</span>;
+    <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-k">char</span>&gt; board(<span class="tok-n">9</span>, EMPTY);
+    <span class="tok-k">char</span> player = HUMAN;                 <span class="tok-c">// X 先手</span>
+    <span class="tok-k">while</span> (winnerOf(board) == EMPTY &amp;&amp; !boardFull(board)) {
+        <span class="tok-k">int</span> s = <span class="tok-n">0</span>;
+        <span class="tok-k">const</span> <span class="tok-k">int</span> m = bestMove(board, player, s);
+        board[m] = player;
+        player = (player == HUMAN) ? AI : HUMAN;
+    }
+    printBoard(board);
+    <span class="tok-k">const</span> <span class="tok-k">char</span> w = winnerOf(board);
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; (w == EMPTY ? <span class="tok-s">"Result: draw"</span> : <span class="tok-t">std</span>::<span class="tok-t">string</span>(<span class="tok-s">"Winner: "</span>) + w) &lt;&lt; <span class="tok-s">"\n"</span>;
+    <span class="tok-k">return</span> <span class="tok-n">0</span>;
+}</pre>
+  </div>
+
+  <div class="code-block dark">
+    <div class="code-title">实际运行结果（真实输出，未经修饰）</div>
+<pre class="term">----- Demo 1 : must block -----
+  X | . | .
+ ---+---+---
+  . | X | .
+ ---+---+---
+  O | . | .
+AI ('O') chooses cell 8 (row 3, col 3), evaluated score = 0
+
+----- Demo 2 : perfect vs perfect -----
+  X | X | O
+ ---+---+---
+  O | O | X
+ ---+---+---
+  X | O | X
+Result: draw</pre>
+  </div>
+
+  <p><b>怎么读这份输出：</b>第一个演示摆了一个局面——X 已经在左上和正中连成一条对角线，
+  下一步落在右下角就赢了。AI 选择了 8 号格（第 3 行第 3 列）把路堵死，<b>评分为 0，意思是「只要这么走，最坏也是平局」</b>。
+  第二个演示让两个都用极小极大的对手互相下完一整局，结果是平局——
+  <b>这不是巧合，而是「双方都不犯错时，井字棋必然平局」这一数学事实，被你的程序自己证明了。</b></p>
+
+  <div class="beauty">
+    <h5>这段代码美在哪里</h5>
+    <ol>
+      <li><b>board 按值传递，是整个设计里最漂亮的一手。</b>
+      因为传的是副本，函数里可以放心地 <code class="inl">board[i] = player;</code> 试走一步，
+      递归返回之后什么都不用管——<b>「撤销」这个动作被语言的机制免费完成了。</b>
+      如果传的是引用，你就必须记得在每一层手动撤回，多一条 return 路径就是多一个 bug。</li>
+      <li><b>分数设计藏着一个精妙的心思。</b> <code class="inl">10 - depth</code> 和 <code class="inl">depth - 10</code>：
+      赢要赢得快，输要输得晚。因为「输得晚」意味着对手还得再想几步，也就意味着中间还有翻盘的机会。
+      <b>两个减号，就把「效率」这个额外目标写进了评价体系。</b></li>
+      <li><b>统一用一套搜索处理双方。</b> 同一个 <code class="inl">minimax</code> 既能当 AI 的大脑，也能当「模拟对手」的大脑，
+      只需要换一个 <code class="inl">player</code> 参数。<b>没有写两份对称的代码——这是抽象的胜利。</b></li>
+      <li><b>「选」与「评」分离。</b> <code class="inl">minimax</code> 只回答「这个局面值多少分」，
+      <code class="inl">bestMove</code> 只回答「那我该走哪一步」。两个问题分开问，两个函数分开写，
+      于是 <code class="inl">minimax</code> 可以被原封不动地复用到别的地方。</li>
+      <li><b>用 <code class="inl">numeric_limits</code> 而不是魔法数字。</b>
+      <code class="inl">std::numeric_limits&lt;int&gt;::min()</code> 一眼就说明「我要一个尽可能小的起点」，
+      而 <code class="inl">-99999</code> 只会让读者停下来猜：为什么是九万九千九百九十九？</li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <div class="bt">常见陷阱</div>
+    <ul>
+      <li><b>判断输赢和判断下满的顺序不能反。</b> 必须<b>先看有没有人赢</b>，再看是不是满了。
+      否则最后一步落子成五的情况会被判成平局。</li>
+      <li>如果改成按引用传递，<b>每一条 <code class="inl">return</code> 之前都必须撤销试走的那一步</b>。
+      漏掉任何一条，棋盘就会带着「幽灵棋子」继续往下算。这是回溯算法最经典的 bug。</li>
+      <li>极小极大的代价是「分支数的深度次方」。井字棋最多 9! ≈ 36 万种局面，秒出结果；
+      但换成五子棋（15×15），同一段代码会把你的电脑算到天荒地老。<b>算法正确，不等于算法可用。</b></li>
+      <li>递归太深会撑爆调用栈。井字棋最多 9 层，绝对安全；
+      但如果你把棋盘改成 20×20，程序会以「栈溢出」的方式崩溃，而不是算得慢。</li>
+    </ul>
+  </div>
+
+  <div class="challenge">
+    <div class="bt">进阶挑战</div>
+    <ul style="margin:0;padding-left:1.3em">
+      <li><b>加入 alpha-beta 剪枝</b>：如果已经知道某条分支不可能更好，就根本不用搜它。
+      在井字棋上，它能把搜索量减少到十分之一左右，而结果一模一样。<b>这是本手册里性价比最高的一个优化。</b></li>
+      <li>加一个计数器，统计搜索了多少个局面，对比剪枝前后的数字。你会对「优化」这个词有实感。</li>
+      <li>用 <code class="inl">map</code> 把「局面 → 分数」缓存下来，避免重复计算同一个局面（这就是记忆化搜索）。
+      你会看到搜索次数骤降，而结果一丝不差。</li>
+      <li>把它变成一个可以真正对弈的程序：用 <code class="inl">cin</code> 读入玩家落子，先让你自己输几局。</li>
+      <li>推广到四子棋（Connect Four）的 7×6 棋盘。你需要加上「只往前看 N 层」的限制和一个粗略的局面评估函数——
+      <b>恭喜，你已经摸到了现代博弈程序的核心思路。</b></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= 项目 07 ======================= -->
+<section class="project" id="p07">
+  <header class="p-header">
+    <div class="p-index">07</div>
+    <div class="p-titles">
+      <h2>像数学一样的矩阵类</h2>
+      <p class="p-sub">让 C = A * B 这四个字符，真的能跑起来</p>
+    </div>
+  </header>
+  <div class="p-meta">
+    <span class="chip">难度 ★★★☆☆</span>
+    <span class="chip">建议 6–8 小时</span>
+    <span class="chip">主线：类与运算符重载</span>
+    <span class="chip">阶段三</span>
+  </div>
+  <label class="done-toggle no-print"><input type="checkbox" data-done="p07">标记为已完成</label>
+
+  <div class="newknow">
+    <h4>本板块会用到的新知识点</h4>
+    <p class="nk-note">这是你第一次写自己的类型。别紧张——类不是新语言，它只是「把数据和函数放进同一个盒子里」。</p>
+    <ul>
+      <li><b>class 与封装</b>　把数据（<code class="inl">rows_</code>、<code class="inl">cols_</code>、<code class="inl">data_</code>）和操作它们的函数装进同一个盒子。
+      <code class="inl">private:</code> 的东西外面碰不到，<code class="inl">public:</code> 的东西才是你交给外界的接口。<b>封装的意义不是保密，而是「让使用者只需要知道他能做什么」。</b></li>
+      <li><b>构造函数与初始化列表</b>　<em>形如 <code class="inl">Matrix(int rows, int cols) : rows_(rows), cols_(cols), data_(...) {}</code></em>
+      保证对象一诞生就是完整可用的，而不是「先造一个空的，再慢慢填」。</li>
+      <li><b>运算符重载</b>　<em>形如 <code class="inl">Matrix operator*(const Matrix&amp; other) const</code></em>
+      让自定义类型也能用 <code class="inl">+</code> 和 <code class="inl">*</code>。<b>这是 C++ 最迷人的能力之一：你可以让自己的类型，长得和 int 一样自然。</b></li>
+      <li><b>std::ostream&amp; 与 &lt;&lt; 重载</b>　让 <code class="inl">cout &lt;&lt; A</code> 直接打印一个矩阵。写完这一行，
+      打印就从「调用一个函数」变成了「这个类型与生俱来的能力」。</li>
+      <li><b>const 成员函数</b>　<em>函数声明末尾的那个 <code class="inl">const</code></em>
+      它承诺「这个函数不会改动对象本身」。有了它，<code class="inl">const Matrix&amp;</code> 才能真正被用起来——
+      <b>这是 C++ 把「只读」这件事做进类型系统的方式。</b></li>
+      <li><b>用一维数组模拟二维（行主序）</b>　<code class="inl">data_[r * cols_ + c]</code>。
+      内存里是一整条连续的带子，<code class="inl">at()</code> 负责把二维坐标翻译成这条带子上的位置。
+      <b>外面的人完全不需要知道这件事——这就是封装的价值。</b></li>
+    </ul>
+  </div>
+
+  <h3 class="h3">一、这件事在真实世界里长什么样</h3>
+  <p>你的专业方向是人工智能，而人工智能在今天几乎等同于「深度神经网络」。神经网络的一层，说穿了就是一句话：
+  <b>输出向量 = 激活函数(权重矩阵 × 输入向量 + 偏置向量)</b>。</p>
+  <p>所以矩阵乘法就是那台机器的心脏。在 Python 里你将来会写 <code class="inl">A @ B</code>，一行搞定；
+  但那一行背后到底是什么？——<b>就是这个项目里你要亲手写出来的三重循环。</b></p>
+  <p>你现在写的这个 <code class="inl">Matrix</code> 类，虽然只有一百来行，却已经具备了工业级矩阵库的骨架：
+  私有数据、受控访问、算术运算符、流式输出。</p>
+
+  <h3 class="h3">二、任务拆解：三关</h3>
+  <ol class="levels">
+    <li>
+      <b>先用最朴素的方式实现一次</b>
+      <p>用 <code class="inl">std::vector&lt;std::vector&lt;double&gt;&gt;</code> 存一个 3×3 矩阵，
+      写两个普通函数：一个转置，一个打印。<b>这一关不用类</b>，你需要先感受一下「到处传二维数组」有多啰嗦——
+      那份啰嗦，正是下一关的动力。</p>
+    </li>
+    <li>
+      <b>把它装进一个类</b>
+      <p>定义 <code class="inl">class Matrix</code>：数据放 private，提供构造函数、<code class="inl">rows()</code>、<code class="inl">cols()</code>、
+      两个版本的 <code class="inl">at(r,c)</code>，以及 <code class="inl">transpose()</code>。
+      <b>检验标准：main 里再也看不到 <code class="inl">data_[...]</code> 这样的下标计算。</b></p>
+    </li>
+    <li>
+      <b>让它会做数学</b>
+      <p>加上 <code class="inl">operator+</code>、<code class="inl">operator*</code> 和 <code class="inl">operator&lt;&lt;</code>。
+      改完之后，<code class="inl">main</code> 里应该只剩下数学表达式本身——
+      <b>当你能把 <code class="inl">A * A.transpose()</code> 当成一句话写出来的时候，这一关就过了。</b></p>
+    </li>
+  </ol>
+
+  <h3 class="h3">三、参考实现</h3>
+  <div class="code-block">
+    <div class="code-title">ways-to-cpp-code / p07_matrix.cpp</div>
+<pre class="code"><span class="tok-c">// ============================================================</span>
+<span class="tok-c">//  Ways to cpp · 项目 07  一个像数学一样写字的矩阵类</span>
+<span class="tok-c">//  编译： g++ -std=c++14 -Wall p07_matrix.cpp -o p07</span>
+<span class="tok-c">//  运行： ./p07</span>
+<span class="tok-c">// ============================================================</span>
+
+<span class="tok-p">#include &lt;iomanip&gt;</span>
+<span class="tok-p">#include &lt;iostream&gt;</span>
+<span class="tok-p">#include &lt;vector&gt;</span>
+
+<span class="tok-c">// 类的意义：把"数据"和"操作这些数据的函数"捆在一起，</span>
+<span class="tok-c">// 让外面的人只看到 C = A * B，而不是一堆循环。</span>
+<span class="tok-k">class</span> <span class="tok-t">Matrix</span> {
+<span class="tok-k">public</span>:
+    <span class="tok-c">// 构造函数：对象一诞生就是合法可用的（全部填 0）</span>
+    <span class="tok-t">Matrix</span>(<span class="tok-k">int</span> rows, <span class="tok-k">int</span> cols)
+        : rows_(rows), cols_(cols), data_(static_cast&lt;<span class="tok-t">size_t</span>&gt;(rows) * cols, <span class="tok-n">0.0</span>) {}
+
+    <span class="tok-k">static</span> <span class="tok-t">Matrix</span> identity(<span class="tok-k">int</span> n) {
+        <span class="tok-t">Matrix</span> m(n, n);
+        <span class="tok-k">for</span> (<span class="tok-k">int</span> i = <span class="tok-n">0</span>; i &lt; n; ++i) m.at(i, i) = <span class="tok-n">1.0</span>;
+        <span class="tok-k">return</span> m;
+    }
+
+    <span class="tok-k">int</span> rows() <span class="tok-k">const</span> { <span class="tok-k">return</span> rows_; }
+    <span class="tok-k">int</span> cols() <span class="tok-k">const</span> { <span class="tok-k">return</span> cols_; }
+
+    <span class="tok-c">// 两个版本：非 const 版本可读可写，const 版本只读。</span>
+    <span class="tok-c">// 编译器靠对象本身是否 const 来挑，我们什么都不用管。</span>
+    <span class="tok-k">double</span>&amp;       at(<span class="tok-k">int</span> r, <span class="tok-k">int</span> c)       { <span class="tok-k">return</span> data_[static_cast&lt;<span class="tok-t">size_t</span>&gt;(r) * cols_ + c]; }
+    <span class="tok-k">double</span>        at(<span class="tok-k">int</span> r, <span class="tok-k">int</span> c) <span class="tok-k">const</span> { <span class="tok-k">return</span> data_[static_cast&lt;<span class="tok-t">size_t</span>&gt;(r) * cols_ + c]; }
+
+    <span class="tok-t">Matrix</span> <span class="tok-k">operator</span>+(<span class="tok-k">const</span> <span class="tok-t">Matrix</span>&amp; other) <span class="tok-k">const</span> {
+        <span class="tok-t">Matrix</span> result(rows_, cols_);
+        <span class="tok-k">for</span> (<span class="tok-k">int</span> r = <span class="tok-n">0</span>; r &lt; rows_; ++r)
+            <span class="tok-k">for</span> (<span class="tok-k">int</span> c = <span class="tok-n">0</span>; c &lt; cols_; ++c)
+                result.at(r, c) = at(r, c) + other.at(r, c);
+        <span class="tok-k">return</span> result;
+    }
+
+    <span class="tok-t">Matrix</span> <span class="tok-k">operator</span>*(<span class="tok-k">const</span> <span class="tok-t">Matrix</span>&amp; other) <span class="tok-k">const</span> {
+        <span class="tok-t">Matrix</span> result(rows_, other.cols_);
+        <span class="tok-k">for</span> (<span class="tok-k">int</span> r = <span class="tok-n">0</span>; r &lt; rows_; ++r) {
+            <span class="tok-k">for</span> (<span class="tok-k">int</span> k = <span class="tok-n">0</span>; k &lt; cols_; ++k) {
+                <span class="tok-k">const</span> <span class="tok-k">double</span> a = at(r, k);
+                <span class="tok-k">for</span> (<span class="tok-k">int</span> c = <span class="tok-n">0</span>; c &lt; other.cols_; ++c) {
+                    result.at(r, c) += a * other.at(k, c);
+                }
+            }
+        }
+        <span class="tok-k">return</span> result;
+    }
+
+    <span class="tok-t">Matrix</span> transpose() <span class="tok-k">const</span> {
+        <span class="tok-t">Matrix</span> result(cols_, rows_);
+        <span class="tok-k">for</span> (<span class="tok-k">int</span> r = <span class="tok-n">0</span>; r &lt; rows_; ++r)
+            <span class="tok-k">for</span> (<span class="tok-k">int</span> c = <span class="tok-n">0</span>; c &lt; cols_; ++c)
+                result.at(c, r) = at(r, c);
+        <span class="tok-k">return</span> result;
+    }
+
+<span class="tok-k">private</span>:
+    <span class="tok-k">int</span> rows_;
+    <span class="tok-k">int</span> cols_;
+    <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-k">double</span>&gt; data_;   <span class="tok-c">// 用一维数组存放，行主序</span>
+};
+
+<span class="tok-c">// 重载 &lt;&lt; 之后，cout &lt;&lt; A 就能像打印一个数字那样打印一个矩阵</span>
+<span class="tok-t">std</span>::<span class="tok-t">ostream</span>&amp; <span class="tok-k">operator</span>&lt;&lt;(<span class="tok-t">std</span>::<span class="tok-t">ostream</span>&amp; os, <span class="tok-k">const</span> <span class="tok-t">Matrix</span>&amp; m) {
+    <span class="tok-k">for</span> (<span class="tok-k">int</span> r = <span class="tok-n">0</span>; r &lt; m.rows(); ++r) {
+        os &lt;&lt; <span class="tok-s">"[ "</span>;
+        <span class="tok-k">for</span> (<span class="tok-k">int</span> c = <span class="tok-n">0</span>; c &lt; m.cols(); ++c) {
+            os &lt;&lt; <span class="tok-t">std</span>::setw(<span class="tok-n">8</span>) &lt;&lt; m.at(r, c) &lt;&lt; <span class="tok-s">" "</span>;
+        }
+        os &lt;&lt; <span class="tok-s">"]\n"</span>;
+    }
+    <span class="tok-k">return</span> os;
+}
+
+<span class="tok-k">int</span> main() {
+    <span class="tok-t">Matrix</span> a(<span class="tok-n">3</span>, <span class="tok-n">3</span>);
+    <span class="tok-t">Matrix</span> b(<span class="tok-n">3</span>, <span class="tok-n">3</span>);
+    <span class="tok-k">for</span> (<span class="tok-k">int</span> r = <span class="tok-n">0</span>; r &lt; <span class="tok-n">3</span>; ++r) {
+        <span class="tok-k">for</span> (<span class="tok-k">int</span> c = <span class="tok-n">0</span>; c &lt; <span class="tok-n">3</span>; ++c) {
+            a.at(r, c) = r * <span class="tok-n">3</span> + c + <span class="tok-n">1</span>;          <span class="tok-c">// 1..9</span>
+            b.at(r, c) = (r == c) ? <span class="tok-n">2.0</span> : <span class="tok-n">0.0</span>;   <span class="tok-c">// 2 倍单位阵</span>
+        }
+    }
+
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-t">std</span>::fixed &lt;&lt; <span class="tok-t">std</span>::setprecision(<span class="tok-n">1</span>);
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"A =\n"</span> &lt;&lt; a;
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"A + A =\n"</span> &lt;&lt; (a + a);
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"A * B  (B = 2I) =\n"</span> &lt;&lt; (a * b);
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"A transposed =\n"</span> &lt;&lt; a.transpose();
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"A * A^T  (对称矩阵，神经网络里的协方差就是这个形状) =\n"</span>
+              &lt;&lt; (a * a.transpose());
+    <span class="tok-k">return</span> <span class="tok-n">0</span>;
+}</pre>
+  </div>
+
+  <div class="code-block dark">
+    <div class="code-title">实际运行结果（真实输出，未经修饰）</div>
+<pre class="term">A =
+[      1.0      2.0      3.0 ]
+[      4.0      5.0      6.0 ]
+[      7.0      8.0      9.0 ]
+A + A =
+[      2.0      4.0      6.0 ]
+[      8.0     10.0     12.0 ]
+[     14.0     16.0     18.0 ]
+A * B  (B = 2I) =
+[      2.0      4.0      6.0 ]
+[      8.0     10.0     12.0 ]
+[     14.0     16.0     18.0 ]
+A transposed =
+[      1.0      4.0      7.0 ]
+[      2.0      5.0      8.0 ]
+[      3.0      6.0      9.0 ]
+A * A^T  (对称矩阵，神经网络里的协方差就是这个形状) =
+[     14.0     32.0     50.0 ]
+[     32.0     77.0    122.0 ]
+[     50.0    122.0    194.0 ]</pre>
+  </div>
+
+  <div class="beauty">
+    <h5>这段代码美在哪里</h5>
+    <ol>
+      <li><b>它让代码长得像数学。</b> 请对比这两行：
+      <code class="inl">result[r][c] += a[r][k] * b[k][c];</code>（在 main 里三层循环）与 <code class="inl">Matrix c = a * b;</code>。
+      后者不只是短，它<b>把「矩阵乘法」这个概念从实现细节里解放了出来</b>。
+      以后每次看到 <code class="inl">a * b</code>，你脑子里想的是数学，而不是下标。</li>
+      <li><b>一维存储 + at() 翻译，是一次漂亮的「内外分离」。</b>
+      外面的人写 <code class="inl">m.at(2, 3)</code>，脑子里想的是「第三行第四列」；
+      里面的人知道那其实是第 <code class="inl">2 * cols_ + 3</code> 个元素。
+      <b>两种视角各得其所，谁也不打扰谁。</b></li>
+      <li><b>两个版本的 at() 是一个教科书级的技巧。</b> 非 const 版本返回 <code class="inl">double&amp;</code>（可以赋值），
+      const 版本返回 <code class="inl">double</code>（只能读）。编译器根据「你手里的 Matrix 是不是 const」自动挑选，
+      于是只读的矩阵<b>在编译期就获得了不可修改的保证</b>——不需要运行时检查，一分钱开销都没有。</li>
+      <li><b>构造函数保证了「不存在残缺的对象」。</b> 一个 Matrix 只要被造出来，
+      就一定有合法的行列数、一定有一块已初始化为 0 的内存。<b>没有「半成品状态」，就没有对应的那一类 bug。</b></li>
+      <li><b>operator&lt;&lt; 写成了自由函数，而不是成员函数。</b> 因为 <code class="inl">cout &lt;&lt; A</code> 里，
+      <code class="inl">cout</code> 在左边、<code class="inl">A</code> 在右边；如果写成 <code class="inl">A.operator&lt;&lt;(cout)</code>，
+      读起来就完全别扭了。<b>为了「读起来对」而调整代码结构的写法，值得。</b></li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <div class="bt">常见陷阱</div>
+    <ul>
+      <li><b>绝对不要返回局部变量的引用。</b> <code class="inl">Matrix&amp; operator+(...)</code> 返回一个函数内部创建的矩阵的引用，
+      是在返回一块已经销毁的内存。<b>这种错误编译器常常不会报，程序会以一种诡异的方式在别处崩溃。</b>
+      算术运算符<b>一律返回值</b>。</li>
+      <li>忘了写 const 成员函数，会导致 <code class="inl">const Matrix&amp;</code> 参数上调用 <code class="inl">.at()</code> 时编译不过。
+      错误信息会很长很吓人，但原因就是这一个词。</li>
+      <li>矩阵乘法要求 <code class="inl">A.cols() == B.rows()</code>。参考实现为了短小没有检查，
+      真实代码里应该在函数开头就挡住，并且<b>明确地报错</b>。</li>
+      <li>这里的数据成员用了 <code class="inl">std::vector</code>，所以默认的拷贝行为是正确的（值语义）。
+      如果你改用 <code class="inl">new double[...]</code> 裸指针，就必须自己写析构函数和拷贝构造函数——
+      <b>这就是「用标准库容器」帮你省掉的一大类麻烦。</b></li>
+    </ul>
+  </div>
+
+  <div class="challenge">
+    <div class="bt">进阶挑战</div>
+    <ul style="margin:0;padding-left:1.3em">
+      <li>加上 <code class="inl">operator-</code>、<code class="inl">operator==</code> 和「矩阵 × 标量」。
+      注意标量乘法要写成自由函数 <code class="inl">operator*(double k, const Matrix&amp; m)</code>，
+      否则 <code class="inl">2.0 * A</code> 这种写法就编译不过——<b>想想为什么。</b></li>
+      <li>实现 <code class="inl">identity(n)</code>（已经是静态成员函数了）、行列式、以及高斯消元求逆。</li>
+      <li><b>用这个类写一个两层全连接网络的前向传播</b>：<code class="inl">h = relu(W1 * x + b1); y = W2 * h + b2;</code>。
+      你会突然发现，深度学习框架里那些抽象的 API，在你手里变成了看得见摸得着的几行代码。<b>这是本项目最有价值的一步。</b></li>
+      <li>把 <code class="inl">Matrix</code> 拆成 <code class="inl">matrix.h</code> 和 <code class="inl">matrix.cpp</code> 两个文件，
+      体验一次真正的「接口与实现分离」。头文件开头记得加 <code class="inl">#pragma once</code>。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= 项目 08 ======================= -->
+<section class="project" id="p08">
+  <header class="p-header">
+    <div class="p-index">08</div>
+    <div class="p-titles">
+      <h2>训练你的第一个模型：感知机</h2>
+      <p class="p-sub">五十行代码，一个完整的机器学习闭环</p>
+    </div>
+  </header>
+  <div class="p-meta">
+    <span class="chip">难度 ★★★★☆</span>
+    <span class="chip">建议 6–9 小时</span>
+    <span class="chip">主线：学习即修正</span>
+    <span class="chip">阶段三</span>
+  </div>
+  <label class="done-toggle no-print"><input type="checkbox" data-done="p08">标记为已完成</label>
+
+  <div class="newknow">
+    <h4>本板块会用到的新知识点</h4>
+    <p class="nk-note">这个项目的新知识里，只有一个是纯语法的（随机数），其余都是「方法」——而方法才是你专业里真正值钱的东西。</p>
+    <ul>
+      <li><b>&lt;random&gt; 随机数引擎</b>　<em><code class="inl">std::mt19937 engine(种子);</code> 和 <code class="inl">std::normal_distribution&lt;double&gt; dist(0.0, 0.8);</code></em>
+      别再使用 <code class="inl">rand()</code> 了，它质量差且分布不均。以及一个关键技巧：<b>给定固定种子，随机数序列就是可复现的</b>——
+      这是所有实验科学的底线。</li>
+      <li><b>「模型即参数」的世界观</b>　这个感知机类的全部内容就是三个 <code class="inl">double</code>：
+      <code class="inl">w1_</code>、<code class="inl">w2_</code>、<code class="inl">b_</code>。<b>所谓「训练」，就是不断调整这三个数字；
+      所谓「模型文件」，就是把这三个数字存下来。</b>复杂的深度学习，本质结构也是这样，只是数字从三个变成了几十亿个。</li>
+      <li><b>训练循环</b>　<em>「预测 → 和正确答案比较 → 错了就朝正确方向挪一小步」</em>
+      重复很多很多次。这一页纸就能写完的循环，是整个人工智能的地基。</li>
+      <li><b>参数持久化</b>　把训练好的参数写进文件、下次读回来。
+      <b>程序第一次拥有了「记忆」</b>，也第一次体现出了「训练一次、使用很多次」这个真实的工程流程。</li>
+      <li><b>std::setprecision 与有效数字</b>　<em>需要 <code class="inl">#include &lt;iomanip&gt;</code></em>
+      存文件时用 <code class="inl">setprecision(17)</code> 保证 double 不丢精度，屏幕上显示时用 3 位就够。
+      <b>同一个数字，写给机器看和写给人看，要求完全不同。</b></li>
+    </ul>
+  </div>
+
+  <h3 class="h3">一、这件事在真实世界里长什么样</h3>
+  <p>一九五七年，弗兰克·罗森布拉特造出了感知机。它要做的事情朴素得可爱：
+  <b>在平面上画一条直线，把两类点分开。</b></p>
+  <p>它学习的方式更可爱：随便画一条线，然后一个点一个点地看过去——分对了就不动，分错了就把线朝那个点的方向掰一点。
+  重复几轮之后，线就自己找到了位置。</p>
+  <p>《纽约时报》当年报道说，这台机器将来能走路、能说话、能自我复制。
+  这个预言夸张了，但它指的方向是对的——<b>七十年后，你所在专业的一切，都还在这条「错一点、改一点」的路上。</b></p>
+  <p>所以这个项目不是为了让你掌握感知机（它太简单了，实际没什么用），
+  而是让你<b>亲手走完一次「造数据 → 训练 → 评估 → 保存 → 再加载使用」的完整闭环</b>。
+  这个流程的形状，和你将来用 PyTorch 训练一个大模型的流程，是一模一样的。</p>
+
+  <h3 class="h3">二、任务拆解：三关</h3>
+  <ol class="levels">
+    <li>
+      <b>先让一条线会做判断</b>
+      <p>定义 <code class="inl">struct Sample { double x1, x2; int label; };</code>，
+      写一个函数 <code class="inl">predict(x1, x2)</code>：算 <code class="inl">w1*x1 + w2*x2 + b</code>，
+      大于等于 0 就返回 <code class="inl">+1</code>，否则 <code class="inl">-1</code>。
+      <b>先随便给 w1、w2、b 一些值，看看这条线把空间分成了什么样。</b></p>
+    </li>
+    <li>
+      <b>让它自己学</b>
+      <p>造两组数据（一组在右上、一组在左下），然后写训练循环：
+      对每个样本预测一次，<b>如果错了，就按 <code class="inl">w += 学习率 × 正确答案 × 输入</code> 更新</b>。
+      跑完一轮，统计错了几次，再跑下一轮。<b>看着 mistakes 从几十降到 0，是这个项目最爽的一刻。</b></p>
+    </li>
+    <li>
+      <b>让它成为一个「能交付的东西」</b>
+      <p>用 <code class="inl">mt19937</code> 生成 80 个带噪声的点（固定种子）；
+      训练完之后算出准确率；把参数存进 <code class="inl">perceptron.txt</code>；
+      再新建一个对象、把参数读回来、验证它的预测和原来完全一致。
+      <b>这一步做完，你的程序就不再是一个练习，而是一个可以反复使用的工具。</b></p>
+    </li>
+  </ol>
+
+  <h3 class="h3">三、参考实现</h3>
+  <div class="code-block">
+    <div class="code-title">ways-to-cpp-code / p08_perceptron.cpp</div>
+<pre class="code"><span class="tok-c">// ============================================================</span>
+<span class="tok-c">//  Ways to cpp · 项目 08  训练你的第一个模型：感知机</span>
+<span class="tok-c">//  编译： g++ -std=c++14 -Wall p08_perceptron.cpp -o p08</span>
+<span class="tok-c">//  运行： ./p08</span>
+<span class="tok-c">//  说明： 训练完会把参数存进 perceptron.txt，再读回来验证一次。</span>
+<span class="tok-c">// ============================================================</span>
+
+<span class="tok-p">#include &lt;cmath&gt;</span>
+<span class="tok-p">#include &lt;fstream&gt;</span>
+<span class="tok-p">#include &lt;iomanip&gt;</span>
+<span class="tok-p">#include &lt;iostream&gt;</span>
+<span class="tok-p">#include &lt;random&gt;</span>
+<span class="tok-p">#include &lt;string&gt;</span>
+<span class="tok-p">#include &lt;vector&gt;</span>
+
+<span class="tok-k">struct</span> <span class="tok-t">Sample</span> {
+    <span class="tok-k">double</span> x1;
+    <span class="tok-k">double</span> x2;
+    <span class="tok-k">int</span>    label;      <span class="tok-c">// +1 或 -1</span>
+};
+
+<span class="tok-c">// ---------- 模型本身：三个数字就是它的全部 ----------</span>
+<span class="tok-k">class</span> <span class="tok-t">Perceptron</span> {
+<span class="tok-k">public</span>:
+    <span class="tok-t">Perceptron</span>(<span class="tok-k">int</span> epochs, <span class="tok-k">double</span> learningRate)
+        : w1_(<span class="tok-n">0.0</span>), w2_(<span class="tok-n">0.0</span>), b_(<span class="tok-n">0.0</span>),
+          epochs_(epochs), learningRate_(learningRate) {}
+
+    <span class="tok-c">// 一次前向计算：把点投影到一个方向上，看它落在哪一边</span>
+    <span class="tok-k">int</span> predict(<span class="tok-k">double</span> x1, <span class="tok-k">double</span> x2) <span class="tok-k">const</span> {
+        <span class="tok-k">return</span> (w1_ * x1 + w2_ * x2 + b_ &gt;= <span class="tok-n">0.0</span>) ? <span class="tok-n">1</span> : -<span class="tok-n">1</span>;
+    }
+
+    <span class="tok-c">// 训练：错一次，就朝着"少错一点"的方向挪一小步</span>
+    <span class="tok-k">void</span> train(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-t">Sample</span>&gt;&amp; data) {
+        <span class="tok-k">for</span> (<span class="tok-k">int</span> epoch = <span class="tok-n">1</span>; epoch &lt;= epochs_; ++epoch) {
+            <span class="tok-k">int</span> mistakes = <span class="tok-n">0</span>;
+            <span class="tok-k">for</span> (<span class="tok-k">const</span> <span class="tok-t">Sample</span>&amp; s : data) {
+                <span class="tok-k">const</span> <span class="tok-k">int</span> guess = predict(s.x1, s.x2);
+                <span class="tok-k">if</span> (guess == s.label) <span class="tok-k">continue</span>;
+
+                ++mistakes;
+                w1_ += learningRate_ * s.label * s.x1;
+                w2_ += learningRate_ * s.label * s.x2;
+                b_  += learningRate_ * s.label;
+            }
+            <span class="tok-k">if</span> (epoch &lt;= <span class="tok-n">5</span> || mistakes == <span class="tok-n">0</span>) {
+                <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"  epoch "</span> &lt;&lt; <span class="tok-t">std</span>::setw(<span class="tok-n">3</span>) &lt;&lt; epoch
+                          &lt;&lt; <span class="tok-s">"   mistakes = "</span> &lt;&lt; mistakes &lt;&lt; <span class="tok-s">"\n"</span>;
+            }
+            <span class="tok-k">if</span> (mistakes == <span class="tok-n">0</span>) <span class="tok-k">break</span>;      <span class="tok-c">// 全对了，提前收工</span>
+        }
+    }
+
+    <span class="tok-k">double</span> accuracy(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-t">Sample</span>&gt;&amp; data) <span class="tok-k">const</span> {
+        <span class="tok-k">if</span> (data.empty()) <span class="tok-k">return</span> <span class="tok-n">0.0</span>;
+        <span class="tok-k">int</span> correct = <span class="tok-n">0</span>;
+        <span class="tok-k">for</span> (<span class="tok-k">const</span> <span class="tok-t">Sample</span>&amp; s : data) {
+            <span class="tok-k">if</span> (predict(s.x1, s.x2) == s.label) ++correct;
+        }
+        <span class="tok-k">return</span> <span class="tok-n">100.0</span> * correct / static_cast&lt;<span class="tok-k">double</span>&gt;(data.size());
+    }
+
+    <span class="tok-k">void</span> print() <span class="tok-k">const</span> {
+        <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-t">std</span>::fixed &lt;&lt; <span class="tok-t">std</span>::setprecision(<span class="tok-n">3</span>);
+        <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"  w1 = "</span> &lt;&lt; w1_ &lt;&lt; <span class="tok-s">"   w2 = "</span> &lt;&lt; w2_ &lt;&lt; <span class="tok-s">"   b = "</span> &lt;&lt; b_ &lt;&lt; <span class="tok-s">"\n"</span>;
+        <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-t">std</span>::setprecision(<span class="tok-n">4</span>)
+                  &lt;&lt; <span class="tok-s">"  boundary: "</span> &lt;&lt; w1_ &lt;&lt; <span class="tok-s">"*x1 "</span>
+                  &lt;&lt; (w2_ &gt;= <span class="tok-n">0.0</span> ? <span class="tok-s">"+ "</span> : <span class="tok-s">"- "</span>) &lt;&lt; <span class="tok-t">std</span>::fabs(w2_) &lt;&lt; <span class="tok-s">"*x2 "</span>
+                  &lt;&lt; (b_  &gt;= <span class="tok-n">0.0</span> ? <span class="tok-s">"+ "</span> : <span class="tok-s">"- "</span>) &lt;&lt; <span class="tok-t">std</span>::fabs(b_)  &lt;&lt; <span class="tok-s">" = 0\n"</span>
+                  &lt;&lt; <span class="tok-t">std</span>::setprecision(<span class="tok-n">3</span>);
+    }
+
+    <span class="tok-k">void</span> save(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; path) <span class="tok-k">const</span> {
+        <span class="tok-t">std</span>::<span class="tok-t">ofstream</span> fout(path);
+        fout &lt;&lt; <span class="tok-t">std</span>::setprecision(<span class="tok-n">17</span>) &lt;&lt; w1_ &lt;&lt; <span class="tok-s">" "</span> &lt;&lt; w2_ &lt;&lt; <span class="tok-s">" "</span> &lt;&lt; b_ &lt;&lt; <span class="tok-s">"\n"</span>;
+    }
+
+    <span class="tok-k">bool</span> load(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; path) {
+        <span class="tok-t">std</span>::<span class="tok-t">ifstream</span> fin(path);
+        <span class="tok-k">if</span> (!fin) <span class="tok-k">return</span> <span class="tok-k">false</span>;
+        fin &gt;&gt; w1_ &gt;&gt; w2_ &gt;&gt; b_;
+        <span class="tok-k">return</span> <span class="tok-k">true</span>;
+    }
+
+<span class="tok-k">private</span>:
+    <span class="tok-k">double</span> w1_, w2_, b_;
+    <span class="tok-k">int</span>    epochs_;
+    <span class="tok-k">double</span> learningRate_;
+};
+
+<span class="tok-k">int</span> main() {
+    <span class="tok-c">// ---------- 1. 造一批线性可分的数据：两团点 ----------</span>
+    <span class="tok-t">std</span>::<span class="tok-t">mt19937</span> engine(<span class="tok-n">20180101</span>);                      <span class="tok-c">// 固定种子 -&gt; 每次运行结果一致</span>
+    <span class="tok-t">std</span>::<span class="tok-t">normal_distribution</span>&lt;<span class="tok-k">double</span>&gt; spread(<span class="tok-n">0.0</span>, <span class="tok-n">0.8</span>);
+
+    <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-t">Sample</span>&gt; trainSet;
+    <span class="tok-k">for</span> (<span class="tok-k">int</span> i = <span class="tok-n">0</span>; i &lt; <span class="tok-n">40</span>; ++i) {
+        <span class="tok-t">Sample</span> s;
+        s.x1 = <span class="tok-n">2.0</span> + spread(engine);
+        s.x2 = <span class="tok-n">2.0</span> + spread(engine);
+        s.label = <span class="tok-n">1</span>;
+        trainSet.push_back(s);
+    }
+    <span class="tok-k">for</span> (<span class="tok-k">int</span> i = <span class="tok-n">0</span>; i &lt; <span class="tok-n">40</span>; ++i) {
+        <span class="tok-t">Sample</span> s;
+        s.x1 = -<span class="tok-n">2.0</span> + spread(engine);
+        s.x2 = -<span class="tok-n">2.0</span> + spread(engine);
+        s.label = -<span class="tok-n">1</span>;
+        trainSet.push_back(s);
+    }
+
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"----- Training -----\n"</span>;
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"  samples = "</span> &lt;&lt; trainSet.size() &lt;&lt; <span class="tok-s">"\n"</span>;
+
+    <span class="tok-t">Perceptron</span> model(<span class="tok-n">200</span>, <span class="tok-n">0.01</span>);
+    model.train(trainSet);
+
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"\n----- Learned parameters -----\n"</span>;
+    model.print();
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"  Training accuracy = "</span> &lt;&lt; model.accuracy(trainSet) &lt;&lt; <span class="tok-s">"%\n"</span>;
+
+    <span class="tok-c">// ---------- 2. 存盘，再读回来，确认模型能"隔天继续用" ----------</span>
+    <span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span> path = <span class="tok-s">"perceptron.txt"</span>;
+    model.save(path);
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"\n----- Persistence -----\n"</span>;
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"  saved to "</span> &lt;&lt; path &lt;&lt; <span class="tok-s">"\n"</span>;
+
+    <span class="tok-t">Perceptron</span> reloaded(<span class="tok-n">200</span>, <span class="tok-n">0.01</span>);
+    <span class="tok-k">if</span> (reloaded.load(path)) {
+        <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"  reloaded accuracy = "</span> &lt;&lt; reloaded.accuracy(trainSet) &lt;&lt; <span class="tok-s">"%\n"</span>;
+    }
+
+    <span class="tok-c">// ---------- 3. 拿几个新点试试 ----------</span>
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"\n----- Predictions -----\n"</span>;
+    <span class="tok-k">const</span> <span class="tok-k">double</span> probes[][<span class="tok-n">2</span>] = {{<span class="tok-n">3.0</span>, <span class="tok-n">3.0</span>}, {-<span class="tok-n">3.0</span>, -<span class="tok-n">3.0</span>}, {<span class="tok-n">3.0</span>, -<span class="tok-n">0.5</span>}, {-<span class="tok-n">0.5</span>, -<span class="tok-n">3.0</span>}};
+    <span class="tok-k">for</span> (<span class="tok-k">int</span> i = <span class="tok-n">0</span>; i &lt; <span class="tok-n">4</span>; ++i) {
+        <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"  ("</span> &lt;&lt; <span class="tok-t">std</span>::setw(<span class="tok-n">5</span>) &lt;&lt; probes[i][<span class="tok-n">0</span>] &lt;&lt; <span class="tok-s">","</span>
+                  &lt;&lt; <span class="tok-t">std</span>::setw(<span class="tok-n">5</span>) &lt;&lt; probes[i][<span class="tok-n">1</span>] &lt;&lt; <span class="tok-s">")"</span>
+                  &lt;&lt; <span class="tok-s">"  -&gt;  label "</span> &lt;&lt; reloaded.predict(probes[i][<span class="tok-n">0</span>], probes[i][<span class="tok-n">1</span>]) &lt;&lt; <span class="tok-s">"\n"</span>;
+    }
+    <span class="tok-k">return</span> <span class="tok-n">0</span>;
+}</pre>
+  </div>
+
+  <div class="code-block dark">
+    <div class="code-title">实际运行结果（真实输出，未经修饰）</div>
+<pre class="term">----- Training -----
+  samples = 80
+  epoch   1   mistakes = 1
+  epoch   2   mistakes = 0
+
+----- Learned parameters -----
+  w1 = 0.021   w2 = 0.014   b = -0.010
+  boundary: 0.0215*x1 + 0.0135*x2 - 0.0100 = 0
+  Training accuracy = 100.000%
+
+----- Persistence -----
+  saved to perceptron.txt
+  reloaded accuracy = 100.000%
+
+----- Predictions -----
+  (3.000,3.000)  -&gt;  label 1
+  (-3.000,-3.000)  -&gt;  label -1
+  (3.000,-0.500)  -&gt;  label 1
+  (-0.500,-3.000)  -&gt;  label -1</pre>
+  </div>
+
+  <p><b>怎么读这份输出：</b>第一轮错了 1 个点，第二轮就一个都不错了。
+  最后得到的分界线是 <code class="inl">0.0215*x1 + 0.0135*x2 - 0.0100 = 0</code>，
+  也就是说这条线大致是 <code class="inl">x1 + 0.63*x2 ≈ 0.47</code>——
+  <b>它不是你想当然的 <code class="inl">x1 + x2 = 0</code>，而是数据自己选出来的一个倾斜角度。</b>
+  最后四个测试点里，<code class="inl">(3.0, -0.5)</code> 落在右下角却仍被判为 <code class="inl">+1</code>，
+  正好说明这条边界是被数据「掰」过的，而不是凭直觉划的。</p>
+
+  <div class="beauty">
+    <h5>这段代码美在哪里</h5>
+    <ol>
+      <li><b>整个模型的全部内容，就是三个 double。</b> 没有复杂的结构，没有玄妙的技巧。
+      <b>越是强大的想法，它的核心往往越是简单</b>——感知机的核心就是「错了就往正确方向挪一点」。
+      理解这一点，你对「机器学习」就不会再有神秘感。</li>
+      <li><b>三行更新规则长得一模一样。</b>
+      <code class="inl">w1_ += learningRate_ * s.label * s.x1;</code>、
+      <code class="inl">w2_ += ... * s.x2;</code>、
+      <code class="inl">b_ += ... * 1;</code>。
+      最后那个 <code class="inl">× 1</code> 是暗含的。这种规律性不是巧合，它暗示着「如果有 1000 个特征，
+      你就需要一个循环」——<b>而那正是从感知机走向真正神经网络的那一步。</b></li>
+      <li><b>predict() 是 const 成员函数，train() 不是。</b>
+      一个只读、一个会改，签名上分得清清楚楚。<b>光看函数名和 const，你就能知道哪个函数会改变世界。</b></li>
+      <li><b>固定随机种子是一种科学态度。</b> <code class="inl">std::mt19937 engine(20180101);</code>——
+      有了它，你今天的实验结果和明天的完全一致。做研究的人都知道，
+      <b>不能复现的实验等于没做</b>。</li>
+      <li><b>save / load 成对出现，而且 load 会告诉你成功还是失败。</b>
+      <code class="inl">bool load(...)</code> 返回布尔值，调用方可以据此决定是继续还是报错。
+      <b>「错误是返回值，不是沉默」——这是工程代码的分水岭。</b></li>
+      <li><b>输出精度分了两档。</b> 存文件用 <code class="inl">setprecision(17)</code>，
+      屏幕显示用 3 位小数。<b>同一个数据，面对机器和面对人，应该有不同的呈现方式。</b></li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <div class="bt">常见陷阱</div>
+    <ul>
+      <li><b>学习率是个需要手感的东西。</b> 太大（比如 10）会让参数来回震荡、永远不收敛；
+      太小（比如 0.000001）则跑到天荒地老。0.01 到 0.1 之间通常是个好起点。
+      <b>「调参」这个词，你在这里第一次体会到它的真实含义。</b></li>
+      <li>一定要给训练轮数设上限。如果数据本身不可分（两团点混在一起），感知机永远不会停下——
+      这是感知机算法本身的局限，不是 bug。</li>
+      <li><code class="inl">rand()</code> 生成的整数虽然方便，但周期短、低位随机性差。
+      既然标准库已经给了 <code class="inl">mt19937</code>，就没有理由再将就。</li>
+      <li>存文件时如果只写 <code class="inl">setprecision(6)</code>，读回来的参数会有微小误差，
+      导致重新加载后准确率变化。<b>浮点数写进文本文件时，默认精度是不够的。</b></li>
+    </ul>
+  </div>
+
+  <div class="challenge">
+    <div class="bt">进阶挑战</div>
+    <ul style="margin:0;padding-left:1.3em">
+      <li><b>把「错了才改」改成「每次都按误差大小改」</b>：<code class="inl">w += lr * (label - prediction) * x</code>，
+      注意此时 prediction 要用输出值而不是符号。这就是<b>梯度下降</b>，比感知机更通用的那一套。</li>
+      <li>把二维扩展到三维、十维。你会发现代码几乎不用改，只需要把 <code class="inl">w1_, w2_</code>
+      换成 <code class="inl">std::vector&lt;double&gt; weights_</code>，并把点积写成一个循环。
+      <b>恭喜，你刚刚完成了从「感知机」到「线性分类器」的抽象。</b></li>
+      <li>把数据换成真实数据：用项目 02 的文件读取方法，从 <code class="inl">data.txt</code> 读入点的坐标和标签。</li>
+      <li>每轮训练后把分界线画在网格上（用项目 03 的二维网格），<b>你会亲眼看到那条线是怎么一步步转过去的。</b></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= 项目 09 ======================= -->
+<section class="project" id="p09">
+  <header class="p-header">
+    <div class="p-index">09</div>
+    <div class="p-titles">
+      <h2>朴素贝叶斯垃圾信息分类器</h2>
+      <p class="p-sub">用你亲手写的代码，读一封邮件是不是垃圾</p>
+    </div>
+  </header>
+  <div class="p-meta">
+    <span class="chip">难度 ★★★★☆</span>
+    <span class="chip">建议 6–9 小时</span>
+    <span class="chip">主线：从数据里学概率</span>
+    <span class="chip">阶段三</span>
+  </div>
+  <label class="done-toggle no-print"><input type="checkbox" data-done="p09">标记为已完成</label>
+
+  <div class="newknow">
+    <h4>本板块会用到的新知识点</h4>
+    <p class="nk-note">这个项目的代码不长，但有两处「第一次遇到一定会踩」的数值陷阱。它们也是本手册最重要的新知识。</p>
+    <ul>
+      <li><b>把概率取对数</b>　一句话概率是若干个小概率相乘，几十个词乘下来，结果小到 <code class="inl">double</code> 都表示不了，
+      直接变成 0（这叫下溢）。<b>解法：取对数，乘法变加法。</b>因为对数函数是单调递增的，比大小不受影响，
+      而加法永远不会下溢。<b>这是数值计算里的必修课。</b></li>
+      <li><b>拉普拉斯平滑</b>　如果一个从没见过的词出现，它的概率算出来是 0，那么整个连乘结果立刻变成 0，
+      整条判断就此作废。<b>解法：分子加 1、分母加上词表大小</b>，给每个词留一条活路。
+      这一行小小的修正，是朴素贝叶斯能真正工作的前提。</li>
+      <li><b>std::log</b>　<em>需要 <code class="inl">#include &lt;cmath&gt;</code></em>
+      自然对数。本项目中它的唯一用途就是「把乘法变加法」。</li>
+      <li><b>map 的 find 与 const 查询</b>　<em><code class="inl">table_.find(w)</code> 返回一个迭代器，找不到就是 <code class="inl">end()</code></em>
+      项目 02 里我们用了 <code class="inl">counter[w]</code>，但那会在表里插一个新条目。
+      在<b>只读的预测函数里</b>，我们不能再改表，所以必须用 <code class="inl">find</code>。</li>
+      <li><b>map 套结构体</b>　<code class="inl">std::map&lt;std::string, WordStats&gt;</code>。
+      把「这个词在垃圾里出现几次、在正常里出现几次」打包成一个结构体，
+      于是<b>两张表合并成了一句话可以说清的一张表</b>。</li>
+      <li><b>训练与预测的彻底分离</b>　训练时更新统计量，预测时<b>只读</b>。
+      这意味着训练完的程序可以只保存那张统计表，运行时根本不需要原始语料。<b>这就是「模型」与「数据」的分家。</b></li>
+    </ul>
+  </div>
+
+  <h3 class="h3">一、这件事在真实世界里长什么样</h3>
+  <p>你每天收到的垃圾邮件，绝大多数是被这类程序拦下来的。它们的思路非常人类：</p>
+  <p><b>「这封邮件里有『免费』『中奖』『点击』这些词。我在以前看过的垃圾邮件里，这些词出现得特别多；
+  在正常邮件里几乎不出现。所以这封大概也是垃圾。」</b></p>
+  <p>把这句直觉翻译成数学，就是贝叶斯定理。而之所以叫「朴素」，是因为它做了一个明显不成立的假设：
+  <b>假设所有词之间互相独立</b>——「免」和「费」显然不是独立的。</p>
+  <p>但神奇的是，这个「错」的假设，在实际任务里效果出奇地好，而且快得不可思议。
+  <b>「理论上有瑕疵，工程上却好用」，这种取舍在人工智能里随处可见，你要早点习惯它。</b></p>
+
+  <h3 class="h3">二、任务拆解：三关</h3>
+  <ol class="levels">
+    <li>
+      <b>先学会「数案底」</b>
+      <p>用项目 02 的切词函数，统计语料里每个词在垃圾消息和正常消息里各出现了几次，
+      顺便记下两边各有多少个词、各有多少条消息。
+      <b>这一关只做统计，不做任何判断。</b></p>
+    </li>
+    <li>
+      <b>从次数算出概率</b>
+      <p>算 <code class="inl">P(这个词 | 这是垃圾)</code>：<b>分子是它出现过的次数加一，分母是垃圾消息的总词数加词表大小</b>。
+      那个「加一」和「加词表大小」就是拉普拉斯平滑。
+      <b>亲手去掉平滑那一项，看看程序会怎样崩掉——这个实验比记住规则有用得多。</b></p>
+    </li>
+    <li>
+      <b>取对数再比大小</b>
+      <p>对一条新消息：把所有词的 <code class="inl">log P(词|垃圾)</code> 加起来，再加上 <code class="inl">log P(垃圾)</code>；
+      对正常消息做同样的计算。哪个大就算哪一类。
+      <b>注意分数都是负数，比的是「谁更接近 0」。</b></p>
+    </li>
+  </ol>
+
+  <h3 class="h3">三、参考实现</h3>
+  <div class="code-block">
+    <div class="code-title">ways-to-cpp-code / p09_naive_bayes.cpp</div>
+<pre class="code"><span class="tok-c">// ============================================================</span>
+<span class="tok-c">//  Ways to cpp · 项目 09  朴素贝叶斯垃圾信息分类器</span>
+<span class="tok-c">//  编译： g++ -std=c++14 -Wall p09_naive_bayes.cpp -o p09</span>
+<span class="tok-c">//  运行： ./p09</span>
+<span class="tok-c">// ============================================================</span>
+
+<span class="tok-p">#include &lt;cctype&gt;</span>
+<span class="tok-p">#include &lt;cmath&gt;</span>
+<span class="tok-p">#include &lt;iomanip&gt;</span>
+<span class="tok-p">#include &lt;iostream&gt;</span>
+<span class="tok-p">#include &lt;map&gt;</span>
+<span class="tok-p">#include &lt;string&gt;</span>
+<span class="tok-p">#include &lt;vector&gt;</span>
+
+<span class="tok-c">// 一个词在两边的"案底"</span>
+<span class="tok-k">struct</span> <span class="tok-t">WordStats</span> {
+    <span class="tok-k">int</span> spam;
+    <span class="tok-k">int</span> ham;
+    <span class="tok-t">WordStats</span>() : spam(<span class="tok-n">0</span>), ham(<span class="tok-n">0</span>) {}
+    <span class="tok-k">int</span> total() <span class="tok-k">const</span> { <span class="tok-k">return</span> spam + ham; }
+};
+
+<span class="tok-k">typedef</span> <span class="tok-t">std</span>::<span class="tok-t">map</span>&lt;<span class="tok-t">std</span>::<span class="tok-t">string</span>, <span class="tok-t">WordStats</span>&gt; <span class="tok-t">Table</span>;
+
+<span class="tok-c">// 把一句话切成小写单词（和项目 02 是同一件事，直接拿来用）</span>
+<span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-t">std</span>::<span class="tok-t">string</span>&gt; splitWords(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; text) {
+    <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-t">std</span>::<span class="tok-t">string</span>&gt; words;
+    <span class="tok-t">std</span>::<span class="tok-t">string</span> current;
+    <span class="tok-k">for</span> (<span class="tok-k">char</span> raw : text) {
+        <span class="tok-k">const</span> <span class="tok-k">unsigned</span> <span class="tok-k">char</span> ch = static_cast&lt;<span class="tok-k">unsigned</span> <span class="tok-k">char</span>&gt;(raw);
+        <span class="tok-k">if</span> (<span class="tok-t">std</span>::isalpha(ch)) {
+            current += static_cast&lt;<span class="tok-k">char</span>&gt;(<span class="tok-t">std</span>::tolower(ch));
+        } <span class="tok-k">else</span> <span class="tok-k">if</span> (!current.empty()) {
+            words.push_back(current);
+            current.clear();
+        }
+    }
+    <span class="tok-k">if</span> (!current.empty()) words.push_back(current);
+    <span class="tok-k">return</span> words;
+}
+
+<span class="tok-c">// ---------- 分类器 ----------</span>
+<span class="tok-k">class</span> <span class="tok-t">NaiveBayes</span> {
+<span class="tok-k">public</span>:
+    <span class="tok-t">NaiveBayes</span>() : spamDocs_(<span class="tok-n">0</span>), hamDocs_(<span class="tok-n">0</span>), spamWords_(<span class="tok-n">0</span>), hamWords_(<span class="tok-n">0</span>) {}
+
+    <span class="tok-k">void</span> train(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; text, <span class="tok-k">bool</span> isSpam) {
+        <span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-t">std</span>::<span class="tok-t">string</span>&gt; words = splitWords(text);
+        <span class="tok-k">if</span> (isSpam) ++spamDocs_; <span class="tok-k">else</span> ++hamDocs_;
+
+        <span class="tok-k">for</span> (<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; w : words) {
+            <span class="tok-t">WordStats</span>&amp; s = table_[w];          <span class="tok-c">// 没见过的词会自动建一条空记录</span>
+            <span class="tok-k">if</span> (isSpam) { ++s.spam; ++spamWords_; }
+            <span class="tok-k">else</span>        { ++s.ham;  ++hamWords_;  }
+        }
+    }
+
+    <span class="tok-c">// 返回对数概率：log P(垃圾) + Σ log P(词 | 垃圾)</span>
+    <span class="tok-k">double</span> spamScore(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; text) <span class="tok-k">const</span> {
+        <span class="tok-k">const</span> <span class="tok-k">double</span> prior = <span class="tok-t">std</span>::log(static_cast&lt;<span class="tok-k">double</span>&gt;(spamDocs_) /
+                                      (spamDocs_ + hamDocs_));
+        <span class="tok-k">return</span> prior + logLikelihood(text, <span class="tok-k">true</span>);
+    }
+
+    <span class="tok-k">double</span> hamScore(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; text) <span class="tok-k">const</span> {
+        <span class="tok-k">const</span> <span class="tok-k">double</span> prior = <span class="tok-t">std</span>::log(static_cast&lt;<span class="tok-k">double</span>&gt;(hamDocs_) /
+                                      (spamDocs_ + hamDocs_));
+        <span class="tok-k">return</span> prior + logLikelihood(text, <span class="tok-k">false</span>);
+    }
+
+    <span class="tok-c">// 预测：哪边的分数大就归哪边</span>
+    <span class="tok-k">bool</span> isSpam(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; text) <span class="tok-k">const</span> {
+        <span class="tok-k">return</span> spamScore(text) &gt; hamScore(text);
+    }
+
+    <span class="tok-t">size_t</span> vocabularySize() <span class="tok-k">const</span> { <span class="tok-k">return</span> table_.size(); }
+
+<span class="tok-k">private</span>:
+    <span class="tok-c">// 拉普拉斯平滑：分子 +1，分母 + 词表大小，</span>
+    <span class="tok-c">// 这样"从没见过的词"也不会把概率算成 0（一旦是 0，取对数就炸了）</span>
+    <span class="tok-k">double</span> logLikelihood(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; text, <span class="tok-k">bool</span> spam) <span class="tok-k">const</span> {
+        <span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-t">std</span>::<span class="tok-t">string</span>&gt; words = splitWords(text);
+        <span class="tok-k">const</span> <span class="tok-k">double</span> vocab = static_cast&lt;<span class="tok-k">double</span>&gt;(table_.size());
+        <span class="tok-k">const</span> <span class="tok-k">double</span> denom = (spam ? spamWords_ : hamWords_) + vocab;
+        <span class="tok-k">double</span> sum = <span class="tok-n">0.0</span>;
+
+        <span class="tok-k">for</span> (<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; w : words) {
+            <span class="tok-k">const</span> <span class="tok-t">Table</span>::const_iterator it = table_.find(w);
+            <span class="tok-k">const</span> <span class="tok-k">int</span> count = (it == table_.end()) ? <span class="tok-n">0</span> : (spam ? it-&gt;second.spam
+                                                               : it-&gt;second.ham);
+            sum += <span class="tok-t">std</span>::log((count + <span class="tok-n">1.0</span>) / denom);
+        }
+        <span class="tok-k">return</span> sum;
+    }
+
+    <span class="tok-t">Table</span> table_;
+    <span class="tok-k">int</span> spamDocs_;
+    <span class="tok-k">int</span> hamDocs_;
+    <span class="tok-k">int</span> spamWords_;
+    <span class="tok-k">int</span> hamWords_;
+};
+
+<span class="tok-k">int</span> main() {
+    <span class="tok-c">// ---------- 训练集：12 条短消息 ----------</span>
+    <span class="tok-k">struct</span> Row { <span class="tok-k">const</span> <span class="tok-k">char</span>* text; <span class="tok-k">bool</span> spam; };
+    <span class="tok-k">const</span> Row rows[] = {
+        {<span class="tok-s">"win a free iphone now click the link"</span>,              <span class="tok-k">true</span>},
+        {<span class="tok-s">"cheap loan approved instantly no credit check"</span>,     <span class="tok-k">true</span>},
+        {<span class="tok-s">"congratulations you won a lottery prize claim"</span>,     <span class="tok-k">true</span>},
+        {<span class="tok-s">"buy discount pills online free shipping now"</span>,       <span class="tok-k">true</span>},
+        {<span class="tok-s">"urgent your account will be closed click here"</span>,     <span class="tok-k">true</span>},
+        {<span class="tok-s">"free entry to win cash prize limited offer"</span>,        <span class="tok-k">true</span>},
+        {<span class="tok-s">"meeting moved to three pm in room b"</span>,               <span class="tok-k">false</span>},
+        {<span class="tok-s">"please review the attached report before friday"</span>,   <span class="tok-k">false</span>},
+        {<span class="tok-s">"lunch today at the campus canteen"</span>,                 <span class="tok-k">false</span>},
+        {<span class="tok-s">"the library book is due next week"</span>,                 <span class="tok-k">false</span>},
+        {<span class="tok-s">"can you send me the notes from lecture"</span>,            <span class="tok-k">false</span>},
+        {<span class="tok-s">"the exam schedule is posted on the website"</span>,        <span class="tok-k">false</span>}
+    };
+
+    <span class="tok-t">NaiveBayes</span> model;
+    <span class="tok-k">for</span> (<span class="tok-k">int</span> i = <span class="tok-n">0</span>; i &lt; <span class="tok-n">12</span>; ++i) {
+        model.train(rows[i].text, rows[i].spam);
+    }
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"Trained on 12 messages, vocabulary = "</span>
+              &lt;&lt; model.vocabularySize() &lt;&lt; <span class="tok-s">" words\n\n"</span>;
+
+    <span class="tok-c">// ---------- 测试 ----------</span>
+    <span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span> tests[] = {
+        <span class="tok-s">"free cash prize click now"</span>,
+        <span class="tok-s">"can we meet after the lecture"</span>,
+        <span class="tok-s">"your loan is approved with no credit check"</span>,
+        <span class="tok-s">"the report is attached for review"</span>
+    };
+
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-t">std</span>::fixed &lt;&lt; <span class="tok-t">std</span>::setprecision(<span class="tok-n">2</span>);
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"----- Predictions -----\n"</span>;
+    <span class="tok-k">for</span> (<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; t : tests) {
+        <span class="tok-k">const</span> <span class="tok-k">double</span> s = model.spamScore(t);
+        <span class="tok-k">const</span> <span class="tok-k">double</span> h = model.hamScore(t);
+        <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-t">std</span>::left &lt;&lt; <span class="tok-t">std</span>::setw(<span class="tok-n">44</span>) &lt;&lt; t
+                  &lt;&lt; <span class="tok-s">" spam="</span> &lt;&lt; <span class="tok-t">std</span>::setw(<span class="tok-n">8</span>) &lt;&lt; s
+                  &lt;&lt; <span class="tok-s">" ham="</span>  &lt;&lt; <span class="tok-t">std</span>::setw(<span class="tok-n">8</span>) &lt;&lt; h
+                  &lt;&lt; <span class="tok-s">"  -&gt;  "</span> &lt;&lt; (model.isSpam(t) ? <span class="tok-s">"SPAM"</span> : <span class="tok-s">"ham"</span>) &lt;&lt; <span class="tok-s">"\n"</span>;
+    }
+    <span class="tok-k">return</span> <span class="tok-n">0</span>;
+}</pre>
+  </div>
+
+  <div class="code-block dark">
+    <div class="code-title">实际运行结果（真实输出，未经修饰）</div>
+<pre class="term">Trained on 12 messages, vocabulary = 73 words
+
+----- Predictions -----
+free cash prize click now                    spam=-19.17   ham=-24.50    -&gt;  SPAM
+can we meet after the lecture                spam=-28.62   ham=-25.93    -&gt;  ham
+your loan is approved with no credit check   spam=-34.70   ham=-37.69    -&gt;  SPAM
+the report is attached for review            spam=-28.62   ham=-24.14    -&gt;  ham</pre>
+  </div>
+
+  <p><b>怎么读这份输出：</b>训练集只有十二条消息，而四条测试全部判对了——
+  包括 <code class="inl">"your loan is approved with no credit check"</code> 这种在训练集里从未完整出现过的句子。
+  分数都是负数，这是正常的：四五个小概率相乘，取对数之后就是若干个负数的和。
+  <b>比的不是谁大谁小，而是谁更接近 0。</b></p>
+
+  <div class="beauty">
+    <h5>这段代码美在哪里</h5>
+    <ol>
+      <li><b>一个「错」的假设，换来了极致的简单与速度。</b> 朴素贝叶斯假设词与词互不相关，
+      这在语言上显然是错的；但正因为这个假设，概率才能拆成一个个独立的乘积，计算量从「所有词的组合」降到「一次遍历」。
+      <b>教科书告诉你什么是对的，工程告诉你什么是有用的。</b></li>
+      <li><b>取对数这一步，是「换个角度看问题」的典范。</b> 概率连乘和 log 概率连加，
+      在数学上完全等价，在计算机上却是「算不出来」和「轻松算完」的差别。<b>算法工程师的功夫，一半花在这种转换上。</b></li>
+      <li><b>WordStats 结构体把两张表合成了一张。</b> 如果写成两个 <code class="inl">map</code>，
+      每次查询都要写两遍、还要保证两边同步。一个五行的小结构体，让「这个词的两边案底」变成了一个不可分割的整体。
+      <b>数据该怎么分组，本身就是一种设计。</b></li>
+      <li><b>训练改数据，预测只读数据，靠 const 强制分开。</b>
+      <code class="inl">spamScore(...) const</code> 里的 const 不是装饰，
+      它保证了「预测这件事绝对不会污染模型」——<b>而这正是「推理」和「训练」必须分开的原因。</b></li>
+      <li><b>每个数字都可以解释。</b> 随便挑一条预测，你都能手工算出那个 -19.17 是怎么来的。
+      在深度学习时代，这种「可解释性」变得非常稀有——<b>所以趁现在，先体会一次「我知道它为什么这么判断」的踏实感。</b></li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <div class="bt">常见陷阱</div>
+    <ul>
+      <li><b>不取对数一定会在真实数据上崩溃。</b> 用十二条短消息可能侥幸不溢出，
+      但换成一千封真实邮件，几百个小概率相乘会稳稳地变成 0，然后两边都是 0，程序彻底失效。</li>
+      <li><b>不平滑同样会崩溃。</b> 只要测试句子里有一个训练集没见过的词，它的概率就是 0，
+      一乘之下全盘归零。<b>你要能在不看答案的情况下说出：为什么「加一」能解决这个问题。</b></li>
+      <li>别忘记加上先验概率 <code class="inl">log P(垃圾)</code>。如果训练集里正常邮件是垃圾邮件的十倍，
+      那么一条中性消息应该更倾向于被判为正常——这个信息就藏在先验里。</li>
+      <li>这套方法对中文几乎无效，因为它依赖空格切词。
+      <b>中文需要先做分词，而分词本身就是一个不小的课题</b>——这也是你将来在 Python 里会遇到的第一个真实障碍。</li>
+      <li>训练集太小的时候，准确率高不代表模型好。
+      十二条消息上 100% 的准确率，没有任何统计意义。<b>这是你对「过拟合」最早的直觉。</b></li>
+    </ul>
+  </div>
+
+  <div class="challenge">
+    <div class="bt">进阶挑战</div>
+    <ul style="margin:0;padding-left:1.3em">
+      <li>把训练语料换成文件（每行一条，前面用 <code class="inl">spam:</code> 或 <code class="inl">ham:</code> 标注），
+      扩大到一百条以上，观察准确率的变化。</li>
+      <li>加一个「停用词表」，把 <code class="inl">the</code>、<code class="inl">a</code>、<code class="inl">is</code> 这类词排除。
+      <b>你会看到一个反直觉的结果：有些看似无用的词，其实对分类有帮助。</b></li>
+      <li>输出每个词对判断的「贡献值」<code class="inl">log P(w|spam) - log P(w|ham)</code>，按绝对值排序。
+      这份榜单就是这个模型的<b>全部知识</b>——它把自己学到的东西，用人能读懂的方式告诉了你。</li>
+      <li>把「词」升级成「词对」（项目 02 的进阶挑战做过）。准确率会上升，泛化能力会下降，
+      <b>这就是「模型复杂度」的两难，你在这里第一次亲手摸到它。</b></li>
+      <li>加一个混淆矩阵：把测试结果分成「判对/判错 × 垃圾/正常」四类。
+      你会发现「把正常邮件误判为垃圾」的代价，远比反过来高——<b>这就是「损失函数」这个概念的现实来源。</b></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= 项目 10 ======================= -->
+<section class="project" id="p10">
+  <header class="p-header">
+    <div class="p-index">10</div>
+    <div class="p-titles">
+      <h2>曼德博集合与图像</h2>
+      <p class="p-sub">六行数学，一张无限复杂的图</p>
+    </div>
+  </header>
+  <div class="p-meta">
+    <span class="chip">难度 ★★★☆☆</span>
+    <span class="chip">建议 5–8 小时</span>
+    <span class="chip">主线：把程序变成产品</span>
+    <span class="chip">阶段四</span>
+  </div>
+  <label class="done-toggle no-print"><input type="checkbox" data-done="p10">标记为已完成</label>
+
+  <div class="newknow">
+    <h4>本板块会用到的新知识点</h4>
+    <p class="nk-note">最后一个项目。你将第一次写一个「输出不是文字」的程序——而这个差别，比它看起来重要得多。</p>
+    <ul>
+      <li><b>二进制文件输出</b>　<em><code class="inl">std::ofstream out(path, std::ios::binary);</code> 配合 <code class="inl">out.put(字节)</code></em>
+      以前写的是给人看的文本，这次写的是给程序看的字节。<b>一旦掌握了这一招，你的程序就能生成图片、音频、模型文件——
+      它开始产出「作品」而不只是「结果」。</b></li>
+      <li><b>BMP 文件格式</b>　一个非常老、非常直白的图片格式：54 字节文件头 + 调色板 + 像素数据。
+      它是最好的「文件不过是一串字节」的教材。</li>
+      <li><b>小端序与字节拆装</b>　<em>形如 <code class="inl">out.put(value &amp; 0xFF); value &gt;&gt;= 8;</code></em>
+      一个 int 是 4 个字节，写进文件时需要决定谁先谁后。BMP 规定低位字节在前。</li>
+      <li><b>坐标映射</b>　<em><code class="inl">cr = -2.20 + 3.00 * x / WIDTH</code></em>
+      把「第 x 列像素」翻译成「复平面上的某个数」。<b>可视化的第一步永远是这件事：把屏幕坐标翻译成数据坐标。</b>
+      将来你画损失曲线、画决策边界，用的都是同一个映射。</li>
+      <li><b>一维缓冲区当二维用</b>　<em><code class="inl">gray[y * WIDTH + x]</code></em>
+      内存在物理上永远是一条线。项目 07 的矩阵内部也是这么存的，这里你自己动手算一次下标，感受会更实在。</li>
+    </ul>
+  </div>
+
+  <h3 class="h3">一、这件事在真实世界里长什么样</h3>
+  <p>取一个复数 <code class="inl">c</code>，令 <code class="inl">z</code> 从 0 开始，
+  反复做同一件小事：<b><code class="inl">z = z² + c</code></b>。</p>
+  <p>有的 <code class="inl">c</code> 会让 <code class="inl">z</code> 越跑越远，有的会让它老老实实待在一个小圈子里。
+  把「待得住」的那些 <code class="inl">c</code> 涂黑，就得到了曼德博集合。</p>
+  <p>规则就这么一句话。可当你把它画出来——你会看到一个边缘无限复杂的图形：
+  <b>无论放大多少倍，新的细节都会继续冒出来，而且每一处都隐约带着整个图形的影子。</b></p>
+  <p>这个项目想让你体会的是：<b>程序的产出，可以不只是屏幕上的几行数字。</b>
+  你的代码第一次会生成一个文件，这个文件可以被别的软件打开、可以发给别人、可以印在纸上。
+  <b>这就是「产品」和「作业」的区别。</b></p>
+
+  <h3 class="h3">二、任务拆解：三关</h3>
+  <ol class="levels">
+    <li>
+      <b>先算一个点</b>
+      <p>写一个函数：给定 <code class="inl">c</code>，迭代 <code class="inl">z = z² + c</code> 最多 200 次，
+      每次检查 <code class="inl">|z|² &gt; 4</code> 就提前返回「第几次跑掉的」。
+      <b>先在 main 里手工试几个 c，比如 (0,0)、(1,1)、(-1,0)，看它们的逃逸次数差多少。</b></p>
+    </li>
+    <li>
+      <b>把整张画面算出来</b>
+      <p>开一个 480×320 的 <code class="inl">vector&lt;unsigned char&gt;</code>，
+      对每个像素：先把行列号映射成复平面的坐标，算出逃逸时间，再映射成 0–255 的灰度，存进缓冲区。
+      <b>在终端用字符画先看一眼——只要形状对了，后面就都好办。</b></p>
+    </li>
+    <li>
+      <b>写成一张真正的图片</b>
+      <p>按 BMP 的格式写文件：14 字节文件头 + 40 字节信息头 + 256 级灰度调色板 + 像素数据。
+      <b>三个必须记住的细节：每行字节数补齐到 4 的倍数、像素自下而上存储、写完用图片查看器打开它。</b></p>
+    </li>
+  </ol>
+
+  <h3 class="h3">三、参考实现</h3>
+  <div class="code-block">
+    <div class="code-title">ways-to-cpp-code / p10_mandelbrot.cpp</div>
+<pre class="code"><span class="tok-c">// ============================================================</span>
+<span class="tok-c">//  Ways to cpp · 项目 10  曼德博集合：把数学画成一张图</span>
+<span class="tok-c">//  编译： g++ -std=c++14 -Wall p10_mandelbrot.cpp -o p10</span>
+<span class="tok-c">//  运行： ./p10</span>
+<span class="tok-c">//  产物： mandelbrot.bmp（双击就能看）</span>
+<span class="tok-c">// ============================================================</span>
+
+<span class="tok-p">#include &lt;algorithm&gt;</span>
+<span class="tok-p">#include &lt;fstream&gt;</span>
+<span class="tok-p">#include &lt;iostream&gt;</span>
+<span class="tok-p">#include &lt;string&gt;</span>
+<span class="tok-p">#include &lt;vector&gt;</span>
+
+<span class="tok-k">const</span> <span class="tok-k">int</span> WIDTH  = <span class="tok-n">480</span>;
+<span class="tok-k">const</span> <span class="tok-k">int</span> HEIGHT = <span class="tok-n">320</span>;
+<span class="tok-k">const</span> <span class="tok-k">int</span> MAX_ITER = <span class="tok-n">200</span>;
+
+<span class="tok-c">// 复数 z 的平方加 c。C++ 标准库里有 &lt;complex&gt;，</span>
+<span class="tok-c">// 但这里手写四行，反而更清楚每一次乘法去了哪里。</span>
+<span class="tok-k">void</span> squareAndAdd(<span class="tok-k">double</span>&amp; zr, <span class="tok-k">double</span>&amp; zi, <span class="tok-k">double</span> cr, <span class="tok-k">double</span> ci) {
+    <span class="tok-k">const</span> <span class="tok-k">double</span> newR = zr * zr - zi * zi + cr;
+    <span class="tok-k">const</span> <span class="tok-k">double</span> newI = <span class="tok-n">2.0</span> * zr * zi + ci;
+    zr = newR;
+    zi = newI;
+}
+
+<span class="tok-c">// 点 (cr, ci) 逃逸得越慢，说明它越"靠近"集合，颜色越黑。</span>
+<span class="tok-c">// 返回值 0..255，0 表示被判定为在集合内。</span>
+<span class="tok-k">int</span> escapeTime(<span class="tok-k">double</span> cr, <span class="tok-k">double</span> ci) {
+    <span class="tok-k">double</span> zr = <span class="tok-n">0.0</span>, zi = <span class="tok-n">0.0</span>;
+    <span class="tok-k">for</span> (<span class="tok-k">int</span> i = <span class="tok-n">0</span>; i &lt; MAX_ITER; ++i) {
+        squareAndAdd(zr, zi, cr, ci);
+        <span class="tok-k">if</span> (zr * zr + zi * zi &gt; <span class="tok-n">4.0</span>) {          <span class="tok-c">// 跑出半径 2 的圆，就再也回不来了</span>
+            <span class="tok-k">return</span> <span class="tok-n">255</span> - (i * <span class="tok-n">255</span>) / MAX_ITER;  <span class="tok-c">// 跑得越快越白，慢的越黑</span>
+        }
+    }
+    <span class="tok-k">return</span> <span class="tok-n">0</span>;
+}
+
+<span class="tok-c">// ---------- 把灰度缓冲区写成一张 BMP 图片 ----------</span>
+<span class="tok-c">// BMP 头是"老式但极其直白"的二进制格式，正好用来学"文件不过是字节"。</span>
+<span class="tok-k">void</span> writeInt(<span class="tok-t">std</span>::<span class="tok-t">ofstream</span>&amp; out, <span class="tok-k">int</span> value) {
+    <span class="tok-k">for</span> (<span class="tok-k">int</span> i = <span class="tok-n">0</span>; i &lt; <span class="tok-n">4</span>; ++i) {                <span class="tok-c">// 小端序：低位字节在前</span>
+        out.put(static_cast&lt;<span class="tok-k">char</span>&gt;(value &amp; <span class="tok-n">0xFF</span>));
+        value &gt;&gt;= <span class="tok-n">8</span>;
+    }
+}
+
+<span class="tok-k">void</span> writeShort(<span class="tok-t">std</span>::<span class="tok-t">ofstream</span>&amp; out, <span class="tok-k">int</span> value) {
+    out.put(static_cast&lt;<span class="tok-k">char</span>&gt;(value &amp; <span class="tok-n">0xFF</span>));
+    out.put(static_cast&lt;<span class="tok-k">char</span>&gt;((value &gt;&gt; <span class="tok-n">8</span>) &amp; <span class="tok-n">0xFF</span>));
+}
+
+<span class="tok-k">bool</span> saveBmp(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span>&amp; path, <span class="tok-k">int</span> w, <span class="tok-k">int</span> h, <span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-k">unsigned</span> <span class="tok-k">char</span>&gt;&amp; gray) {
+    <span class="tok-k">const</span> <span class="tok-k">int</span> rowBytes = (w + <span class="tok-n">3</span>) / <span class="tok-n">4</span> * <span class="tok-n">4</span>;        <span class="tok-c">// BMP 规定每行字节数必须是 4 的倍数</span>
+    <span class="tok-k">const</span> <span class="tok-k">int</span> dataSize = rowBytes * h;
+    <span class="tok-k">const</span> <span class="tok-k">int</span> fileSize = <span class="tok-n">54</span> + <span class="tok-n">1024</span> + dataSize;   <span class="tok-c">// 头 54 字节 + 256 级灰度调色板</span>
+
+    <span class="tok-t">std</span>::<span class="tok-t">ofstream</span> out(path.c_str(), <span class="tok-t">std</span>::ios::binary);
+    <span class="tok-k">if</span> (!out) <span class="tok-k">return</span> <span class="tok-k">false</span>;
+
+    out.put(<span class="tok-s">'B'</span>); out.put(<span class="tok-s">'M'</span>);                  <span class="tok-c">// 文件头</span>
+    writeInt(out, fileSize);
+    writeInt(out, <span class="tok-n">0</span>);
+    writeInt(out, <span class="tok-n">54</span> + <span class="tok-n">1024</span>);
+
+    writeInt(out, <span class="tok-n">40</span>);                           <span class="tok-c">// 信息头</span>
+    writeInt(out, w);
+    writeInt(out, h);
+    writeShort(out, <span class="tok-n">1</span>);
+    writeShort(out, <span class="tok-n">8</span>);                          <span class="tok-c">// 每像素 8 位 = 灰度图</span>
+    writeInt(out, <span class="tok-n">0</span>);
+    writeInt(out, dataSize);
+    writeInt(out, <span class="tok-n">2835</span>);
+    writeInt(out, <span class="tok-n">2835</span>);
+    writeInt(out, <span class="tok-n">256</span>);
+    writeInt(out, <span class="tok-n">256</span>);
+
+    <span class="tok-k">for</span> (<span class="tok-k">int</span> i = <span class="tok-n">0</span>; i &lt; <span class="tok-n">256</span>; ++i) {              <span class="tok-c">// 调色板：第 i 号颜色就是灰度 i</span>
+        out.put(static_cast&lt;<span class="tok-k">char</span>&gt;(i));
+        out.put(static_cast&lt;<span class="tok-k">char</span>&gt;(i));
+        out.put(static_cast&lt;<span class="tok-k">char</span>&gt;(i));
+        out.put(static_cast&lt;<span class="tok-k">char</span>&gt;(<span class="tok-n">0</span>));
+    }
+
+    <span class="tok-k">for</span> (<span class="tok-k">int</span> y = h - <span class="tok-n">1</span>; y &gt;= <span class="tok-n">0</span>; --y) {           <span class="tok-c">// BMP 的像素是自下而上存的</span>
+        <span class="tok-k">for</span> (<span class="tok-k">int</span> x = <span class="tok-n">0</span>; x &lt; w; ++x) {
+            out.put(static_cast&lt;<span class="tok-k">char</span>&gt;(gray[y * w + x]));
+        }
+        <span class="tok-k">for</span> (<span class="tok-k">int</span> p = w; p &lt; rowBytes; ++p) out.put(static_cast&lt;<span class="tok-k">char</span>&gt;(<span class="tok-n">0</span>));
+    }
+    <span class="tok-k">return</span> <span class="tok-k">true</span>;
+}
+
+<span class="tok-c">// ---------- 在终端里先看一眼：把图缩小成字符画 ----------</span>
+<span class="tok-k">void</span> printPreview(<span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-k">unsigned</span> <span class="tok-k">char</span>&gt;&amp; gray, <span class="tok-k">int</span> w, <span class="tok-k">int</span> h) {
+    <span class="tok-k">const</span> <span class="tok-k">int</span> stepX = <span class="tok-n">12</span>;
+    <span class="tok-k">const</span> <span class="tok-k">int</span> stepY = <span class="tok-n">16</span>;
+    <span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span> ramp = <span class="tok-s">"@%#*+=-:. "</span>;       <span class="tok-c">// 从黑到白</span>
+    <span class="tok-k">for</span> (<span class="tok-k">int</span> y = <span class="tok-n">0</span>; y &lt; h; y += stepY) {
+        <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"  "</span>;
+        <span class="tok-k">for</span> (<span class="tok-k">int</span> x = <span class="tok-n">0</span>; x &lt; w; x += stepX) {
+            <span class="tok-k">const</span> <span class="tok-k">int</span> level = gray[y * w + x] * (static_cast&lt;<span class="tok-k">int</span>&gt;(ramp.size()) - <span class="tok-n">1</span>) / <span class="tok-n">255</span>;
+            <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; ramp[level];
+        }
+        <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"\n"</span>;
+    }
+}
+
+<span class="tok-k">int</span> main() {
+    <span class="tok-t">std</span>::<span class="tok-t">vector</span>&lt;<span class="tok-k">unsigned</span> <span class="tok-k">char</span>&gt; gray(static_cast&lt;<span class="tok-t">size_t</span>&gt;(WIDTH) * HEIGHT, <span class="tok-n">0</span>);
+
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"Rendering "</span> &lt;&lt; WIDTH &lt;&lt; <span class="tok-s">"x"</span> &lt;&lt; HEIGHT &lt;&lt; <span class="tok-s">" ...\n"</span>;
+    <span class="tok-k">for</span> (<span class="tok-k">int</span> y = <span class="tok-n">0</span>; y &lt; HEIGHT; ++y) {
+        <span class="tok-k">const</span> <span class="tok-k">double</span> ci = -<span class="tok-n">1.15</span> + <span class="tok-n">2.30</span> * y / HEIGHT;      <span class="tok-c">// 把像素坐标映射到复平面</span>
+        <span class="tok-k">for</span> (<span class="tok-k">int</span> x = <span class="tok-n">0</span>; x &lt; WIDTH; ++x) {
+            <span class="tok-k">const</span> <span class="tok-k">double</span> cr = -<span class="tok-n">2.20</span> + <span class="tok-n">3.00</span> * x / WIDTH;
+            gray[static_cast&lt;<span class="tok-t">size_t</span>&gt;(y) * WIDTH + x] =
+                static_cast&lt;<span class="tok-k">unsigned</span> <span class="tok-k">char</span>&gt;(escapeTime(cr, ci));
+        }
+    }
+
+    <span class="tok-k">const</span> <span class="tok-t">std</span>::<span class="tok-t">string</span> path = <span class="tok-s">"mandelbrot.bmp"</span>;
+    <span class="tok-k">if</span> (!saveBmp(path, WIDTH, HEIGHT, gray)) {
+        <span class="tok-t">std</span>::<span class="tok-t">cerr</span> &lt;&lt; <span class="tok-s">"Cannot write "</span> &lt;&lt; path &lt;&lt; <span class="tok-s">"\n"</span>;
+        <span class="tok-k">return</span> <span class="tok-n">1</span>;
+    }
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"Saved "</span> &lt;&lt; path &lt;&lt; <span class="tok-s">" ("</span> &lt;&lt; (<span class="tok-n">54</span> + <span class="tok-n">1024</span> + WIDTH * HEIGHT) &lt;&lt; <span class="tok-s">" bytes)\n\n"</span>;
+    <span class="tok-t">std</span>::<span class="tok-t">cout</span> &lt;&lt; <span class="tok-s">"----- ASCII preview -----\n"</span>;
+    printPreview(gray, WIDTH, HEIGHT);
+    <span class="tok-k">return</span> <span class="tok-n">0</span>;
+}</pre>
+  </div>
+
+  <div class="code-block dark">
+    <div class="code-title">实际运行结果（真实输出，未经修饰）</div>
+<pre class="term">Rendering 480x320 ...
+Saved mandelbrot.bmp (154678 bytes)
+
+----- ASCII preview -----
+          ................................
+         .................................
+        ......................:...........
+       ......................@@:..........
+       ......................@@...........
+      ..................-@@@@@@@@@.@:.....
+      .................=@@@@@@@@@@@@......
+      ................-@@@@@@@@@@@@@@=....
+     ...........@@@@..@@@@@@@@@@@@@@@.....
+     ..........=@@@@@-@@@@@@@@@@@@@@@.....
+     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@.......
+     ..........=@@@@@-@@@@@@@@@@@@@@@.....
+     ...........@@@@..@@@@@@@@@@@@@@@.....
+      ................-@@@@@@@@@@@@@@=....
+      .................=@@@@@@@@@@@@......
+      ..................-@@@@@@@@@.@:.....
+       ......................@@...........
+       ......................@@:..........
+        ......................:...........
+         .................................</pre>
+  </div>
+
+  <p><b>怎么读这份输出：</b>程序在终端里用字符先「预览」了一遍——
+  <code class="inl">@</code> 是判定为在集合内的点（黑色），越往 <code class="inl">.</code> 方向越白。
+  中间那一大块就是曼德博集合的主体（心形），左边那条横线是实轴上的区间，上下对称。
+  同时它在你运行程序的目录里生成了 <code class="inl">mandelbrot.bmp</code>，<b>双击就能看到完整分辨率的图像。</b></p>
+
+  <div class="box">
+    <div class="bt">BMP 之外更短的写法（PGM 格式）</div>
+    <p style="margin:0 0 .6em">如果只是想快速看到灰度图，PGM 格式只要六行：</p>
+    <div class="code-block" style="margin:0">
+<pre class="code"><span class="tok-c">// PGM 版本：比 BMP 短得多，但 Windows 默认打不开</span>
+<span class="tok-t">std</span>::<span class="tok-t">ofstream</span> out(<span class="tok-s">"mandelbrot.pgm"</span>, <span class="tok-t">std</span>::ios::binary);
+out &lt;&lt; <span class="tok-s">"P5\n"</span> &lt;&lt; WIDTH &lt;&lt; <span class="tok-s">" "</span> &lt;&lt; HEIGHT &lt;&lt; <span class="tok-s">"\n255\n"</span>;
+<span class="tok-k">for</span> (<span class="tok-k">int</span> y = <span class="tok-n">0</span>; y &lt; HEIGHT; ++y) {
+    <span class="tok-k">for</span> (<span class="tok-k">int</span> x = <span class="tok-n">0</span>; x &lt; WIDTH; ++x) {
+        out.put(static_cast&lt;<span class="tok-k">char</span>&gt;(gray[y * WIDTH + x]));
+    }
+}</pre>
+    </div>
+    <p style="margin:.8em 0 0">代价是 Windows 的图片查看器默认不认识 <code class="inl">.pgm</code>。
+    <b>用 BMP 换来的那三十行，买到的正是「双击就能看」这个体验。</b>
+    这一点在真实产品里很关键：<b>用户的方便，值得你多写代码。</b></p>
+  </div>
+
+  <div class="beauty">
+    <h5>这段代码美在哪里</h5>
+    <ol>
+      <li><b>极致的投入产出比。</b> 整个图形的数学核心只有两行：
+      <code class="inl">zr = zr*zr - zi*zi + cr;</code> 和 <code class="inl">zi = 2*zr*zi + ci;</code>。
+      <b>用最少的数学，生产出无限复杂的结构——这是数学之美，被你的代码原样搬运到了屏幕上。</b></li>
+      <li><b>squareAndAdd 这个函数，把「复数平方加 c」变成了一个动词。</b>
+      它内部明明有四行运算，但调用处只写 <code class="inl">squareAndAdd(zr, zi, cr, ci);</code>，
+      读起来就是它名字说的那件事。<b>给一段操作起一个准确的名字，是抽象的开始。</b></li>
+      <li><b>整数除法的顺序被刻意安排过。</b> <code class="inl">(i * 255) / MAX_ITER</code>——
+      先乘后除，是为了不让整数除法过早地把结果截断成 0。
+      <b>这种细节看起来很小，但它决定了图像是平滑过渡还是一团死黑。</b></li>
+      <li><b>文件写入被拆成了 writeInt / writeShort 两个小函数。</b>
+      BMP 头有十几个字段要写，如果不拆，主函数里会出现十几行一模一样的 <code class="inl">out.put(...)</code>。
+      拆完之后，<b>文件头的结构一眼就能对上 BMP 的文档</b>。</li>
+      <li><b>同一个缓冲区，喂给了两个完全不同的输出。</b>
+      <code class="inl">saveBmp()</code> 把它变成图片，<code class="inl">printPreview()</code> 把它变成字符画。
+      <b>「计算一次、呈现多次」——把数据的产生和数据的展示分开，是一个值得记住的架构习惯。</b></li>
+      <li><b>它的产物可以拿给别人看。</b> 这是本手册十个项目里，唯一一个能直接「展示」的作品。
+      <b>而这，正是「产品落地」最朴素的定义。</b></li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <div class="bt">常见陷阱</div>
+    <ul>
+      <li><b>BMP 每一行的字节数必须是 4 的倍数。</b> 480 刚好是 4 的倍数，所以看起来没问题；
+      但你一旦把宽度改成 481，图片就会歪斜——因为少补了那几个填充字节。<b>这是格式规范，不是可以省略的优化。</b></li>
+      <li><b>BMP 的像素是自下而上存储的。</b> 忘了这件事，得到的图片会上下颠倒。
+      写循环时那个 <code class="inl">for (int y = h - 1; y &gt;= 0; --y)</code> 就是干这个的。</li>
+      <li>8 位灰度图必须带那 256 级调色板。漏掉它，图片查看器会打不开或者显示成乱码。</li>
+      <li>迭代上限 <code class="inl">MAX_ITER</code> 太小，图形边缘会很粗糙；太大则计算变慢。
+      <b>这又是一次「精度与速度」的权衡</b>，和项目 08 里调学习率是同一类问题。</li>
+      <li>直接开 <code class="inl">-O0</code> 编译并跑 480×320，你会明显感觉到等待。
+      <b>这可能是你第一次真切地意识到：算法一样，快慢可以差很多倍。</b></li>
+    </ul>
+  </div>
+
+  <div class="challenge">
+    <div class="bt">进阶挑战</div>
+    <ul style="margin:0;padding-left:1.3em">
+      <li><b>放大一个区域。</b> 把复平面的范围改成 <code class="inl">[-0.75, -0.73] × [0.09, 0.11]</code>，
+      并把迭代上限提到 1000。你会亲眼看到<b>自相似性</b>——一个局部里藏着整个图形的样子。</li>
+      <li>把 <code class="inl">c</code> 固定、把初始的 <code class="inl">z</code> 设为每个像素的坐标，得到的是<b>朱利亚集合</b>。
+      只改两行代码，又是一整个家族的新图形。</li>
+      <li>既然要写图片了，那就试试 24 位彩色 BMP：调色板那一段去掉，每个像素写三个字节。
+      <b>然后按逃逸时间给不同的通道不同的强度，做一张有颜色的图</b>——你会发现颜色的数学和形状的数学一样有趣。</li>
+      <li>用 Python 三行代码读一下你生成的这个文件：
+      <code class="inl">import imageio; img = imageio.imread('mandelbrot.bmp'); imageio.imwrite('m.png', img)</code>。
+      <b>这是你的 C++ 与未来的 Python 第一次握手的时刻。</b></li>
+      <li>把这张图接到项目 03 的网格上：读取图片的像素亮度，用不同的字符打印出来。
+      <b>两个项目一拼接，你就得到了一个「终端图片查看器」。</b></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= 附录 A ======================= -->
+<section class="sec" id="apx-a">
+  <p class="sec-kicker">APPENDIX&nbsp;A</p>
+  <h2>让代码优雅的十条习惯</h2>
+
+  <p>这是整本手册里唯一不讲新知识的一节，但也可能是最值钱的一节。<b>下面十条，每一条都能在你写的每一个程序里兑现。</b></p>
+
+  <table>
+    <thead><tr><th style="width:44px">#</th><th style="width:200px">习惯</th><th>为什么</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td class="k">名字要能被读出来</td>
+        <td><code class="inl">averageOf</code> 比 <code class="inl">avg</code> 好，<code class="inl">avg</code> 比 <code class="inl">a</code> 好。
+        <b>代码是写给人读的，只是顺便让机器执行。</b>变量名多打三个字母，未来能省半小时。</td></tr>
+      <tr><td>2</td><td class="k">一个函数只做一件事</td>
+        <td>如果你需要用「和」来介绍一个函数（「这个函数读取并排序并打印」），它就该被拆成三个。
+        <b>能一句话说清楚的函数，才配拥有一个好名字。</b></td></tr>
+      <tr><td>3</td><td class="k">能加 const 就加 const</td>
+        <td><code class="inl">const</code> 是写给编译器看的承诺，它会在你违约时报错。
+        <b>把「我不会改这个数据」变成编译期能检查的事实，等于免费雇了一个审查员。</b></td></tr>
+      <tr><td>4</td><td class="k">数据与逻辑分开</td>
+        <td>结构体只装数据，函数只做动作。项目 01 到 10 全都遵循这一条。
+        <b>分开之后，换数据源不用改逻辑，改逻辑不用动数据。</b></td></tr>
+      <tr><td>5</td><td class="k">不要重复自己</td>
+        <td>当你准备第三次复制粘贴同一段代码时，停下来，把它抽成一个函数。
+        <b>三次是经验法则：第一次可以随便写，第二次忍一忍，第三次必须重构。</b></td></tr>
+      <tr><td>6</td><td class="k">边界要挡住</td>
+        <td>空容器、越界下标、除以零、打不开的文件、维度不匹配的矩阵。
+        <b>程序崩溃的地方，九成在边界上。</b></td></tr>
+      <tr><td>7</td><td class="k">出错要出声</td>
+        <td>返回 <code class="inl">false</code> 或者打一行 <code class="inl">std::cerr</code>，比默默算出一个错误答案好一万倍。
+        <b>沉默的 bug 是最贵的 bug。</b></td></tr>
+      <tr><td>8</td><td class="k">让代码的形状对应问题的形状</td>
+        <td>项目 05 里，加减法调用乘除法，所以乘除先算——<b>优先级被写进了代码的结构里</b>。
+        项目 03 里，八个方向变成了一张表。当代码的结构和问题的结构对上时，读代码就不需要注释了。</td></tr>
+      <tr><td>9</td><td class="k">注释写「为什么」，不写「是什么」</td>
+        <td><code class="inl">// i 加一</code> 这种注释是噪音；
+        <code class="inl">// 每行补齐到 4 字节，这是 BMP 的格式要求</code> 才是真注释。
+        <b>代码已经说了「是什么」，注释要说的是代码说不出的那部分。</b></td></tr>
+      <tr><td>10</td><td class="k">永远带着 -Wall 编译</td>
+        <td>编译器免费的警告，往往指向一个你还没遇到的 bug。
+        <b>一个零警告的程序，不一定是对的；但一个满是警告的程序，大概率有问题。</b></td></tr>
+    </tbody>
+  </table>
+
+  <p class="pull">这十条里没有一条是「聪明」的技巧，全都是「克制」的功夫。<br>
+  <b>写代码的功力，到最后拼的不是你知道多少花招，而是你能忍住不写多少花招。</b></p>
+</section>
+
+<!-- ======================= 附录 B ======================= -->
+<section class="sec" id="apx-b">
+  <p class="sec-kicker">APPENDIX&nbsp;B</p>
+  <h2>编译、调试与求助</h2>
+
+  <h3 class="h3">B.1 最常用的几条命令</h3>
+  <table>
+    <thead><tr><th style="width:330px">命令</th><th>作用</th></tr></thead>
+    <tbody>
+      <tr><td><code class="inl">g++ -std=c++14 -Wall main.cpp -o main</code></td><td>最常用的编译方式，本手册全程使用</td></tr>
+      <tr><td><code class="inl">g++ -std=c++14 -Wall -O2 main.cpp -o main</code></td><td>打开优化。项目 10 这种计算量大的程序会快很多</td></tr>
+      <tr><td><code class="inl">g++ -std=c++14 -Wall -g main.cpp -o main</code></td><td>带上调试信息，配合 gdb 使用</td></tr>
+      <tr><td><code class="inl">./main</code> ／ <code class="inl">main.exe</code></td><td>运行。Windows 下是后者，Linux / macOS / Git Bash 下是前者</td></tr>
+      <tr><td><code class="inl">./main &lt; input.txt</code></td><td>把文件当成键盘输入喂给程序，方便反复测试</td></tr>
+      <tr><td><code class="inl">./main &gt; output.txt</code></td><td>把输出存进文件，方便对比和粘贴</td></tr>
+      <tr><td><code class="inl">g++ -std=c++14 -Wall -fsyntax-only main.cpp</code></td><td>只检查语法，不生成可执行文件，改代码时用得很顺手</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="h3">B.2 八个最常见的错误信息，以及它们的真实含义</h3>
+  <table>
+    <thead><tr><th style="width:300px">编译器说</th><th>翻译成人话</th></tr></thead>
+    <tbody>
+      <tr><td><code class="inl">expected ';' before '}' token</code></td><td>上一行末尾漏了分号。<b>看报错行号的<u>上一行</u>。</b></td></tr>
+      <tr><td><code class="inl">'xxx' was not declared in this scope</code></td><td>这个名字你没定义、或者拼错了、或者忘了 <code class="inl">#include</code> 对应的头文件。</td></tr>
+      <tr><td><code class="inl">undefined reference to 'yyy'</code></td><td>编译通过了但链接失败。函数只有声明没有定义，或者多个文件没一起编译。</td></tr>
+      <tr><td><code class="inl">no matching function for call to ...</code></td><td>参数类型或个数对不上。检查你有没有传错顺序、或者该传引用却传了值。</td></tr>
+      <tr><td><code class="inl">passing 'const X' as 'this' argument discards qualifiers</code></td><td>你在一个 const 对象上调用了非 const 成员函数。<b>给那个成员函数加个 const 就好了。</b></td></tr>
+      <tr><td><code class="inl">comparison between signed and unsigned integer expressions</code></td><td>警告，不是错误。<code class="inl">int</code> 和 <code class="inl">size()</code> 比较了，加个 <code class="inl">static_cast&lt;int&gt;</code>。</td></tr>
+      <tr><td><code class="inl">Segmentation fault</code> ／ 程序直接闪退</td><td>访问了不属于你的内存：下标越界、用了空指针、返回了局部变量的引用。</td></tr>
+      <tr><td><code class="inl">ld returned 1 exit status</code></td><td>链接失败。Windows 上最常见的原因：<b>上一次运行的程序还开着</b>，文件被占用，关掉它再编译。</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="h3">B.3 调试三招</h3>
+  <ol class="levels">
+    <li><b>打印出来看</b>
+      <p>在关键位置加一行 <code class="inl">std::cerr &lt;&lt; "i = " &lt;&lt; i &lt;&lt; "\n";</code>。
+      用 <code class="inl">cerr</code> 而不是 <code class="inl">cout</code>，这样即使你用 <code class="inl">&gt;</code> 重定向了输出，
+      调试信息依然会显示在屏幕上。<b>这是最原始也最有效的办法，专业程序员每天都在用。</b></p></li>
+    <li><b>把问题缩小</b>
+      <p>程序在 100 个数据上错了，就改成 3 个数据，手工把每一步的结果算一遍，和程序的输出逐个对比。
+      <b>能稳定复现的小例子，比一百行日志管用。</b></p></li>
+    <li><b>怀疑「刚才改的那一行」</b>
+      <p>如果代码五分钟前还是好的，那么错误几乎一定在你刚才的改动里。
+      <b>先回退，再一位一位地改回来，错误就会自己冒出来。</b></p></li>
+  </ol>
+
+  <div class="box">
+    <div class="bt">卡住的时候，这样求助</div>
+    <p style="margin-bottom:.6em">不管是问同学、问老师还是问 AI，一段好的提问应该包含四样东西：</p>
+    <ol style="margin:0">
+      <li><b>我想做什么</b>（一句话说清目标）</li>
+      <li><b>我写了什么</b>（贴出相关的最小代码片段，不要贴整个文件）</li>
+      <li><b>发生了什么</b>（<u>完整的</u>报错信息，包括行号；或实际输出与预期输出的对比）</li>
+      <li><b>我试过什么</b>（这一步最能让对方认真回答你）</li>
+    </ol>
+    <p style="margin:.8em 0 0"><b>把问题描述清楚的过程，本身就是一半的解题过程。</b>很多时候，你在写第 3 条的时候就已经找到答案了。</p>
+  </div>
+</section>
+
+<!-- ======================= 附录 C ======================= -->
+<section class="sec" id="apx-c">
+  <p class="sec-kicker">APPENDIX&nbsp;C</p>
+  <h2>从这里走向 Python 与人工智能</h2>
+
+  <h3 class="h3">C.1 先说一个可能让你意外的事实</h3>
+  <p>你说你之后的学习重点是 Python，而写这份手册用的是 C++。这两件事看起来有点别扭，其实一点都不矛盾——</p>
+  <p class="pull"><b>你在这十个项目里真正学到的东西，几乎全都不是 C++ 的。</b><br>
+  「把数据和对数据的操作分开」「一个函数只做一件事」「用方向数组消灭重复的 if」
+  「先取对数再求和」「训练和预测要分开」——这些是<b>编程的思想</b>，换到 Python、换到任何语言，它们一个字都不用改。</p>
+  <p>语言会变，工具会变，但你在这十个项目里建立起来的<b>「面对一个空白文件时知道从哪下手的底气」</b>，是会一直带着走的。</p>
+
+  <h3 class="h3">C.2 你现在手里有什么</h3>
+  <table>
+    <thead><tr><th style="width:230px">能力</th><th>它是从哪来的</th><th style="width:200px">在 Python 里怎么用</th></tr></thead>
+    <tbody>
+      <tr><td class="k">用合适的数据结构装数据</td><td>项目 01–03 的 vector / map / 二维数组</td><td>list / dict / 嵌套 list，一一对应</td></tr>
+      <tr><td class="k">把大问题拆成小函数</td><td>每一个项目</td><td>def 函数，思路完全一样</td></tr>
+      <tr><td class="k">经典算法的骨架</td><td>BFS、递归下降、极小极大</td><td>Python 写起来更短，但算法一模一样</td></tr>
+      <tr><td class="k">读得懂报错信息</td><td>附录 B 和你的每一次编译失败</td><td>Python 的 traceback 更好读，你已经不怕了</td></tr>
+      <tr><td class="k">数值稳定性的直觉</td><td>项目 09 的取对数与平滑</td><td>numpy 里同样会遇到下溢、溢出、除零</td></tr>
+      <tr><td class="k">机器学习的完整流程感</td><td>项目 08 与 09</td><td>造数据 → 训练 → 评估 → 保存，PyTorch 也是这个形状</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="h3">C.3 如果还想再深入 C++</h3>
+  <p>按你的专业方向，我不建议你现在花太多时间在 C++ 的高级特性上。但有三个方向值得留意：</p>
+  <ul>
+    <li><b>STL 算法库</b>（<code class="inl">&lt;algorithm&gt;</code>）：<code class="inl">find_if</code>、<code class="inl">count_if</code>、<code class="inl">transform</code>、<code class="inl">accumulate</code>。
+    它们能让你的代码再短一半，而且和你将来要用的 pandas 风格非常接近。</li>
+    <li><b>把程序拆成多个文件</b>：<code class="inl">.h</code> 放声明、<code class="inl">.cpp</code> 放实现。
+    项目 07 的进阶挑战里提过。这是从「写脚本」走向「做工程」的第一步。</li>
+    <li><b>性能意识</b>：同一段算法，写法的不同可以让它快十倍。项目 10 的 <code class="inl">-O2</code> 和项目 06 的 alpha-beta 剪枝，
+    已经让你摸到这件事了。人工智能里，这一条非常值钱。</li>
+  </ul>
+  <p>至于模板元编程、移动语义、智能指针、并发、C++20 的新特性——<b>先放着。等你真的遇到需要它们的问题时再学，效率会高十倍。</b></p>
+
+  <h3 class="h3">C.4 给大一人工智能专业学生的一条路线</h3>
+  <ol class="levels">
+    <li><b>数学，现在就开始，一天都不要等</b>
+      <p>线性代数、概率论与数理统计、微积分。<b>人工智能的本质是这三门数学，编程只是把它们变成可执行的形式。</b>
+      项目 07 的矩阵乘法就是线性代数，项目 09 的贝叶斯就是概率论，项目 08 的「错一点改一点」就是微积分里的梯度。
+      数学课上听过的每一个概念，你都应该想一想：这个东西用代码怎么写？</p></li>
+    <li><b>数据结构与算法</b>
+      <p>你在这本手册里已经摸到了队列、搜索、递归、哈希表。接下来系统地学一遍：链表、栈、树、堆、图、动态规划。
+      <b>这是你和「只会调库的人」之间的差距所在。</b></p></li>
+    <li><b>Python 与它的科学计算栈</b>
+      <p>语法一周就能学完（你已经有编程基础了，会非常快）。真正要花时间的是三样东西：
+      <b>numpy</b>（把项目 07 的矩阵类换成它，速度差几百倍）、
+      <b>pandas</b>（把项目 02 的统计换成它，三行顶你一百行）、
+      <b>matplotlib</b>（把项目 10 的位图换成它，一行出图）。</p>
+      <p><b>一个高效的学法：把这本手册里的项目，用 Python 重写一遍。</b>
+      你已经知道正确答案是什么了，所以可以全力关注「这门新语言是怎么表达的」。
+      词频统计、矩阵乘法、感知机、朴素贝叶斯——四个项目重写下来，Python 你就掌握了。</p></li>
+    <li><b>然后是 PyTorch，以及真正的机器学习</b>
+      <p>到那个时候你会发现，<b>项目 08 里那三个 double 的感知机，和 PyTorch 里的一个大模型，骨架是一样的</b>：
+      定义模型、前向计算、算损失、反向传播、更新参数。<b>你只是把参数从三个变成了几十亿个。</b></p></li>
+  </ol>
+
+  <div class="box">
+    <div class="bt">最后一句话</div>
+    <p style="margin:0">这本手册的十个项目，没有一个是为了考试准备的。它们全部都在做同一件事：
+    <b>让你在「想法」和「能跑起来的东西」之间，建立一条通畅的路。</b></p>
+    <p style="margin:.8em 0 0">这条路修好之后，你学什么语言、做什么方向，都只是换一辆车而已。</p>
+  </div>
+</section>
+
+<div class="footer">
+  <p style="margin-bottom:.4em"><b>Ways to cpp</b> · C++ 项目式训练手册</p>
+  <p style="margin-bottom:.4em">全部源码位于 <code class="inl">ways-to-cpp-code/</code>，每个文件都可以用
+  <code class="inl">g++ -std=c++14 -Wall &lt;文件名&gt; -o &lt;输出名&gt;</code> 直接编译运行。</p>
+  <p style="margin:0">愿你早日写出让自己觉得「这段代码真好看」的程序。</p>
+</div>
+
+</div><!-- /content -->
+</main>
+</div><!-- /layout -->
+
+<script>
+(function () {
+  /* ---------- 侧边栏高亮当前章节 ---------- */
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  var targets = links.map(function (a) {
+    return document.querySelector(a.getAttribute('href'));
+  }).filter(Boolean);
+
+  function sync() {
+    var y = window.scrollY + window.innerHeight * 0.28;
+    var current = -1;
+    for (var i = 0; i < targets.length; i++) {
+      if (targets[i].offsetTop <= y) current = i;
+    }
+    links.forEach(function (a) { a.classList.remove('active'); });
+    if (current >= 0) links[current].classList.add('active');
+  }
+  window.addEventListener('scroll', sync, { passive: true });
+  window.addEventListener('resize', sync);
+  sync();
+
+  /* ---------- 项目完成标记（本地保存，不打印） ---------- */
+  var KEY = 'ways-to-cpp-done';
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { saved = {}; }
+
+  Array.prototype.forEach.call(document.querySelectorAll('input[data-done]'), function (box) {
+    var id = box.getAttribute('data-done');
+    box.checked = !!saved[id];
+    box.addEventListener('change', function () {
+      saved[id] = box.checked;
+      try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {}
+    });
+  });
+})();
+</script>
+</body>
+</html>

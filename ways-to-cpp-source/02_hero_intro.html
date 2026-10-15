@@ -1,0 +1,195 @@
+<!-- ======================= 封面 ======================= -->
+<section class="hero" id="top">
+  <div class="hero-kicker">C++ 项目式训练手册 · 为人工智能专业大一学生编写</div>
+  <h1>Ways&nbsp;to&nbsp;cpp</h1>
+  <div class="hero-rule"></div>
+  <p class="hero-lead">
+    你已经学完了变量、数据类型、运算符、输入输出、分支与循环、数组、字符串、结构、指针、函数。<br>
+    这本手册不想再把这些语法讲一遍。它想带你用手里已有的零件，做出十件真正能跑、能看、能用的东西——
+    然后在做的过程里，把语言知识变成工程直觉。
+  </p>
+  <div class="hero-stats">
+    <div><b>10</b><span>个完整项目</span></div>
+    <div><b>4</b><span>个循序渐进的阶段</span></div>
+    <div><b>30+</b><span>个新知识点</span></div>
+    <div><b>0</b><span>处为了炫技而写的代码</span></div>
+  </div>
+</section>
+
+<!-- ======================= 打印用目录 ======================= -->
+<nav class="print-toc">
+  <h2>目&nbsp;&nbsp;录</h2>
+  <ul>
+    <li><span>00</span>怎么用这本手册</li>
+    <li><span>00</span>学习地图</li>
+    <li><span>00</span>新知识点总表</li>
+    <li><span>01</span>学生成绩分析器 —— 用向量代替数组</li>
+    <li><span>02</span>英文词频统计器 —— 让文件与字典为你工作</li>
+    <li><span>03</span>康威生命游戏 —— 二维世界与规则的力量</li>
+    <li><span>04</span>迷宫最短路径 —— 广度优先搜索</li>
+    <li><span>05</span>表达式求值器 —— 递归下降分析</li>
+    <li><span>06</span>井字棋与极小极大 —— 会下棋的递归</li>
+    <li><span>07</span>像数学一样的矩阵类 —— 类与运算符重载</li>
+    <li><span>08</span>训练第一个模型：感知机</li>
+    <li><span>09</span>朴素贝叶斯分类器 —— 从数据里学概率</li>
+    <li><span>10</span>曼德博集合与图像 —— 把数学变成产品</li>
+    <li><span>A</span>让代码优雅的十条习惯</li>
+    <li><span>B</span>编译、调试与求助</li>
+    <li><span>C</span>从这里走向 Python 与人工智能</li>
+  </ul>
+</nav>
+
+<!-- ======================= 00 使用说明 ======================= -->
+<section class="sec" id="intro">
+  <p class="sec-kicker">BEFORE&nbsp;YOU&nbsp;START</p>
+  <h2>怎么用这本手册</h2>
+
+  <p>你说过一句话：语法都学过，但一到算法层面就无从下手。这不是你的问题，这是<b>所有只做课后题的人都会遇到的坎</b>。
+  课后题的形式是「输入 A，输出 B，用一个循环解决」，而真实程序的形式是「有一堆数据，我该怎么摆放它们，
+  该派哪些函数去处理，出错时谁来兜底」。这两件事用的是同一门语言，却是两种完全不同的思维方式。</p>
+
+  <p>所以这本手册的每一个项目，都按照同一套结构来写，你按这个顺序读、按这个顺序做，效果最好：</p>
+
+  <table>
+    <thead><tr><th style="width:150px">板块</th><th>它是干什么用的</th></tr></thead>
+    <tbody>
+      <tr><td class="k">项目背景</td><td>先告诉你这件事在真实世界里长什么样。你会知道自己在造什么，而不是在凑一个循环。</td></tr>
+      <tr><td class="k">本板块新知识点</td><td><b>每个项目开头都会先列出没学过的内容</b>。看到不认识的词不要慌，那是接下来要解决的问题的答案。</td></tr>
+      <tr><td class="k">任务拆解</td><td>把一个项目切成 Lv1 / Lv2 / Lv3 三关。<b>请务必先自己动手写，卡住了再看参考实现。</b></td></tr>
+      <tr><td class="k">参考实现</td><td>完整源码 + 真实运行结果。代码可以在 <code class="inl">ways-to-cpp-code/</code> 里找到，直接编译就能跑。</td></tr>
+      <tr><td class="k">美在哪里</td><td>逐条讲解这段代码为什么这样写更好看、更好改。<b>这是本手册最想给你的东西。</b></td></tr>
+      <tr><td class="k">常见陷阱 / 进阶挑战</td><td>前者帮你少走弯路，后者给你继续往前走的方向。</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="h3">三条硬规矩</h3>
+  <ol>
+    <li><b>先关掉参考实现，自己写四十分钟。</b>哪怕写得很丑、编译不过、逻辑全错，那四十分钟的价值也大于直接抄一遍。</li>
+    <li><b>每一关都要真的编译、真的运行。</b>看懂和写出来之间，隔着一次 <code class="inl">error: expected ';'</code>。</li>
+    <li><b>动手改。</b>把示例数据换成你自己的、把 10 改成 100、把升序改成降序。你对代码的掌控感是改出来的。</li>
+  </ol>
+
+  <div class="box">
+    <div class="bt">编译与运行环境</div>
+    <p style="margin-bottom:.6em">本手册所有代码都在 <b>C++11 / C++14</b> 标准下编写，任何一个现代编译器都能直接通过。以 MinGW 的 g++ 为例：</p>
+    <div class="code-block" style="margin:0">
+      <pre class="term">g++ -std=c++14 -Wall p01_grade_analyzer.cpp -o p01
+
+./p01          # 在 Linux / macOS / Git Bash 下
+p01.exe        # 在 Windows 的 cmd 或 PowerShell 下</pre>
+    </div>
+    <p style="margin:.9em 0 0"><code class="inl">-Wall</code> 的意思是「把该提醒我的都提醒我」。初学者最该养成的习惯之一，就是<b>永远带着它编译</b>——
+    编译器是你身边最便宜、最诚实的老师。</p>
+  </div>
+
+  <div class="box dashed">
+    <div class="bt">关于「新知识」的分寸</div>
+    <p style="margin:0">你希望少碰语言的高级特性，这个尺度我按下面的标准把握：</p>
+    <ul style="margin:.7em 0 0">
+      <li><b>收进来的</b>：标准库中真正日常的工具（<code class="inl">vector</code>、<code class="inl">map</code>、<code class="inl">sort</code>、文件流、<code class="inl">class</code> 与运算符重载），以及算法本身的思想（搜索、递归、概率）。它们是「做事要用的」，不是「考试要考的」。</li>
+      <li><b>挡在外面的</b>：模板元编程、移动语义与右值引用、智能指针、lambda 的进阶用法、多线程、编译期计算、C++20 概念等。这些是有价值的，但对你当前的阶段而言，投入产出比很低，而且 Python 与 AI 的路线用不上它们。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= 00 学习地图 ======================= -->
+<section class="sec" id="map">
+  <p class="sec-kicker">THE&nbsp;MAP</p>
+  <h2>学习地图</h2>
+
+  <p>十个项目分成四个阶段。阶段与阶段之间是<b>依赖关系</b>，不是并列关系——每一个项目都会用到前面项目教过的东西，
+  所以请按顺序走。难度用五星制表示，但请记住：<b>难度高的项目不一定花时间多，难度低的项目也值得做得漂亮。</b></p>
+
+  <table>
+    <thead>
+      <tr><th style="width:120px">阶段</th><th style="width:60px">编号</th><th style="width:190px">项目</th>
+      <th style="width:90px">难度</th><th>你会获得的能力</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="k" rowspan="3">第一篇<br>把数据管起来</td>
+        <td>01</td><td class="k">学生成绩分析器</td><td>★★☆☆☆</td>
+        <td>不再用固定长度的数组，学会用 <code class="inl">vector</code> 和标准库算法组织一批数据</td>
+      </tr>
+      <tr><td>02</td><td class="k">英文词频统计器</td><td>★★☆☆☆</td>
+        <td>让程序读写真实文件，用 <code class="inl">map</code> 完成「查表式」的统计</td></tr>
+      <tr><td>03</td><td class="k">康威生命游戏</td><td>★★★☆☆</td>
+        <td>驾驭二维数据与「按规则演化」的思维，这是所有仿真与元胞自动机的骨架</td></tr>
+
+      <tr>
+        <td class="k" rowspan="3">第二篇<br>让程序会思考</td>
+        <td>04</td><td class="k">迷宫最短路径</td><td>★★★☆☆</td>
+        <td>第一次真正意义上的「算法」：广度优先搜索与路径回溯</td>
+      </tr>
+      <tr><td>05</td><td class="k">表达式求值器</td><td>★★★☆☆</td>
+        <td>递归下降分析——用三十行代码理解编译器的入口，递归从此不再是「算阶乘」</td></tr>
+      <tr><td>06</td><td class="k">井字棋与极小极大</td><td>★★★★☆</td>
+        <td>把递归用于「对抗性搜索」，写出一个你赢不了的对手</td></tr>
+
+      <tr>
+        <td class="k" rowspan="3">第三篇<br>用 C++ 写数学</td>
+        <td>07</td><td class="k">像数学一样的矩阵类</td><td>★★★☆☆</td>
+        <td>定义自己的类型，让 <code class="inl">C = A * B</code> 直接可写。这是神经网络的第一块砖</td>
+      </tr>
+      <tr><td>08</td><td class="k">感知机</td><td>★★★★☆</td>
+        <td>完整走一遍「造数据—训练—评估—保存参数」的机器学习流程</td></tr>
+      <tr><td>09</td><td class="k">朴素贝叶斯分类器</td><td>★★★★☆</td>
+        <td>用你亲手写的代码，完成一次真实的文本分类</td></tr>
+
+      <tr>
+        <td class="k">第四篇<br>把产品做出来</td>
+        <td>10</td><td class="k">曼德博集合与图像</td><td>★★★☆☆</td>
+        <td>程序不再只输出文字，而是产出一个可以用眼睛看的文件——这就是「落地」</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="pull">建议节奏：一周一个项目，两天读、三天写、两天改。<br>
+  十周之后，你手里会有十个能跑的程序，和一套比语法重要得多的东西——<b>面对一个空白文件时知道从哪下手的底气。</b></p>
+</section>
+
+<!-- ======================= 00 新知识点总表 ======================= -->
+<section class="sec" id="newtable">
+  <p class="sec-kicker">WHAT&nbsp;IS&nbsp;NEW</p>
+  <h2>新知识点总表</h2>
+
+  <p>下面这张表是本手册的「新东西清单」。左边是知识点，中间告诉你它<b>为了解决什么问题</b>才出现，
+  右边一列是它<b>在 Python 里的近亲</b>——你是人工智能专业的学生，这条路迟早要走到 Python 上去，
+  提前建立这种对应关系，将来迁移会轻松得多。</p>
+
+  <table>
+    <thead>
+      <tr><th style="width:70px">项目</th><th style="width:210px">新知识点</th><th>它为什么存在</th><th style="width:170px">Python 里的对应物</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="k">01</td><td class="k">const 与 const 引用</td><td>告诉编译器也告诉读者：这个数据到此为止，不许改</td><td>约定俗成的常量命名</td></tr>
+      <tr><td class="k">01</td><td class="k">std::vector</td><td>可以随时长大的数组，长度不再是编译期就定死的数字</td><td>list</td></tr>
+      <tr><td class="k">01</td><td class="k">范围 for / std::sort</td><td>不再手写下标循环，也不再手写冒泡排序</td><td>for x in xs / sorted()</td></tr>
+      <tr><td class="k">02</td><td class="k">std::map</td><td>用「键」直接找到「值」，天生适合数数、查表、建索引</td><td>dict</td></tr>
+      <tr><td class="k">02</td><td class="k">文件流 fstream</td><td>让数据活过这次运行，能被下一次运行读到</td><td>open() / with 语句</td></tr>
+      <tr><td class="k">02</td><td class="k">字符分类函数</td><td>把「是不是字母」「转成小写」交给标准库，别自己写范围判断</td><td>str.isalpha() / str.lower()</td></tr>
+      <tr><td class="k">03</td><td class="k">二维 vector</td><td>表示网格、图像、棋盘、矩阵——一切有行有列的东西</td><td>嵌套 list</td></tr>
+      <tr><td class="k">03</td><td class="k">方向数组</td><td>把「八个方向」变成一张数据表，而不是八段重复的 if</td><td>方向元组列表</td></tr>
+      <tr><td class="k">03</td><td class="k">双缓冲更新</td><td>读旧状态、写新状态，避免「改到一半被自己影响」</td><td>list.copy() / 新建数组</td></tr>
+      <tr><td class="k">04</td><td class="k">std::queue 与 BFS</td><td>一层一层向外扩散，第一次到达即最短</td><td>collections.deque</td></tr>
+      <tr><td class="k">04</td><td class="k">std::pair 与前驱表</td><td>把两个值绑成一个、并记录「我是从哪来的」，用来复原路径</td><td>tuple / 字典记录父节点</td></tr>
+      <tr><td class="k">05</td><td class="k">递归下降分析</td><td>用一层层函数准确表达「优先级」这件事</td><td>递归下降解析器</td></tr>
+      <tr><td class="k">05</td><td class="k">引用参数共享状态</td><td>让几个函数共用同一个「光标」，不用全局变量</td><td>把对象传来传去</td></tr>
+      <tr><td class="k">06</td><td class="k">极小极大搜索</td><td>在「我走一步、对手走一步」的世界里找最优解</td><td>同样的算法，加缓存就是 α-β</td></tr>
+      <tr><td class="k">06</td><td class="k">按值传参</td><td>每次递归拿到一份自己的副本，撤销变得免费</td><td>切片复制 board[:]</td></tr>
+      <tr><td class="k">07</td><td class="k">class 与封装</td><td>把数据和操作它的函数捆在一起，外面只看得到接口</td><td>class</td></tr>
+      <tr><td class="k">07</td><td class="k">运算符重载</td><td>让自定义类型也能用 + 和 *，代码长得像数学公式</td><td>__add__ / __mul__</td></tr>
+      <tr><td class="k">07</td><td class="k">const 成员函数</td><td>承诺「这个函数不会改动对象」，编译器替你把关</td><td>没有直接对应，靠自觉</td></tr>
+      <tr><td class="k">08</td><td class="k">&lt;random&gt; 随机数引擎</td><td>造出可复现的假数据，机器学习的实验离不开它</td><td>random / numpy.random</td></tr>
+      <tr><td class="k">08</td><td class="k">训练循环</td><td>「预测—比较—修正」重复很多次，这就是学习的本质</td><td>for epoch in range(n)</td></tr>
+      <tr><td class="k">08</td><td class="k">参数持久化</td><td>把训练结果存成文件，下次不用重训</td><td>pickle / np.save</td></tr>
+      <tr><td class="k">09</td><td class="k">概率取对数</td><td>把连乘变成连加，避免小概率相乘变成 0</td><td>np.log 累加</td></tr>
+      <tr><td class="k">09</td><td class="k">拉普拉斯平滑</td><td>没见过的词也要给一点点概率，否则整条判断作废</td><td>加一平滑</td></tr>
+      <tr><td class="k">10</td><td class="k">二进制文件输出</td><td>把内存里的数字原样写进文件，于是程序能产出「作品」</td><td>open(..., 'wb')</td></tr>
+      <tr><td class="k">10</td><td class="k">坐标映射</td><td>把屏幕像素坐标翻译成数学坐标，这是可视化的第一步</td><td>同样的线性映射</td></tr>
+    </tbody>
+  </table>
+
+  <p class="pull">不要试图记住这张表。<b>知识点的价值不在于记住，而在于你在某个时刻真的需要它</b>——
+  那时的记忆，才是长在身上的。</p>
+</section>

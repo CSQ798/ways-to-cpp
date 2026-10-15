@@ -1,0 +1,15 @@
+﻿----- Demo 1 : must block -----
+  X | . | .
+ ---+---+---
+  . | X | .
+ ---+---+---
+  O | . | .
+AI ('O') chooses cell 8 (row 3, col 3), evaluated score = 0
+
+----- Demo 2 : perfect vs perfect -----
+  X | X | O
+ ---+---+---
+  O | O | X
+ ---+---+---
+  X | O | X
+Result: draw

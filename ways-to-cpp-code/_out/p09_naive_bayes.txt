@@ -1,0 +1,7 @@
+﻿Trained on 12 messages, vocabulary = 73 words
+
+----- Predictions -----
+free cash prize click now                    spam=-19.17   ham=-24.50    ->  SPAM
+can we meet after the lecture                spam=-28.62   ham=-25.93    ->  ham
+your loan is approved with no credit check   spam=-34.70   ham=-37.69    ->  SPAM
+the report is attached for review            spam=-28.62   ham=-24.14    ->  ham

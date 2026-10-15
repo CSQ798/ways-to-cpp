@@ -1,0 +1,376 @@
+<!-- ======================= 项目 10 ======================= -->
+<section class="project" id="p10">
+  <header class="p-header">
+    <div class="p-index">10</div>
+    <div class="p-titles">
+      <h2>曼德博集合与图像</h2>
+      <p class="p-sub">六行数学，一张无限复杂的图</p>
+    </div>
+  </header>
+  <div class="p-meta">
+    <span class="chip">难度 ★★★☆☆</span>
+    <span class="chip">建议 5–8 小时</span>
+    <span class="chip">主线：把程序变成产品</span>
+    <span class="chip">阶段四</span>
+  </div>
+  <label class="done-toggle no-print"><input type="checkbox" data-done="p10">标记为已完成</label>
+
+  <div class="newknow">
+    <h4>本板块会用到的新知识点</h4>
+    <p class="nk-note">最后一个项目。你将第一次写一个「输出不是文字」的程序——而这个差别，比它看起来重要得多。</p>
+    <ul>
+      <li><b>二进制文件输出</b>　<em><code class="inl">std::ofstream out(path, std::ios::binary);</code> 配合 <code class="inl">out.put(字节)</code></em>
+      以前写的是给人看的文本，这次写的是给程序看的字节。<b>一旦掌握了这一招，你的程序就能生成图片、音频、模型文件——
+      它开始产出「作品」而不只是「结果」。</b></li>
+      <li><b>BMP 文件格式</b>　一个非常老、非常直白的图片格式：54 字节文件头 + 调色板 + 像素数据。
+      它是最好的「文件不过是一串字节」的教材。</li>
+      <li><b>小端序与字节拆装</b>　<em>形如 <code class="inl">out.put(value &amp; 0xFF); value &gt;&gt;= 8;</code></em>
+      一个 int 是 4 个字节，写进文件时需要决定谁先谁后。BMP 规定低位字节在前。</li>
+      <li><b>坐标映射</b>　<em><code class="inl">cr = -2.20 + 3.00 * x / WIDTH</code></em>
+      把「第 x 列像素」翻译成「复平面上的某个数」。<b>可视化的第一步永远是这件事：把屏幕坐标翻译成数据坐标。</b>
+      将来你画损失曲线、画决策边界，用的都是同一个映射。</li>
+      <li><b>一维缓冲区当二维用</b>　<em><code class="inl">gray[y * WIDTH + x]</code></em>
+      内存在物理上永远是一条线。项目 07 的矩阵内部也是这么存的，这里你自己动手算一次下标，感受会更实在。</li>
+    </ul>
+  </div>
+
+  <h3 class="h3">一、这件事在真实世界里长什么样</h3>
+  <p>取一个复数 <code class="inl">c</code>，令 <code class="inl">z</code> 从 0 开始，
+  反复做同一件小事：<b><code class="inl">z = z² + c</code></b>。</p>
+  <p>有的 <code class="inl">c</code> 会让 <code class="inl">z</code> 越跑越远，有的会让它老老实实待在一个小圈子里。
+  把「待得住」的那些 <code class="inl">c</code> 涂黑，就得到了曼德博集合。</p>
+  <p>规则就这么一句话。可当你把它画出来——你会看到一个边缘无限复杂的图形：
+  <b>无论放大多少倍，新的细节都会继续冒出来，而且每一处都隐约带着整个图形的影子。</b></p>
+  <p>这个项目想让你体会的是：<b>程序的产出，可以不只是屏幕上的几行数字。</b>
+  你的代码第一次会生成一个文件，这个文件可以被别的软件打开、可以发给别人、可以印在纸上。
+  <b>这就是「产品」和「作业」的区别。</b></p>
+
+  <h3 class="h3">二、任务拆解：三关</h3>
+  <ol class="levels">
+    <li>
+      <b>先算一个点</b>
+      <p>写一个函数：给定 <code class="inl">c</code>，迭代 <code class="inl">z = z² + c</code> 最多 200 次，
+      每次检查 <code class="inl">|z|² &gt; 4</code> 就提前返回「第几次跑掉的」。
+      <b>先在 main 里手工试几个 c，比如 (0,0)、(1,1)、(-1,0)，看它们的逃逸次数差多少。</b></p>
+    </li>
+    <li>
+      <b>把整张画面算出来</b>
+      <p>开一个 480×320 的 <code class="inl">vector&lt;unsigned char&gt;</code>，
+      对每个像素：先把行列号映射成复平面的坐标，算出逃逸时间，再映射成 0–255 的灰度，存进缓冲区。
+      <b>在终端用字符画先看一眼——只要形状对了，后面就都好办。</b></p>
+    </li>
+    <li>
+      <b>写成一张真正的图片</b>
+      <p>按 BMP 的格式写文件：14 字节文件头 + 40 字节信息头 + 256 级灰度调色板 + 像素数据。
+      <b>三个必须记住的细节：每行字节数补齐到 4 的倍数、像素自下而上存储、写完用图片查看器打开它。</b></p>
+    </li>
+  </ol>
+
+  <h3 class="h3">三、参考实现</h3>
+  <div class="code-block">
+    <div class="code-title">ways-to-cpp-code / p10_mandelbrot.cpp</div>
+<pre class="code"><!--CODE:10--></pre>
+  </div>
+
+  <div class="code-block dark">
+    <div class="code-title">实际运行结果（真实输出，未经修饰）</div>
+<pre class="term"><!--OUT:10--></pre>
+  </div>
+
+  <p><b>怎么读这份输出：</b>程序在终端里用字符先「预览」了一遍——
+  <code class="inl">@</code> 是判定为在集合内的点（黑色），越往 <code class="inl">.</code> 方向越白。
+  中间那一大块就是曼德博集合的主体（心形），左边那条横线是实轴上的区间，上下对称。
+  同时它在你运行程序的目录里生成了 <code class="inl">mandelbrot.bmp</code>，<b>双击就能看到完整分辨率的图像。</b></p>
+
+  <div class="box">
+    <div class="bt">BMP 之外更短的写法（PGM 格式）</div>
+    <p style="margin:0 0 .6em">如果只是想快速看到灰度图，PGM 格式只要六行：</p>
+    <div class="code-block" style="margin:0">
+<pre class="code"><!--CODE:pgm--></pre>
+    </div>
+    <p style="margin:.8em 0 0">代价是 Windows 的图片查看器默认不认识 <code class="inl">.pgm</code>。
+    <b>用 BMP 换来的那三十行，买到的正是「双击就能看」这个体验。</b>
+    这一点在真实产品里很关键：<b>用户的方便，值得你多写代码。</b></p>
+  </div>
+
+  <div class="beauty">
+    <h5>这段代码美在哪里</h5>
+    <ol>
+      <li><b>极致的投入产出比。</b> 整个图形的数学核心只有两行：
+      <code class="inl">zr = zr*zr - zi*zi + cr;</code> 和 <code class="inl">zi = 2*zr*zi + ci;</code>。
+      <b>用最少的数学，生产出无限复杂的结构——这是数学之美，被你的代码原样搬运到了屏幕上。</b></li>
+      <li><b>squareAndAdd 这个函数，把「复数平方加 c」变成了一个动词。</b>
+      它内部明明有四行运算，但调用处只写 <code class="inl">squareAndAdd(zr, zi, cr, ci);</code>，
+      读起来就是它名字说的那件事。<b>给一段操作起一个准确的名字，是抽象的开始。</b></li>
+      <li><b>整数除法的顺序被刻意安排过。</b> <code class="inl">(i * 255) / MAX_ITER</code>——
+      先乘后除，是为了不让整数除法过早地把结果截断成 0。
+      <b>这种细节看起来很小，但它决定了图像是平滑过渡还是一团死黑。</b></li>
+      <li><b>文件写入被拆成了 writeInt / writeShort 两个小函数。</b>
+      BMP 头有十几个字段要写，如果不拆，主函数里会出现十几行一模一样的 <code class="inl">out.put(...)</code>。
+      拆完之后，<b>文件头的结构一眼就能对上 BMP 的文档</b>。</li>
+      <li><b>同一个缓冲区，喂给了两个完全不同的输出。</b>
+      <code class="inl">saveBmp()</code> 把它变成图片，<code class="inl">printPreview()</code> 把它变成字符画。
+      <b>「计算一次、呈现多次」——把数据的产生和数据的展示分开，是一个值得记住的架构习惯。</b></li>
+      <li><b>它的产物可以拿给别人看。</b> 这是本手册十个项目里，唯一一个能直接「展示」的作品。
+      <b>而这，正是「产品落地」最朴素的定义。</b></li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <div class="bt">常见陷阱</div>
+    <ul>
+      <li><b>BMP 每一行的字节数必须是 4 的倍数。</b> 480 刚好是 4 的倍数，所以看起来没问题；
+      但你一旦把宽度改成 481，图片就会歪斜——因为少补了那几个填充字节。<b>这是格式规范，不是可以省略的优化。</b></li>
+      <li><b>BMP 的像素是自下而上存储的。</b> 忘了这件事，得到的图片会上下颠倒。
+      写循环时那个 <code class="inl">for (int y = h - 1; y &gt;= 0; --y)</code> 就是干这个的。</li>
+      <li>8 位灰度图必须带那 256 级调色板。漏掉它，图片查看器会打不开或者显示成乱码。</li>
+      <li>迭代上限 <code class="inl">MAX_ITER</code> 太小，图形边缘会很粗糙；太大则计算变慢。
+      <b>这又是一次「精度与速度」的权衡</b>，和项目 08 里调学习率是同一类问题。</li>
+      <li>直接开 <code class="inl">-O0</code> 编译并跑 480×320，你会明显感觉到等待。
+      <b>这可能是你第一次真切地意识到：算法一样，快慢可以差很多倍。</b></li>
+    </ul>
+  </div>
+
+  <div class="challenge">
+    <div class="bt">进阶挑战</div>
+    <ul style="margin:0;padding-left:1.3em">
+      <li><b>放大一个区域。</b> 把复平面的范围改成 <code class="inl">[-0.75, -0.73] × [0.09, 0.11]</code>，
+      并把迭代上限提到 1000。你会亲眼看到<b>自相似性</b>——一个局部里藏着整个图形的样子。</li>
+      <li>把 <code class="inl">c</code> 固定、把初始的 <code class="inl">z</code> 设为每个像素的坐标，得到的是<b>朱利亚集合</b>。
+      只改两行代码，又是一整个家族的新图形。</li>
+      <li>既然要写图片了，那就试试 24 位彩色 BMP：调色板那一段去掉，每个像素写三个字节。
+      <b>然后按逃逸时间给不同的通道不同的强度，做一张有颜色的图</b>——你会发现颜色的数学和形状的数学一样有趣。</li>
+      <li>用 Python 三行代码读一下你生成的这个文件：
+      <code class="inl">import imageio; img = imageio.imread('mandelbrot.bmp'); imageio.imwrite('m.png', img)</code>。
+      <b>这是你的 C++ 与未来的 Python 第一次握手的时刻。</b></li>
+      <li>把这张图接到项目 03 的网格上：读取图片的像素亮度，用不同的字符打印出来。
+      <b>两个项目一拼接，你就得到了一个「终端图片查看器」。</b></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= 附录 A ======================= -->
+<section class="sec" id="apx-a">
+  <p class="sec-kicker">APPENDIX&nbsp;A</p>
+  <h2>让代码优雅的十条习惯</h2>
+
+  <p>这是整本手册里唯一不讲新知识的一节，但也可能是最值钱的一节。<b>下面十条，每一条都能在你写的每一个程序里兑现。</b></p>
+
+  <table>
+    <thead><tr><th style="width:44px">#</th><th style="width:200px">习惯</th><th>为什么</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td class="k">名字要能被读出来</td>
+        <td><code class="inl">averageOf</code> 比 <code class="inl">avg</code> 好，<code class="inl">avg</code> 比 <code class="inl">a</code> 好。
+        <b>代码是写给人读的，只是顺便让机器执行。</b>变量名多打三个字母，未来能省半小时。</td></tr>
+      <tr><td>2</td><td class="k">一个函数只做一件事</td>
+        <td>如果你需要用「和」来介绍一个函数（「这个函数读取并排序并打印」），它就该被拆成三个。
+        <b>能一句话说清楚的函数，才配拥有一个好名字。</b></td></tr>
+      <tr><td>3</td><td class="k">能加 const 就加 const</td>
+        <td><code class="inl">const</code> 是写给编译器看的承诺，它会在你违约时报错。
+        <b>把「我不会改这个数据」变成编译期能检查的事实，等于免费雇了一个审查员。</b></td></tr>
+      <tr><td>4</td><td class="k">数据与逻辑分开</td>
+        <td>结构体只装数据，函数只做动作。项目 01 到 10 全都遵循这一条。
+        <b>分开之后，换数据源不用改逻辑，改逻辑不用动数据。</b></td></tr>
+      <tr><td>5</td><td class="k">不要重复自己</td>
+        <td>当你准备第三次复制粘贴同一段代码时，停下来，把它抽成一个函数。
+        <b>三次是经验法则：第一次可以随便写，第二次忍一忍，第三次必须重构。</b></td></tr>
+      <tr><td>6</td><td class="k">边界要挡住</td>
+        <td>空容器、越界下标、除以零、打不开的文件、维度不匹配的矩阵。
+        <b>程序崩溃的地方，九成在边界上。</b></td></tr>
+      <tr><td>7</td><td class="k">出错要出声</td>
+        <td>返回 <code class="inl">false</code> 或者打一行 <code class="inl">std::cerr</code>，比默默算出一个错误答案好一万倍。
+        <b>沉默的 bug 是最贵的 bug。</b></td></tr>
+      <tr><td>8</td><td class="k">让代码的形状对应问题的形状</td>
+        <td>项目 05 里，加减法调用乘除法，所以乘除先算——<b>优先级被写进了代码的结构里</b>。
+        项目 03 里，八个方向变成了一张表。当代码的结构和问题的结构对上时，读代码就不需要注释了。</td></tr>
+      <tr><td>9</td><td class="k">注释写「为什么」，不写「是什么」</td>
+        <td><code class="inl">// i 加一</code> 这种注释是噪音；
+        <code class="inl">// 每行补齐到 4 字节，这是 BMP 的格式要求</code> 才是真注释。
+        <b>代码已经说了「是什么」，注释要说的是代码说不出的那部分。</b></td></tr>
+      <tr><td>10</td><td class="k">永远带着 -Wall 编译</td>
+        <td>编译器免费的警告，往往指向一个你还没遇到的 bug。
+        <b>一个零警告的程序，不一定是对的；但一个满是警告的程序，大概率有问题。</b></td></tr>
+    </tbody>
+  </table>
+
+  <p class="pull">这十条里没有一条是「聪明」的技巧，全都是「克制」的功夫。<br>
+  <b>写代码的功力，到最后拼的不是你知道多少花招，而是你能忍住不写多少花招。</b></p>
+</section>
+
+<!-- ======================= 附录 B ======================= -->
+<section class="sec" id="apx-b">
+  <p class="sec-kicker">APPENDIX&nbsp;B</p>
+  <h2>编译、调试与求助</h2>
+
+  <h3 class="h3">B.1 最常用的几条命令</h3>
+  <table>
+    <thead><tr><th style="width:330px">命令</th><th>作用</th></tr></thead>
+    <tbody>
+      <tr><td><code class="inl">g++ -std=c++14 -Wall main.cpp -o main</code></td><td>最常用的编译方式，本手册全程使用</td></tr>
+      <tr><td><code class="inl">g++ -std=c++14 -Wall -O2 main.cpp -o main</code></td><td>打开优化。项目 10 这种计算量大的程序会快很多</td></tr>
+      <tr><td><code class="inl">g++ -std=c++14 -Wall -g main.cpp -o main</code></td><td>带上调试信息，配合 gdb 使用</td></tr>
+      <tr><td><code class="inl">./main</code> ／ <code class="inl">main.exe</code></td><td>运行。Windows 下是后者，Linux / macOS / Git Bash 下是前者</td></tr>
+      <tr><td><code class="inl">./main &lt; input.txt</code></td><td>把文件当成键盘输入喂给程序，方便反复测试</td></tr>
+      <tr><td><code class="inl">./main &gt; output.txt</code></td><td>把输出存进文件，方便对比和粘贴</td></tr>
+      <tr><td><code class="inl">g++ -std=c++14 -Wall -fsyntax-only main.cpp</code></td><td>只检查语法，不生成可执行文件，改代码时用得很顺手</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="h3">B.2 八个最常见的错误信息，以及它们的真实含义</h3>
+  <table>
+    <thead><tr><th style="width:300px">编译器说</th><th>翻译成人话</th></tr></thead>
+    <tbody>
+      <tr><td><code class="inl">expected ';' before '}' token</code></td><td>上一行末尾漏了分号。<b>看报错行号的<u>上一行</u>。</b></td></tr>
+      <tr><td><code class="inl">'xxx' was not declared in this scope</code></td><td>这个名字你没定义、或者拼错了、或者忘了 <code class="inl">#include</code> 对应的头文件。</td></tr>
+      <tr><td><code class="inl">undefined reference to 'yyy'</code></td><td>编译通过了但链接失败。函数只有声明没有定义，或者多个文件没一起编译。</td></tr>
+      <tr><td><code class="inl">no matching function for call to ...</code></td><td>参数类型或个数对不上。检查你有没有传错顺序、或者该传引用却传了值。</td></tr>
+      <tr><td><code class="inl">passing 'const X' as 'this' argument discards qualifiers</code></td><td>你在一个 const 对象上调用了非 const 成员函数。<b>给那个成员函数加个 const 就好了。</b></td></tr>
+      <tr><td><code class="inl">comparison between signed and unsigned integer expressions</code></td><td>警告，不是错误。<code class="inl">int</code> 和 <code class="inl">size()</code> 比较了，加个 <code class="inl">static_cast&lt;int&gt;</code>。</td></tr>
+      <tr><td><code class="inl">Segmentation fault</code> ／ 程序直接闪退</td><td>访问了不属于你的内存：下标越界、用了空指针、返回了局部变量的引用。</td></tr>
+      <tr><td><code class="inl">ld returned 1 exit status</code></td><td>链接失败。Windows 上最常见的原因：<b>上一次运行的程序还开着</b>，文件被占用，关掉它再编译。</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="h3">B.3 调试三招</h3>
+  <ol class="levels">
+    <li><b>打印出来看</b>
+      <p>在关键位置加一行 <code class="inl">std::cerr &lt;&lt; "i = " &lt;&lt; i &lt;&lt; "\n";</code>。
+      用 <code class="inl">cerr</code> 而不是 <code class="inl">cout</code>，这样即使你用 <code class="inl">&gt;</code> 重定向了输出，
+      调试信息依然会显示在屏幕上。<b>这是最原始也最有效的办法，专业程序员每天都在用。</b></p></li>
+    <li><b>把问题缩小</b>
+      <p>程序在 100 个数据上错了，就改成 3 个数据，手工把每一步的结果算一遍，和程序的输出逐个对比。
+      <b>能稳定复现的小例子，比一百行日志管用。</b></p></li>
+    <li><b>怀疑「刚才改的那一行」</b>
+      <p>如果代码五分钟前还是好的，那么错误几乎一定在你刚才的改动里。
+      <b>先回退，再一位一位地改回来，错误就会自己冒出来。</b></p></li>
+  </ol>
+
+  <div class="box">
+    <div class="bt">卡住的时候，这样求助</div>
+    <p style="margin-bottom:.6em">不管是问同学、问老师还是问 AI，一段好的提问应该包含四样东西：</p>
+    <ol style="margin:0">
+      <li><b>我想做什么</b>（一句话说清目标）</li>
+      <li><b>我写了什么</b>（贴出相关的最小代码片段，不要贴整个文件）</li>
+      <li><b>发生了什么</b>（<u>完整的</u>报错信息，包括行号；或实际输出与预期输出的对比）</li>
+      <li><b>我试过什么</b>（这一步最能让对方认真回答你）</li>
+    </ol>
+    <p style="margin:.8em 0 0"><b>把问题描述清楚的过程，本身就是一半的解题过程。</b>很多时候，你在写第 3 条的时候就已经找到答案了。</p>
+  </div>
+</section>
+
+<!-- ======================= 附录 C ======================= -->
+<section class="sec" id="apx-c">
+  <p class="sec-kicker">APPENDIX&nbsp;C</p>
+  <h2>从这里走向 Python 与人工智能</h2>
+
+  <h3 class="h3">C.1 先说一个可能让你意外的事实</h3>
+  <p>你说你之后的学习重点是 Python，而写这份手册用的是 C++。这两件事看起来有点别扭，其实一点都不矛盾——</p>
+  <p class="pull"><b>你在这十个项目里真正学到的东西，几乎全都不是 C++ 的。</b><br>
+  「把数据和对数据的操作分开」「一个函数只做一件事」「用方向数组消灭重复的 if」
+  「先取对数再求和」「训练和预测要分开」——这些是<b>编程的思想</b>，换到 Python、换到任何语言，它们一个字都不用改。</p>
+  <p>语言会变，工具会变，但你在这十个项目里建立起来的<b>「面对一个空白文件时知道从哪下手的底气」</b>，是会一直带着走的。</p>
+
+  <h3 class="h3">C.2 你现在手里有什么</h3>
+  <table>
+    <thead><tr><th style="width:230px">能力</th><th>它是从哪来的</th><th style="width:200px">在 Python 里怎么用</th></tr></thead>
+    <tbody>
+      <tr><td class="k">用合适的数据结构装数据</td><td>项目 01–03 的 vector / map / 二维数组</td><td>list / dict / 嵌套 list，一一对应</td></tr>
+      <tr><td class="k">把大问题拆成小函数</td><td>每一个项目</td><td>def 函数，思路完全一样</td></tr>
+      <tr><td class="k">经典算法的骨架</td><td>BFS、递归下降、极小极大</td><td>Python 写起来更短，但算法一模一样</td></tr>
+      <tr><td class="k">读得懂报错信息</td><td>附录 B 和你的每一次编译失败</td><td>Python 的 traceback 更好读，你已经不怕了</td></tr>
+      <tr><td class="k">数值稳定性的直觉</td><td>项目 09 的取对数与平滑</td><td>numpy 里同样会遇到下溢、溢出、除零</td></tr>
+      <tr><td class="k">机器学习的完整流程感</td><td>项目 08 与 09</td><td>造数据 → 训练 → 评估 → 保存，PyTorch 也是这个形状</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="h3">C.3 如果还想再深入 C++</h3>
+  <p>按你的专业方向，我不建议你现在花太多时间在 C++ 的高级特性上。但有三个方向值得留意：</p>
+  <ul>
+    <li><b>STL 算法库</b>（<code class="inl">&lt;algorithm&gt;</code>）：<code class="inl">find_if</code>、<code class="inl">count_if</code>、<code class="inl">transform</code>、<code class="inl">accumulate</code>。
+    它们能让你的代码再短一半，而且和你将来要用的 pandas 风格非常接近。</li>
+    <li><b>把程序拆成多个文件</b>：<code class="inl">.h</code> 放声明、<code class="inl">.cpp</code> 放实现。
+    项目 07 的进阶挑战里提过。这是从「写脚本」走向「做工程」的第一步。</li>
+    <li><b>性能意识</b>：同一段算法，写法的不同可以让它快十倍。项目 10 的 <code class="inl">-O2</code> 和项目 06 的 alpha-beta 剪枝，
+    已经让你摸到这件事了。人工智能里，这一条非常值钱。</li>
+  </ul>
+  <p>至于模板元编程、移动语义、智能指针、并发、C++20 的新特性——<b>先放着。等你真的遇到需要它们的问题时再学，效率会高十倍。</b></p>
+
+  <h3 class="h3">C.4 给大一人工智能专业学生的一条路线</h3>
+  <ol class="levels">
+    <li><b>数学，现在就开始，一天都不要等</b>
+      <p>线性代数、概率论与数理统计、微积分。<b>人工智能的本质是这三门数学，编程只是把它们变成可执行的形式。</b>
+      项目 07 的矩阵乘法就是线性代数，项目 09 的贝叶斯就是概率论，项目 08 的「错一点改一点」就是微积分里的梯度。
+      数学课上听过的每一个概念，你都应该想一想：这个东西用代码怎么写？</p></li>
+    <li><b>数据结构与算法</b>
+      <p>你在这本手册里已经摸到了队列、搜索、递归、哈希表。接下来系统地学一遍：链表、栈、树、堆、图、动态规划。
+      <b>这是你和「只会调库的人」之间的差距所在。</b></p></li>
+    <li><b>Python 与它的科学计算栈</b>
+      <p>语法一周就能学完（你已经有编程基础了，会非常快）。真正要花时间的是三样东西：
+      <b>numpy</b>（把项目 07 的矩阵类换成它，速度差几百倍）、
+      <b>pandas</b>（把项目 02 的统计换成它，三行顶你一百行）、
+      <b>matplotlib</b>（把项目 10 的位图换成它，一行出图）。</p>
+      <p><b>一个高效的学法：把这本手册里的项目，用 Python 重写一遍。</b>
+      你已经知道正确答案是什么了，所以可以全力关注「这门新语言是怎么表达的」。
+      词频统计、矩阵乘法、感知机、朴素贝叶斯——四个项目重写下来，Python 你就掌握了。</p></li>
+    <li><b>然后是 PyTorch，以及真正的机器学习</b>
+      <p>到那个时候你会发现，<b>项目 08 里那三个 double 的感知机，和 PyTorch 里的一个大模型，骨架是一样的</b>：
+      定义模型、前向计算、算损失、反向传播、更新参数。<b>你只是把参数从三个变成了几十亿个。</b></p></li>
+  </ol>
+
+  <div class="box">
+    <div class="bt">最后一句话</div>
+    <p style="margin:0">这本手册的十个项目，没有一个是为了考试准备的。它们全部都在做同一件事：
+    <b>让你在「想法」和「能跑起来的东西」之间，建立一条通畅的路。</b></p>
+    <p style="margin:.8em 0 0">这条路修好之后，你学什么语言、做什么方向，都只是换一辆车而已。</p>
+  </div>
+</section>
+
+<div class="footer">
+  <p style="margin-bottom:.4em"><b>Ways to cpp</b> · C++ 项目式训练手册</p>
+  <p style="margin-bottom:.4em">全部源码位于 <code class="inl">ways-to-cpp-code/</code>，每个文件都可以用
+  <code class="inl">g++ -std=c++14 -Wall &lt;文件名&gt; -o &lt;输出名&gt;</code> 直接编译运行。</p>
+  <p style="margin:0">愿你早日写出让自己觉得「这段代码真好看」的程序。</p>
+</div>
+
+</div><!-- /content -->
+</main>
+</div><!-- /layout -->
+
+<script>
+(function () {
+  /* ---------- 侧边栏高亮当前章节 ---------- */
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  var targets = links.map(function (a) {
+    return document.querySelector(a.getAttribute('href'));
+  }).filter(Boolean);
+
+  function sync() {
+    var y = window.scrollY + window.innerHeight * 0.28;
+    var current = -1;
+    for (var i = 0; i < targets.length; i++) {
+      if (targets[i].offsetTop <= y) current = i;
+    }
+    links.forEach(function (a) { a.classList.remove('active'); });
+    if (current >= 0) links[current].classList.add('active');
+  }
+  window.addEventListener('scroll', sync, { passive: true });
+  window.addEventListener('resize', sync);
+  sync();
+
+  /* ---------- 项目完成标记（本地保存，不打印） ---------- */
+  var KEY = 'ways-to-cpp-done';
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { saved = {}; }
+
+  Array.prototype.forEach.call(document.querySelectorAll('input[data-done]'), function (box) {
+    var id = box.getAttribute('data-done');
+    box.checked = !!saved[id];
+    box.addEventListener('change', function () {
+      saved[id] = box.checked;
+      try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {}
+    });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ways to cpp · C++ 项目式训练手册</title>
+<style>
+/* ==========================================================================
+   Ways to cpp —— 单色（黑 / 白 / 灰）宋体排版
+   ========================================================================== */
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --ink:#000;--ink2:#1c1c1c;--ink3:#3d3d3d;--ink4:#666;--ink5:#8a8a8a;--ink6:#a8a8a8;
+  --line:#d5d5d5;--line2:#e8e8e8;--line3:#f1f1f1;
+  --paper:#ffffff;--paper2:#fafafa;--paper3:#f3f3f3;--paper4:#ebebeb;
+}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:"SimSun","宋体","Songti SC","Noto Serif CJK SC",serif;
+  font-size:16px;line-height:1.95;letter-spacing:.015em;
+  font-variant-ligatures:none;
+}
+p{margin:0 0 1.05em}
+a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line)}
+a:hover{border-bottom-color:var(--ink)}
+ul,ol{margin:0 0 1.05em;padding-left:1.5em}
+li{margin-bottom:.4em}
+code.inl{
+  background:var(--paper3);border:1px solid var(--line2);padding:0 5px;
+  font-family:inherit;font-size:.95em;white-space:nowrap;
+}
+hr.rule{border:0;border-top:1px solid var(--line);margin:52px 0}
+
+/* ---------- 骨架 ---------- */
+.layout{display:flex;align-items:stretch}
+.sidebar{
+  flex:0 0 272px;width:272px;height:100vh;position:sticky;top:0;overflow-y:auto;
+  border-right:1px solid var(--line);padding:34px 20px 70px;background:var(--paper);
+}
+.sidebar::-webkit-scrollbar{width:6px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--line)}
+.brand{padding:0 8px 16px;border-bottom:2px solid var(--ink);margin-bottom:14px}
+.brand-mark{font-size:19px;letter-spacing:.2em;font-weight:700;line-height:1.3}
+.brand-sub{font-size:11.5px;color:var(--ink5);letter-spacing:.14em;margin-top:5px}
+.toc{font-size:13.5px;line-height:1.55}
+.toc-group{font-size:10.5px;letter-spacing:.22em;color:var(--ink6);margin:22px 8px 7px}
+.toc a{display:block;padding:5px 8px 5px 10px;border-bottom:0;color:var(--ink3);border-left:2px solid transparent}
+.toc a:hover{background:var(--paper3);color:var(--ink)}
+.toc a.active{color:var(--ink);font-weight:700;border-left-color:var(--ink);background:var(--paper2)}
+.toc a .n{display:inline-block;width:26px;color:var(--ink6);font-size:11.5px;letter-spacing:.04em}
+.toc a.active .n{color:var(--ink)}
+.main{flex:1 1 auto;min-width:0;padding:0 52px 150px}
+.content{max-width:940px;margin:0 auto}
+
+/* ---------- 封面 ---------- */
+.hero{padding:100px 0 66px;border-bottom:3px double var(--ink)}
+.hero-kicker{font-size:11.5px;letter-spacing:.34em;color:var(--ink5);margin-bottom:32px}
+.hero h1{font-size:78px;line-height:1;margin:0;letter-spacing:.03em;font-weight:700}
+.hero-rule{width:92px;height:5px;background:var(--ink);margin:32px 0}
+.hero-lead{font-size:17.5px;color:var(--ink2);max-width:660px;line-height:2.1;margin-bottom:0}
+.hero-stats{display:flex;flex-wrap:wrap;margin-top:56px;border-top:1px solid var(--line)}
+.hero-stats>div{flex:1 1 168px;padding:22px 26px 18px 0;border-right:1px solid var(--line)}
+.hero-stats>div:last-child{border-right:0}
+.hero-stats b{display:block;font-size:36px;line-height:1.1;font-weight:700}
+.hero-stats span{font-size:12.5px;color:var(--ink5);letter-spacing:.1em}
+
+/* ---------- 章节 ---------- */
+.sec{padding-top:78px}
+.sec-kicker{font-size:11.5px;letter-spacing:.34em;color:var(--ink5);margin:0 0 12px}
+.sec h2{font-size:35px;margin:0 0 30px;letter-spacing:.05em;line-height:1.3;font-weight:700}
+.h3{font-size:19px;margin:48px 0 14px;letter-spacing:.06em;position:relative;padding-left:20px;font-weight:700}
+.h3::before{content:"";position:absolute;left:0;top:.72em;width:9px;height:2px;background:var(--ink)}
+.h4{font-size:15.5px;margin:30px 0 10px;letter-spacing:.08em;font-weight:700}
+
+/* ---------- 表格 ---------- */
+table{width:100%;border-collapse:collapse;font-size:14.5px;margin:24px 0 32px;line-height:1.7}
+th{background:var(--paper3);text-align:left;font-weight:700;letter-spacing:.07em;font-size:13.5px}
+th,td{border:1px solid var(--line);padding:10px 13px;vertical-align:top}
+tbody tr:nth-child(even){background:var(--paper2)}
+td.k{font-weight:700;white-space:nowrap}
+
+/* ---------- 项目头 ---------- */
+.project{border-top:3px solid var(--ink);margin-top:110px;padding-top:36px}
+.p-header{display:flex;gap:26px;align-items:flex-start}
+.p-index{font-size:56px;line-height:.88;letter-spacing:-.02em;color:var(--ink6);font-weight:700;min-width:82px}
+.p-titles h2{font-size:32px;margin:0 0 9px;letter-spacing:.05em;line-height:1.25;font-weight:700}
+.p-sub{margin:0;color:var(--ink4);font-size:15px;letter-spacing:.03em}
+.p-meta{display:flex;flex-wrap:wrap;gap:10px;margin:26px 0 0}
+.chip{font-size:12.5px;letter-spacing:.08em;border:1px solid var(--line);padding:4px 13px;color:var(--ink3);background:var(--paper2)}
+.done-toggle{display:flex;align-items:center;gap:8px;font-size:12.5px;letter-spacing:.1em;color:var(--ink5);margin-top:16px;cursor:pointer;user-select:none}
+.done-toggle input{appearance:none;width:14px;height:14px;border:1px solid var(--ink4);margin:0;position:relative;cursor:pointer;background:#fff}
+.done-toggle input:checked{background:var(--ink);border-color:var(--ink)}
+.done-toggle input:checked::after{content:"";position:absolute;left:4px;top:1px;width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+
+/* ---------- 新知识点 ---------- */
+.newknow{border:1px solid var(--ink);background:var(--paper2);padding:26px 30px 18px;margin:32px 0 40px}
+.newknow h4{margin:0 0 6px;font-size:13px;letter-spacing:.24em;font-weight:700}
+.newknow .nk-note{font-size:12.5px;color:var(--ink5);margin:0 0 14px;letter-spacing:.04em}
+.newknow ul{margin:0;padding:0;list-style:none}
+.newknow li{padding:11px 0 11px 26px;position:relative;border-top:1px dashed var(--line);font-size:14.8px;line-height:1.8;margin:0}
+.newknow li:first-child{border-top:0}
+.newknow li::before{content:"\25C6";position:absolute;left:2px;top:12px;font-size:9px;color:var(--ink5)}
+.newknow li b{letter-spacing:.02em}
+.newknow li em{font-style:normal;color:var(--ink4)}
+
+/* ---------- 任务关卡 ---------- */
+.levels{list-style:none;padding:0;margin:22px 0 10px;counter-reset:lv}
+.levels li{position:relative;padding:16px 0 16px 82px;border-top:1px solid var(--line2);margin:0}
+.levels li:first-child{border-top:0}
+.levels li::before{
+  counter-increment:lv;content:"Lv" counter(lv);
+  position:absolute;left:0;top:18px;font-size:12px;letter-spacing:.1em;
+  border:1px solid var(--ink);padding:1px 9px;line-height:1.5;
+}
+.levels li b{display:block;font-size:15.5px;margin-bottom:3px}
+.levels li p{margin:0;font-size:14.8px;color:var(--ink3);line-height:1.85}
+
+/* ---------- 代码 ---------- */
+.code-block{margin:26px 0 34px;border:1px solid var(--line);background:var(--paper2)}
+.code-title{font-size:12px;letter-spacing:.18em;color:var(--ink4);background:var(--paper3);border-bottom:1px solid var(--line);padding:8px 18px}
+pre{
+  margin:0;padding:20px 22px;overflow-x:auto;
+  font-family:"SimSun","宋体","Songti SC",monospace;
+  font-size:13.2px;line-height:1.72;letter-spacing:0;
+  background:var(--paper2);color:var(--ink);white-space:pre;tab-size:4;
+}
+.code-block.dark{border-color:#111}
+.code-block.dark .code-title{background:#111;color:#c9c9c9;border-bottom-color:#2e2e2e;letter-spacing:.18em}
+pre.term{background:#111;color:#e9e9e9;font-size:12.8px;line-height:1.68}
+.tok-k{font-weight:700;color:#000}
+.tok-t{color:#383838}
+.tok-s{color:#606060}
+.tok-n{color:#4a4a4a}
+.tok-c{color:#a6a6a6;font-style:italic}
+.tok-p{font-weight:700;color:#000}
+
+/* ---------- 评述类 ---------- */
+.beauty{border-left:3px solid var(--ink);padding:4px 0 4px 26px;margin:28px 0 36px}
+.beauty h5{margin:0 0 12px;font-size:13px;letter-spacing:.24em;font-weight:700}
+.beauty ol{margin:0;padding-left:1.35em}
+.beauty li{margin-bottom:10px;font-size:15px;line-height:1.85}
+.box{border:1px solid var(--line);background:var(--paper2);padding:22px 26px;margin:26px 0}
+.box .bt{font-size:12.5px;letter-spacing:.22em;color:var(--ink4);margin-bottom:12px;font-weight:700}
+.box ul{margin:0;padding-left:1.3em}
+.box li{font-size:14.8px;line-height:1.85}
+.box.dashed{border-style:dashed}
+.pull{font-size:17px;line-height:2;color:var(--ink2);border-left:3px solid var(--line);padding-left:22px;margin:30px 0}
+.challenge{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:20px 0;margin:30px 0}
+.challenge .bt{font-size:12.5px;letter-spacing:.22em;color:var(--ink4);margin-bottom:12px;font-weight:700}
+
+/* ---------- 打印目录（仅 PDF） ---------- */
+.print-toc{display:none}
+.print-toc h2{font-size:26px;letter-spacing:.2em;border-bottom:2px solid var(--ink);padding-bottom:14px}
+.print-toc ul{list-style:none;padding:0;font-size:14px}
+.print-toc li{padding:5px 0;border-bottom:1px dotted var(--line)}
+.print-toc li span{display:inline-block;width:44px;color:var(--ink5)}
+
+.footer{margin-top:110px;border-top:3px double var(--ink);padding-top:28px;font-size:13px;color:var(--ink5);letter-spacing:.06em}
+
+/* ---------- 自适应 ---------- */
+@media (max-width:1120px){
+  .sidebar{display:none}
+  .main{padding:0 28px 110px}
+  .hero h1{font-size:56px}
+}
+@media (max-width:640px){
+  body{font-size:15px}
+  .hero{padding:56px 0 44px}
+  .hero h1{font-size:38px}
+  .hero-stats b{font-size:27px}
+  .p-index{font-size:34px;min-width:52px}
+  .p-titles h2{font-size:23px}
+  .main{padding:0 18px 90px}
+  pre{font-size:11.4px;padding:14px 16px}
+  .content{max-width:100%}
+}
+
+/* ==========================================================================
+   打印 / PDF
+   ========================================================================== */
+@media print{
+  @page{size:A4;margin:17mm 15mm 16mm}
+  html,body{background:#fff}
+  body{font-size:10.4pt;line-height:1.72;letter-spacing:.01em;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .sidebar,.no-print{display:none!important}
+  .layout{display:block}
+  .main{padding:0;max-width:none}
+  .content{max-width:none;margin:0}
+
+  .hero{break-after:page;padding:22mm 0 0;border-bottom:0}
+  .hero h1{font-size:54pt;letter-spacing:.04em}
+  .hero-kicker{font-size:9pt}
+  .hero-rule{height:4px;width:70px;margin:22px 0}
+  .hero-lead{font-size:11.5pt;line-height:1.95}
+  .hero-stats{margin-top:34mm;border-top:1px solid var(--line)}
+  .hero-stats>div{padding:14px 16px 12px 0}
+  .hero-stats b{font-size:22pt}
+
+  .print-toc{display:block;break-after:page}
+  .sec{padding-top:0;break-before:page}
+  .sec:first-of-type{break-before:auto}
+  .project{break-before:page;margin-top:0;padding-top:0;border-top:3px solid var(--ink)}
+  .p-index{font-size:34pt;min-width:58px}
+  .p-titles h2{font-size:19pt}
+  .p-sub{font-size:10pt}
+  .p-meta{margin-top:14px}
+  .chip{font-size:8.5pt;padding:2px 9px}
+
+  h2,h3,h4,h5,.h3,.h4,.sec-kicker,.p-header{break-after:avoid}
+  .newknow,.beauty,.box,.challenge,.pull,.code-block{break-inside:avoid}
+  .newknow{break-inside:avoid;page-break-inside:avoid;padding:16px 20px 10px;margin:18px 0 24px}
+  .newknow li{padding:7px 0 7px 22px;font-size:9.8pt;line-height:1.62}
+  .levels li{padding:10px 0 10px 68px}
+  .levels li::before{top:12px;font-size:8.5pt}
+  .levels li p{font-size:9.8pt;line-height:1.7}
+  .beauty li,.box li{font-size:9.8pt;line-height:1.7}
+  .h3{font-size:12.5pt;margin:26px 0 8px}
+  table{font-size:9.4pt;margin:14px 0 22px}
+  th,td{padding:6px 9px}
+  pre{font-size:9.2pt;line-height:1.5;padding:14px 16px;overflow:visible;break-inside:auto}
+  .code-block{break-inside:auto}
+  .code-title{break-after:avoid;font-size:8.2pt;padding:5px 12px}
+  .code-block{margin:14px 0 20px}
+  a{color:#000;border-bottom:0}
+  .footer{break-before:avoid;margin-top:40px}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<aside class="sidebar no-print">
+  <div class="brand">
+    <div class="brand-mark">Ways&nbsp;to&nbsp;cpp</div>
+    <div class="brand-sub">C++ 项目式训练手册</div>
+  </div>
+  <nav class="toc">
+    <div class="toc-group">开始之前</div>
+    <a href="#intro"><span class="n">00</span>怎么用这本手册</a>
+    <a href="#map"><span class="n">00</span>学习地图</a>
+    <a href="#newtable"><span class="n">00</span>新知识点总表</a>
+
+    <div class="toc-group">第一篇 · 把数据管起来</div>
+    <a href="#p01"><span class="n">01</span>学生成绩分析器</a>
+    <a href="#p02"><span class="n">02</span>英文词频统计器</a>
+    <a href="#p03"><span class="n">03</span>康威生命游戏</a>
+
+    <div class="toc-group">第二篇 · 让程序会思考</div>
+    <a href="#p04"><span class="n">04</span>迷宫最短路径</a>
+    <a href="#p05"><span class="n">05</span>表达式求值器</a>
+    <a href="#p06"><span class="n">06</span>井字棋与极小极大</a>
+
+    <div class="toc-group">第三篇 · 用 C++ 写数学</div>
+    <a href="#p07"><span class="n">07</span>像数学一样的矩阵类</a>
+    <a href="#p08"><span class="n">08</span>训练第一个模型：感知机</a>
+    <a href="#p09"><span class="n">09</span>朴素贝叶斯分类器</a>
+
+    <div class="toc-group">第四篇 · 把产品做出来</div>
+    <a href="#p10"><span class="n">10</span>曼德博集合与图像</a>
+
+    <div class="toc-group">结束之前</div>
+    <a href="#apx-a"><span class="n">A</span>让代码优雅的十条习惯</a>
+    <a href="#apx-b"><span class="n">B</span>编译、调试与求助</a>
+    <a href="#apx-c"><span class="n">C</span>从这里走向 Python 与人工智能</a>
+  </nav>
+</aside>
+
+<main class="main">
+<div class="content">

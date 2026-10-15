@@ -1,0 +1,361 @@
+<!-- ======================= 项目 04 ======================= -->
+<section class="project" id="p04">
+  <header class="p-header">
+    <div class="p-index">04</div>
+    <div class="p-titles">
+      <h2>迷宫最短路径</h2>
+      <p class="p-sub">像水波一样，一圈一圈地扩散</p>
+    </div>
+  </header>
+  <div class="p-meta">
+    <span class="chip">难度 ★★★☆☆</span>
+    <span class="chip">建议 5–7 小时</span>
+    <span class="chip">主线：广度优先搜索</span>
+    <span class="chip">阶段二</span>
+  </div>
+  <label class="done-toggle no-print"><input type="checkbox" data-done="p04">标记为已完成</label>
+
+  <div class="newknow">
+    <h4>本板块会用到的新知识点</h4>
+    <p class="nk-note">从这里开始，你正式进入「算法」。好消息是：这个算法只有二十行。</p>
+    <ul>
+      <li><b>std::queue 队列</b>　<em>需要 <code class="inl">#include &lt;queue&gt;</code>。</em>
+      「先进先出」的容器。用 <code class="inl">push()</code> 从队尾放进，用 <code class="inl">front()</code> 看队首、<code class="inl">pop()</code> 弹出队首。
+      <b>它和栈（后进先出）的区别，就是「一圈一圈扩散」和「一条路走到黑」的区别。</b></li>
+      <li><b>std::pair</b>　<em>需要 <code class="inl">#include &lt;utility&gt;</code>。</em>
+      把两个值捆成一件东西，比如一个坐标 <code class="inl">Cell(3, 5)</code>。
+      它可以直接用 <code class="inl">==</code> 比较，所以写 <code class="inl">if (cur == goal)</code> 就够了。</li>
+      <li><b>广度优先搜索（BFS）</b>　这是思想，不是语法：<b>把起点放进队列，每次取出一个，把它的所有「下一步」放到队尾。</b>
+      因为队列是先进先出的，所以所有距离为 1 的格子会先被处理完，才轮到距离为 2 的。
+      于是——<b>第一次到达终点时走的路，一定是最短的。</b></li>
+      <li><b>visited / dist 表</b>　<em>形如 <code class="inl">std::vector&lt;std::vector&lt;int&gt;&gt; dist</code>。</em>
+      一张和地图同样大的表，记录「到每个格子最少要几步」。它顺便还兼任了「来没来过」的标记。</li>
+      <li><b>前驱表与路径回溯</b>　<em>代码里的 <code class="inl">parent</code>。</em>
+      BFS 只告诉你「最短是 128 步」，不告诉你「怎么走」。于是我们顺手记下「我是从哪个格子来的」，
+      最后从终点一路倒推回起点，路就出来了。</li>
+    </ul>
+  </div>
+
+  <h3 class="h3">一、这件事在真实世界里长什么样</h3>
+  <p>你手机里的导航软件规划的路线、游戏里 NPC 找到你的路径、社交网络里「你和某个人隔了几度」、
+  网络数据包经过了几台路由器——这些问题的数学形式完全一样：<b>一张图，从一点到另一点，最少几步。</b></p>
+  <p>解决办法朴素得让人意外：<b>从起点开始一圈一圈往外扩散，扩散到终点为止</b>。
+  这不就是往平静的水面丢一颗石子吗？最先漫到岸边的那个水波，走的一定是最直的路线。</p>
+
+  <h3 class="h3">二、任务拆解：三关</h3>
+  <ol class="levels">
+    <li>
+      <b>把地图读进来，把规则写清楚</b>
+      <p>用 <code class="inl">std::vector&lt;std::string&gt;</code> 存地图（<code class="inl">#</code> 是墙，<code class="inl">.</code> 是路）。
+      写一个打印函数，再写一个「这个格子能不能走」的判断。<b>这一关只是把问题描述清楚，还没开始搜索。</b></p>
+    </li>
+    <li>
+      <b>算出最短步数</b>
+      <p>建一个和地图等大的 <code class="inl">dist</code> 表，全部填 <code class="inl">-1</code> 表示「没去过」。
+      起点入队、距离记 0，然后开始循环：取出队首，把四个方向上「能走且没去过」的邻格记上「当前距离 + 1」并入队。
+      <b>能打印出 128 这个数字，这一关就过了。</b></p>
+    </li>
+    <li>
+      <b>把路画出来</b>
+      <p>再加一张 <code class="inl">parent</code> 表，入队时顺便记下「我是从哪来的」。
+      搜索结束后，从终点一路顺着 parent 往回走，把沿途的 <code class="inl">.</code> 改成 <code class="inl">*</code>。</p>
+    </li>
+  </ol>
+
+  <h3 class="h3">三、参考实现</h3>
+  <div class="code-block">
+    <div class="code-title">ways-to-cpp-code / p04_maze_bfs.cpp</div>
+<pre class="code"><!--CODE:04--></pre>
+  </div>
+
+  <div class="code-block dark">
+    <div class="code-title">实际运行结果（真实输出，未经修饰）</div>
+<pre class="term"><!--OUT:04--></pre>
+  </div>
+
+  <div class="beauty">
+    <h5>这段代码美在哪里</h5>
+    <ol>
+      <li><b>「最短」这个要求，被策略本身免费满足了。</b> 代码里没有任何一行在比较「哪条路更短」。
+      它只是在扩散。扩散的顺序天然保证了先到的一定最短。<b>这就是算法的美：不是算得更快，而是想得更对。</b></li>
+      <li><b>一张表干了两件事。</b> <code class="inl">dist[r][c]</code> 是 <code class="inl">-1</code>，
+      既表示「没访问过」，也表示「到不了」。一个哨兵值同时承担两种含义，于是 <code class="inl">if (dist[nr][nc] != -1) continue;</code>
+      这一行就同时挡住了「重复访问」和「绕圈」。</li>
+      <li><b>「算距离」和「还原路径」是分开的。</b> BFS 只负责填 <code class="inl">dist</code>，
+      回溯只负责读 <code class="inl">parent</code>。两段逻辑互不干扰，各自都能单独看懂。<b>把「求解」和「呈现」分开，是工程上极重要的一刀。</b></li>
+      <li><b>方向数组思想在项目 03 出现过，这里又出现了。</b> 四个方向写成 <code class="inl">DR/DC</code> 两张表，
+      于是「上、下、左、右」变成一次循环。<b>好思想会被反复用到——这正是它们值得被记住的原因。</b></li>
+      <li><b>传引用还是传 const 引用，取决于你要不要改它。</b>
+      <code class="inl">shortestPath(Grid&amp; grid, ...)</code> 用的是普通引用，因为它要在地图上画 <code class="inl">*</code>；
+      而 <code class="inl">printGrid(const Grid&amp; g)</code> 用 const，因为它只看不改。<b>两个函数签名放在一起，就把意图说完了。</b></li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <div class="bt">常见陷阱</div>
+    <ul>
+      <li><b>标记「已访问」必须在入队时，不能等到出队时。</b> 如果在出队时才标记，同一个格子会被好几个邻居重复入队，
+      队列会膨胀几倍，代码依然能跑对，但慢得莫名其妙。这是个很隐蔽的坑。</li>
+      <li><code class="inl">queue</code> 取队首用 <code class="inl">front()</code>，不是 <code class="inl">back()</code>。
+      用错就变成了深度优先——结果不再是「一圈一圈」，最短性立刻失效。</li>
+      <li><code class="inl">pop()</code> 的返回值是 <code class="inl">void</code>，它只负责扔掉。
+      想取值必须先 <code class="inl">front()</code> 再 <code class="inl">pop()</code>。</li>
+      <li>网格的行是 <code class="inl">std::string</code>，所以 <code class="inl">grid[r][c]</code> 取出来的是 <code class="inl">char</code>，比较时要用 <code class="inl">'#'</code> 而不是 <code class="inl">"#"</code>。</li>
+      <li>起点就等于终点、或者终点被墙包死——这两种情况都要能优雅处理，而不是崩溃。</li>
+    </ul>
+  </div>
+
+  <div class="challenge">
+    <div class="bt">进阶挑战</div>
+    <ul style="margin:0;padding-left:1.3em">
+      <li>把所有最短路径全部打印出来。你会发现从「记录一个父亲」变成「记录所有父亲」，再改成深度优先输出。</li>
+      <li>允许斜着走（八个方向）。最短步数会变吗？如果斜走一步和直走一步「代价」不一样呢？</li>
+      <li>给每个格子加上不同的通行代价（草地慢、大路快），这时 BFS 就不够用了，你需要 <b>Dijkstra 算法</b>——
+      它和 BFS 只差一个数据结构：把队列换成优先队列。</li>
+      <li>再加一个「离终点还有多远」的估计值，优先搜索离终点近的方向，这就是 <b>A* 算法</b>，游戏工业里的寻路基石。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= 项目 05 ======================= -->
+<section class="project" id="p05">
+  <header class="p-header">
+    <div class="p-index">05</div>
+    <div class="p-titles">
+      <h2>表达式求值器</h2>
+      <p class="p-sub">用函数的调用层次，表达运算的优先级</p>
+    </div>
+  </header>
+  <div class="p-meta">
+    <span class="chip">难度 ★★★☆☆</span>
+    <span class="chip">建议 5–8 小时</span>
+    <span class="chip">主线：递归下降分析</span>
+    <span class="chip">阶段二</span>
+  </div>
+  <label class="done-toggle no-print"><input type="checkbox" data-done="p05">标记为已完成</label>
+
+  <div class="newknow">
+    <h4>本板块会用到的新知识点</h4>
+    <p class="nk-note">你会第一次遇到「递归不只是算阶乘」这件事。这个项目的代码量比前几个都少，但思想密度最高。</p>
+    <ul>
+      <li><b>递归下降分析</b>　这是本项目的灵魂。核心想法只有一句：<b>用函数的调用层次来表达运算的优先级。</b>
+      加法函数会去调用乘法函数，所以乘法天生就比加法先算——优先级不再是一张需要查的表，而是程序的形状本身。</li>
+      <li><b>函数前置声明</b>　<em>形如在文件上方写 <code class="inl">double parseTerm(const std::string&amp;, size_t&amp;);</code></em>
+      C++ 要求「先声明后使用」。而这三个函数互相调用，谁也无法排在第一个，所以必须先声明、后定义。</li>
+      <li><b>引用参数共享状态</b>　<em><code class="inl">size_t&amp; pos</code></em>
+      三个函数需要共享同一个「读到哪了」的光标。用引用而不是全局变量，既不破坏封装，也不需要写一个类。</li>
+      <li><b>std::atof</b>　<em>需要 <code class="inl">#include &lt;cstdlib&gt;</code>。</em>
+      把一段字符串转成 <code class="inl">double</code>。有了它，我们不必手写「数位乘十累加」。</li>
+      <li><b>size_t</b>　无符号整数类型，专门用来表示「长度」和「下标」。标准库容器的下标就是它。</li>
+    </ul>
+  </div>
+
+  <h3 class="h3">一、这件事在真实世界里长什么样</h3>
+  <p>你在计算器里敲下 <code class="inl">1 + 2 * 3</code>，它回给你 <code class="inl">7</code>。为什么不是 <code class="inl">9</code>？因为你默认了乘号先算。
+  可计算机只会从左往右读字符，它凭什么知道该先算哪一段？</p>
+  <p>这个问题是编译器技术的起点。JavaScript 引擎要理解你的代码、Excel 要计算公式、SQL 要解析查询语句，
+  走的都是同一条路：<b>先把表达式理解成一棵树，再算这棵树。</b></p>
+  <p>而写这棵树最短的写法，叫递归下降——<b>三十行代码，三个函数，就能把一个完整的四则运算表达式吃透。</b></p>
+
+  <h3 class="h3">二、任务拆解：三关</h3>
+  <ol class="levels">
+    <li>
+      <b>只会加法</b>
+      <p>写一个函数，只处理「数字 + 数字 + 数字」这种形式。<b>先跑通「读一个数字」和「吃掉一个加号」这两件事</b>，
+      不要贪多。这一步的目的是想清楚「光标 pos 是共享的」。</p>
+    </li>
+    <li>
+      <b>加入乘除，让优先级自然出现</b>
+      <p>把原来的函数拆成两个：一个只管加减，一个只管乘除。让「加减函数」在需要操作数时去调用「乘除函数」。
+      <b>体会一下：你一行优先级判断都没写，但 <code class="inl">1 + 2 * 3</code> 已经等于 7 了。</b></p>
+    </li>
+    <li>
+      <b>加入括号和负号</b>
+      <p>再加最里层的第三个函数：它负责「读一个数字」「处理括号」「处理负号」。
+      遇到左括号时，它递归调用最外层的加减函数——<b>于是括号里的世界重新开始，任何复杂度都被这一行递归抹平了。</b></p>
+    </li>
+  </ol>
+
+  <h3 class="h3">三、参考实现</h3>
+  <div class="code-block">
+    <div class="code-title">ways-to-cpp-code / p05_calculator.cpp</div>
+<pre class="code"><!--CODE:05--></pre>
+  </div>
+
+  <div class="code-block dark">
+    <div class="code-title">实际运行结果（真实输出，未经修饰）</div>
+<pre class="term"><!--OUT:05--></pre>
+  </div>
+
+  <div class="beauty">
+    <h5>这段代码美在哪里</h5>
+    <ol>
+      <li><b>优先级变成了结构，而不是规则。</b> 传统写法要先做「中缀转后缀」，还要维护一个运算符栈、
+      查一张优先级表。而这里，<b>优先级就是「谁调用谁」</b>：加减在顶层、乘除在中间、括号和数字在最里面。
+      越靠里，越先被算出来。代码的层次结构，直接对应了数学的结构。</li>
+      <li><b>一个引用参数替代了一个类。</b> 三个函数共享 <code class="inl">size_t&amp; pos</code>，
+      没有全局变量、没有对象、没有成员函数。对于这么小的一个问题，这是最轻的表达方式。
+      <b>「够用就好」本身就是一种优雅。</b></li>
+      <li><b>三个函数，每个都短到一屏能看完。</b> 而且它们的名字就是它们的职责：<code class="inl">parseExpression</code> 管整个表达式，
+      <code class="inl">parseTerm</code> 管一个项，<code class="inl">parseFactor</code> 管一个因子。
+      <b>能一句话说清的函数，才配拥有一个好名字。</b></li>
+      <li><b>递归在这里不是炫技，而是唯一的自然写法。</b> 括号可以套括号，套多少层事先并不知道——
+      这正好是递归天生要解决的问题。</li>
+      <li><b>「吃掉一个字符」这个动作被写得非常明确。</b> <code class="inl">const char op = s[pos]; ++pos;</code>
+      先把记下来，再前进。<b>把「读」和「移动」分开写，能避免绝大多数「少读一个字符」的 bug。</b></li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <div class="bt">常见陷阱</div>
+    <ul>
+      <li><b>忘记 <code class="inl">++pos</code> 会导致死循环。</b> 函数不再前进，<code class="inl">while</code> 就永远转下去。
+      第一次写的时候几乎一定会遇到，遇到之后你会永远记住它。</li>
+      <li>括号不匹配时，这个简版实现会安静地返回一个错误结果，而不是报错。
+      <b>「出错时大声说出来」是工程代码的基本原则</b>——这里留给你在进阶挑战里补上。</li>
+      <li>三个函数互相调用，<b>前置声明一个都不能少</b>，而且声明和定义的签名必须完全一致，否则链接时会报「未定义」。</li>
+      <li>这里全程用 <code class="inl">double</code>，所以 <code class="inl">10 / 4</code> 得到 <code class="inl">2.5</code>。
+      如果换成 <code class="inl">int</code>，得到的就是 <code class="inl">2</code>——整数除法截断是初学者永恒的坑。</li>
+    </ul>
+  </div>
+
+  <div class="challenge">
+    <div class="bt">进阶挑战</div>
+    <ul style="margin:0;padding-left:1.3em">
+      <li>加上乘方 <code class="inl">^</code>。注意它是<b>右结合</b>的：<code class="inl">2^3^2</code> 应该是 <code class="inl">2^9 = 512</code> 而不是 <code class="inl">8^2 = 64</code>。
+      你会发现自己需要把某个 <code class="inl">while</code> 改成递归调用。</li>
+      <li>支持变量 <code class="inl">x</code>，并用项目 02 学过的 <code class="inl">map&lt;std::string,double&gt;</code> 存变量表。
+      <b>做完这一步，你手里就有了一个「公式引擎」</b>——Excel 的一小部分。</li>
+      <li>加入函数调用：<code class="inl">sin(0)</code>、<code class="inl">max(3, 5)</code>。你需要处理逗号分隔的多个参数。</li>
+      <li>把「解析」和「计算」彻底分开：先解析成一棵树（结构体 + 指针就是天然的树），再写一个 <code class="inl">evaluate</code> 去遍历它。
+      <b>这一步做完，你就摸到了编译器的门。</b></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= 项目 06 ======================= -->
+<section class="project" id="p06">
+  <header class="p-header">
+    <div class="p-index">06</div>
+    <div class="p-titles">
+      <h2>井字棋与极小极大</h2>
+      <p class="p-sub">写一个你永远赢不了的对手</p>
+    </div>
+  </header>
+  <div class="p-meta">
+    <span class="chip">难度 ★★★★☆</span>
+    <span class="chip">建议 6–9 小时</span>
+    <span class="chip">主线：对抗性搜索</span>
+    <span class="chip">阶段二</span>
+  </div>
+  <label class="done-toggle no-print"><input type="checkbox" data-done="p06">标记为已完成</label>
+
+  <div class="newknow">
+    <h4>本板块会用到的新知识点</h4>
+    <p class="nk-note">这是第二阶段的高潮。递归在这里第一次用来「思考」，而不只是用来「遍历」。</p>
+    <ul>
+      <li><b>极小极大搜索（Minimax）</b>　思想：<b>我走一步时，假设我选最好的；对手走一步时，假设他选对我最坏的。</b>
+      递归下去，每个局面都会得到一个分数，我选分数最高的那一手。这套逻辑适用于一切「有对手」的场景，也是早期国际象棋程序的基础。</li>
+      <li><b>按值传参</b>　<em>形如 <code class="inl">int minimax(std::vector&lt;char&gt; board, ...)</code>，注意 board 前面没有 &amp;。</em>
+      每次递归都拿到棋盘的一份独立副本。于是「试走一步」和「撤销这一步」变成了天然的动作——
+      <b>函数返回时副本自动消失，外面的棋盘毫发无损。</b>这是用一点点拷贝开销买来的、极干净的一段递归。</li>
+      <li><b>std::numeric_limits</b>　<em>需要 <code class="inl">#include &lt;limits&gt;</code>。</em>
+      <code class="inl">std::numeric_limits&lt;int&gt;::min()</code> 就是 int 能表示的最小值。
+      求最大值时把初值设为它，比硬编码一个 <code class="inl">-999999</code> 更安全、也更说明意图。</li>
+      <li><b>std::min / std::max</b>　<em>需要 <code class="inl">#include &lt;algorithm&gt;</code>。</em>
+      极小极大的核心操作就是取最小或取最大，标准库直接给你了。</li>
+      <li><b>递归中的「试—评—撤」模式</b>　这是回溯算法的通用骨架，八皇后、数独、全排列，用的都是它。</li>
+    </ul>
+  </div>
+
+  <h3 class="h3">一、这件事在真实世界里长什么样</h3>
+  <p>井字棋只有九个格子，规则简单到小孩都会玩。但正因为简单，它成了「机器如何做决策」最好的教具：
+  <b>它小到可以穷举所有未来，又大到不能一眼看穿。</b></p>
+  <p>一九五零年代，程序第一次在井字棋上做到了不败。从那里出发，加上更聪明的剪枝、更准确的局面评估，
+  才有了后来的跳棋程序、国际象棋的深蓝，直到 AlphaGo。<b>你接下来写下的这二十行递归，是那整条路的起点。</b></p>
+
+  <h3 class="h3">二、任务拆解：三关</h3>
+  <ol class="levels">
+    <li>
+      <b>先把规则写清楚</b>
+      <p>用 <code class="inl">std::vector&lt;char&gt;</code> 表示九宫格。写三个函数：<b>打印棋盘</b>、
+      <b>判断谁赢了</b>（八条连线，用一张表存起来）、<b>判断是否下满</b>。<b>这一关没有递归，全是基本功。</b></p>
+    </li>
+    <li>
+      <b>做一个「随便下」的对手</b>
+      <p>写一个函数，在所有空位里随便挑一个落子。<b>先让它能陪你下完一整局</b>——
+      你会立刻发现：随便下的 AI 输得很难看。这个落差，就是第三关的动力。</p>
+    </li>
+    <li>
+      <b>把「随便」换成「算尽」</b>
+      <p>写 <code class="inl">minimax(board, player, depth)</code>：
+      如果已经分出胜负，返回一个带深度的分数；否则轮到谁走，就把每个空位都试一遍，递归拿到分数，
+      我方取最大、对方取最小。最后用 <code class="inl">bestMove</code> 在根节点挑出最好的那一手。</p>
+    </li>
+  </ol>
+
+  <h3 class="h3">三、参考实现</h3>
+  <div class="code-block">
+    <div class="code-title">ways-to-cpp-code / p06_tictactoe.cpp</div>
+<pre class="code"><!--CODE:06--></pre>
+  </div>
+
+  <div class="code-block dark">
+    <div class="code-title">实际运行结果（真实输出，未经修饰）</div>
+<pre class="term"><!--OUT:06--></pre>
+  </div>
+
+  <p><b>怎么读这份输出：</b>第一个演示摆了一个局面——X 已经在左上和正中连成一条对角线，
+  下一步落在右下角就赢了。AI 选择了 8 号格（第 3 行第 3 列）把路堵死，<b>评分为 0，意思是「只要这么走，最坏也是平局」</b>。
+  第二个演示让两个都用极小极大的对手互相下完一整局，结果是平局——
+  <b>这不是巧合，而是「双方都不犯错时，井字棋必然平局」这一数学事实，被你的程序自己证明了。</b></p>
+
+  <div class="beauty">
+    <h5>这段代码美在哪里</h5>
+    <ol>
+      <li><b>board 按值传递，是整个设计里最漂亮的一手。</b>
+      因为传的是副本，函数里可以放心地 <code class="inl">board[i] = player;</code> 试走一步，
+      递归返回之后什么都不用管——<b>「撤销」这个动作被语言的机制免费完成了。</b>
+      如果传的是引用，你就必须记得在每一层手动撤回，多一条 return 路径就是多一个 bug。</li>
+      <li><b>分数设计藏着一个精妙的心思。</b> <code class="inl">10 - depth</code> 和 <code class="inl">depth - 10</code>：
+      赢要赢得快，输要输得晚。因为「输得晚」意味着对手还得再想几步，也就意味着中间还有翻盘的机会。
+      <b>两个减号，就把「效率」这个额外目标写进了评价体系。</b></li>
+      <li><b>统一用一套搜索处理双方。</b> 同一个 <code class="inl">minimax</code> 既能当 AI 的大脑，也能当「模拟对手」的大脑，
+      只需要换一个 <code class="inl">player</code> 参数。<b>没有写两份对称的代码——这是抽象的胜利。</b></li>
+      <li><b>「选」与「评」分离。</b> <code class="inl">minimax</code> 只回答「这个局面值多少分」，
+      <code class="inl">bestMove</code> 只回答「那我该走哪一步」。两个问题分开问，两个函数分开写，
+      于是 <code class="inl">minimax</code> 可以被原封不动地复用到别的地方。</li>
+      <li><b>用 <code class="inl">numeric_limits</code> 而不是魔法数字。</b>
+      <code class="inl">std::numeric_limits&lt;int&gt;::min()</code> 一眼就说明「我要一个尽可能小的起点」，
+      而 <code class="inl">-99999</code> 只会让读者停下来猜：为什么是九万九千九百九十九？</li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <div class="bt">常见陷阱</div>
+    <ul>
+      <li><b>判断输赢和判断下满的顺序不能反。</b> 必须<b>先看有没有人赢</b>，再看是不是满了。
+      否则最后一步落子成五的情况会被判成平局。</li>
+      <li>如果改成按引用传递，<b>每一条 <code class="inl">return</code> 之前都必须撤销试走的那一步</b>。
+      漏掉任何一条，棋盘就会带着「幽灵棋子」继续往下算。这是回溯算法最经典的 bug。</li>
+      <li>极小极大的代价是「分支数的深度次方」。井字棋最多 9! ≈ 36 万种局面，秒出结果；
+      但换成五子棋（15×15），同一段代码会把你的电脑算到天荒地老。<b>算法正确，不等于算法可用。</b></li>
+      <li>递归太深会撑爆调用栈。井字棋最多 9 层，绝对安全；
+      但如果你把棋盘改成 20×20，程序会以「栈溢出」的方式崩溃，而不是算得慢。</li>
+    </ul>
+  </div>
+
+  <div class="challenge">
+    <div class="bt">进阶挑战</div>
+    <ul style="margin:0;padding-left:1.3em">
+      <li><b>加入 alpha-beta 剪枝</b>：如果已经知道某条分支不可能更好，就根本不用搜它。
+      在井字棋上，它能把搜索量减少到十分之一左右，而结果一模一样。<b>这是本手册里性价比最高的一个优化。</b></li>
+      <li>加一个计数器，统计搜索了多少个局面，对比剪枝前后的数字。你会对「优化」这个词有实感。</li>
+      <li>用 <code class="inl">map</code> 把「局面 → 分数」缓存下来，避免重复计算同一个局面（这就是记忆化搜索）。
+      你会看到搜索次数骤降，而结果一丝不差。</li>
+      <li>把它变成一个可以真正对弈的程序：用 <code class="inl">cin</code> 读入玩家落子，先让你自己输几局。</li>
+      <li>推广到四子棋（Connect Four）的 7×6 棋盘。你需要加上「只往前看 N 层」的限制和一个粗略的局面评估函数——
+      <b>恭喜，你已经摸到了现代博弈程序的核心思路。</b></li>
+    </ul>
+  </div>
+</section>

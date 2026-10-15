@@ -1,0 +1,414 @@
+<!-- ======================= 项目 07 ======================= -->
+<section class="project" id="p07">
+  <header class="p-header">
+    <div class="p-index">07</div>
+    <div class="p-titles">
+      <h2>像数学一样的矩阵类</h2>
+      <p class="p-sub">让 C = A * B 这四个字符，真的能跑起来</p>
+    </div>
+  </header>
+  <div class="p-meta">
+    <span class="chip">难度 ★★★☆☆</span>
+    <span class="chip">建议 6–8 小时</span>
+    <span class="chip">主线：类与运算符重载</span>
+    <span class="chip">阶段三</span>
+  </div>
+  <label class="done-toggle no-print"><input type="checkbox" data-done="p07">标记为已完成</label>
+
+  <div class="newknow">
+    <h4>本板块会用到的新知识点</h4>
+    <p class="nk-note">这是你第一次写自己的类型。别紧张——类不是新语言，它只是「把数据和函数放进同一个盒子里」。</p>
+    <ul>
+      <li><b>class 与封装</b>　把数据（<code class="inl">rows_</code>、<code class="inl">cols_</code>、<code class="inl">data_</code>）和操作它们的函数装进同一个盒子。
+      <code class="inl">private:</code> 的东西外面碰不到，<code class="inl">public:</code> 的东西才是你交给外界的接口。<b>封装的意义不是保密，而是「让使用者只需要知道他能做什么」。</b></li>
+      <li><b>构造函数与初始化列表</b>　<em>形如 <code class="inl">Matrix(int rows, int cols) : rows_(rows), cols_(cols), data_(...) {}</code></em>
+      保证对象一诞生就是完整可用的，而不是「先造一个空的，再慢慢填」。</li>
+      <li><b>运算符重载</b>　<em>形如 <code class="inl">Matrix operator*(const Matrix&amp; other) const</code></em>
+      让自定义类型也能用 <code class="inl">+</code> 和 <code class="inl">*</code>。<b>这是 C++ 最迷人的能力之一：你可以让自己的类型，长得和 int 一样自然。</b></li>
+      <li><b>std::ostream&amp; 与 &lt;&lt; 重载</b>　让 <code class="inl">cout &lt;&lt; A</code> 直接打印一个矩阵。写完这一行，
+      打印就从「调用一个函数」变成了「这个类型与生俱来的能力」。</li>
+      <li><b>const 成员函数</b>　<em>函数声明末尾的那个 <code class="inl">const</code></em>
+      它承诺「这个函数不会改动对象本身」。有了它，<code class="inl">const Matrix&amp;</code> 才能真正被用起来——
+      <b>这是 C++ 把「只读」这件事做进类型系统的方式。</b></li>
+      <li><b>用一维数组模拟二维（行主序）</b>　<code class="inl">data_[r * cols_ + c]</code>。
+      内存里是一整条连续的带子，<code class="inl">at()</code> 负责把二维坐标翻译成这条带子上的位置。
+      <b>外面的人完全不需要知道这件事——这就是封装的价值。</b></li>
+    </ul>
+  </div>
+
+  <h3 class="h3">一、这件事在真实世界里长什么样</h3>
+  <p>你的专业方向是人工智能，而人工智能在今天几乎等同于「深度神经网络」。神经网络的一层，说穿了就是一句话：
+  <b>输出向量 = 激活函数(权重矩阵 × 输入向量 + 偏置向量)</b>。</p>
+  <p>所以矩阵乘法就是那台机器的心脏。在 Python 里你将来会写 <code class="inl">A @ B</code>，一行搞定；
+  但那一行背后到底是什么？——<b>就是这个项目里你要亲手写出来的三重循环。</b></p>
+  <p>你现在写的这个 <code class="inl">Matrix</code> 类，虽然只有一百来行，却已经具备了工业级矩阵库的骨架：
+  私有数据、受控访问、算术运算符、流式输出。</p>
+
+  <h3 class="h3">二、任务拆解：三关</h3>
+  <ol class="levels">
+    <li>
+      <b>先用最朴素的方式实现一次</b>
+      <p>用 <code class="inl">std::vector&lt;std::vector&lt;double&gt;&gt;</code> 存一个 3×3 矩阵，
+      写两个普通函数：一个转置，一个打印。<b>这一关不用类</b>，你需要先感受一下「到处传二维数组」有多啰嗦——
+      那份啰嗦，正是下一关的动力。</p>
+    </li>
+    <li>
+      <b>把它装进一个类</b>
+      <p>定义 <code class="inl">class Matrix</code>：数据放 private，提供构造函数、<code class="inl">rows()</code>、<code class="inl">cols()</code>、
+      两个版本的 <code class="inl">at(r,c)</code>，以及 <code class="inl">transpose()</code>。
+      <b>检验标准：main 里再也看不到 <code class="inl">data_[...]</code> 这样的下标计算。</b></p>
+    </li>
+    <li>
+      <b>让它会做数学</b>
+      <p>加上 <code class="inl">operator+</code>、<code class="inl">operator*</code> 和 <code class="inl">operator&lt;&lt;</code>。
+      改完之后，<code class="inl">main</code> 里应该只剩下数学表达式本身——
+      <b>当你能把 <code class="inl">A * A.transpose()</code> 当成一句话写出来的时候，这一关就过了。</b></p>
+    </li>
+  </ol>
+
+  <h3 class="h3">三、参考实现</h3>
+  <div class="code-block">
+    <div class="code-title">ways-to-cpp-code / p07_matrix.cpp</div>
+<pre class="code"><!--CODE:07--></pre>
+  </div>
+
+  <div class="code-block dark">
+    <div class="code-title">实际运行结果（真实输出，未经修饰）</div>
+<pre class="term"><!--OUT:07--></pre>
+  </div>
+
+  <div class="beauty">
+    <h5>这段代码美在哪里</h5>
+    <ol>
+      <li><b>它让代码长得像数学。</b> 请对比这两行：
+      <code class="inl">result[r][c] += a[r][k] * b[k][c];</code>（在 main 里三层循环）与 <code class="inl">Matrix c = a * b;</code>。
+      后者不只是短，它<b>把「矩阵乘法」这个概念从实现细节里解放了出来</b>。
+      以后每次看到 <code class="inl">a * b</code>，你脑子里想的是数学，而不是下标。</li>
+      <li><b>一维存储 + at() 翻译，是一次漂亮的「内外分离」。</b>
+      外面的人写 <code class="inl">m.at(2, 3)</code>，脑子里想的是「第三行第四列」；
+      里面的人知道那其实是第 <code class="inl">2 * cols_ + 3</code> 个元素。
+      <b>两种视角各得其所，谁也不打扰谁。</b></li>
+      <li><b>两个版本的 at() 是一个教科书级的技巧。</b> 非 const 版本返回 <code class="inl">double&amp;</code>（可以赋值），
+      const 版本返回 <code class="inl">double</code>（只能读）。编译器根据「你手里的 Matrix 是不是 const」自动挑选，
+      于是只读的矩阵<b>在编译期就获得了不可修改的保证</b>——不需要运行时检查，一分钱开销都没有。</li>
+      <li><b>构造函数保证了「不存在残缺的对象」。</b> 一个 Matrix 只要被造出来，
+      就一定有合法的行列数、一定有一块已初始化为 0 的内存。<b>没有「半成品状态」，就没有对应的那一类 bug。</b></li>
+      <li><b>operator&lt;&lt; 写成了自由函数，而不是成员函数。</b> 因为 <code class="inl">cout &lt;&lt; A</code> 里，
+      <code class="inl">cout</code> 在左边、<code class="inl">A</code> 在右边；如果写成 <code class="inl">A.operator&lt;&lt;(cout)</code>，
+      读起来就完全别扭了。<b>为了「读起来对」而调整代码结构的写法，值得。</b></li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <div class="bt">常见陷阱</div>
+    <ul>
+      <li><b>绝对不要返回局部变量的引用。</b> <code class="inl">Matrix&amp; operator+(...)</code> 返回一个函数内部创建的矩阵的引用，
+      是在返回一块已经销毁的内存。<b>这种错误编译器常常不会报，程序会以一种诡异的方式在别处崩溃。</b>
+      算术运算符<b>一律返回值</b>。</li>
+      <li>忘了写 const 成员函数，会导致 <code class="inl">const Matrix&amp;</code> 参数上调用 <code class="inl">.at()</code> 时编译不过。
+      错误信息会很长很吓人，但原因就是这一个词。</li>
+      <li>矩阵乘法要求 <code class="inl">A.cols() == B.rows()</code>。参考实现为了短小没有检查，
+      真实代码里应该在函数开头就挡住，并且<b>明确地报错</b>。</li>
+      <li>这里的数据成员用了 <code class="inl">std::vector</code>，所以默认的拷贝行为是正确的（值语义）。
+      如果你改用 <code class="inl">new double[...]</code> 裸指针，就必须自己写析构函数和拷贝构造函数——
+      <b>这就是「用标准库容器」帮你省掉的一大类麻烦。</b></li>
+    </ul>
+  </div>
+
+  <div class="challenge">
+    <div class="bt">进阶挑战</div>
+    <ul style="margin:0;padding-left:1.3em">
+      <li>加上 <code class="inl">operator-</code>、<code class="inl">operator==</code> 和「矩阵 × 标量」。
+      注意标量乘法要写成自由函数 <code class="inl">operator*(double k, const Matrix&amp; m)</code>，
+      否则 <code class="inl">2.0 * A</code> 这种写法就编译不过——<b>想想为什么。</b></li>
+      <li>实现 <code class="inl">identity(n)</code>（已经是静态成员函数了）、行列式、以及高斯消元求逆。</li>
+      <li><b>用这个类写一个两层全连接网络的前向传播</b>：<code class="inl">h = relu(W1 * x + b1); y = W2 * h + b2;</code>。
+      你会突然发现，深度学习框架里那些抽象的 API，在你手里变成了看得见摸得着的几行代码。<b>这是本项目最有价值的一步。</b></li>
+      <li>把 <code class="inl">Matrix</code> 拆成 <code class="inl">matrix.h</code> 和 <code class="inl">matrix.cpp</code> 两个文件，
+      体验一次真正的「接口与实现分离」。头文件开头记得加 <code class="inl">#pragma once</code>。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= 项目 08 ======================= -->
+<section class="project" id="p08">
+  <header class="p-header">
+    <div class="p-index">08</div>
+    <div class="p-titles">
+      <h2>训练你的第一个模型：感知机</h2>
+      <p class="p-sub">五十行代码，一个完整的机器学习闭环</p>
+    </div>
+  </header>
+  <div class="p-meta">
+    <span class="chip">难度 ★★★★☆</span>
+    <span class="chip">建议 6–9 小时</span>
+    <span class="chip">主线：学习即修正</span>
+    <span class="chip">阶段三</span>
+  </div>
+  <label class="done-toggle no-print"><input type="checkbox" data-done="p08">标记为已完成</label>
+
+  <div class="newknow">
+    <h4>本板块会用到的新知识点</h4>
+    <p class="nk-note">这个项目的新知识里，只有一个是纯语法的（随机数），其余都是「方法」——而方法才是你专业里真正值钱的东西。</p>
+    <ul>
+      <li><b>&lt;random&gt; 随机数引擎</b>　<em><code class="inl">std::mt19937 engine(种子);</code> 和 <code class="inl">std::normal_distribution&lt;double&gt; dist(0.0, 0.8);</code></em>
+      别再使用 <code class="inl">rand()</code> 了，它质量差且分布不均。以及一个关键技巧：<b>给定固定种子，随机数序列就是可复现的</b>——
+      这是所有实验科学的底线。</li>
+      <li><b>「模型即参数」的世界观</b>　这个感知机类的全部内容就是三个 <code class="inl">double</code>：
+      <code class="inl">w1_</code>、<code class="inl">w2_</code>、<code class="inl">b_</code>。<b>所谓「训练」，就是不断调整这三个数字；
+      所谓「模型文件」，就是把这三个数字存下来。</b>复杂的深度学习，本质结构也是这样，只是数字从三个变成了几十亿个。</li>
+      <li><b>训练循环</b>　<em>「预测 → 和正确答案比较 → 错了就朝正确方向挪一小步」</em>
+      重复很多很多次。这一页纸就能写完的循环，是整个人工智能的地基。</li>
+      <li><b>参数持久化</b>　把训练好的参数写进文件、下次读回来。
+      <b>程序第一次拥有了「记忆」</b>，也第一次体现出了「训练一次、使用很多次」这个真实的工程流程。</li>
+      <li><b>std::setprecision 与有效数字</b>　<em>需要 <code class="inl">#include &lt;iomanip&gt;</code></em>
+      存文件时用 <code class="inl">setprecision(17)</code> 保证 double 不丢精度，屏幕上显示时用 3 位就够。
+      <b>同一个数字，写给机器看和写给人看，要求完全不同。</b></li>
+    </ul>
+  </div>
+
+  <h3 class="h3">一、这件事在真实世界里长什么样</h3>
+  <p>一九五七年，弗兰克·罗森布拉特造出了感知机。它要做的事情朴素得可爱：
+  <b>在平面上画一条直线，把两类点分开。</b></p>
+  <p>它学习的方式更可爱：随便画一条线，然后一个点一个点地看过去——分对了就不动，分错了就把线朝那个点的方向掰一点。
+  重复几轮之后，线就自己找到了位置。</p>
+  <p>《纽约时报》当年报道说，这台机器将来能走路、能说话、能自我复制。
+  这个预言夸张了，但它指的方向是对的——<b>七十年后，你所在专业的一切，都还在这条「错一点、改一点」的路上。</b></p>
+  <p>所以这个项目不是为了让你掌握感知机（它太简单了，实际没什么用），
+  而是让你<b>亲手走完一次「造数据 → 训练 → 评估 → 保存 → 再加载使用」的完整闭环</b>。
+  这个流程的形状，和你将来用 PyTorch 训练一个大模型的流程，是一模一样的。</p>
+
+  <h3 class="h3">二、任务拆解：三关</h3>
+  <ol class="levels">
+    <li>
+      <b>先让一条线会做判断</b>
+      <p>定义 <code class="inl">struct Sample { double x1, x2; int label; };</code>，
+      写一个函数 <code class="inl">predict(x1, x2)</code>：算 <code class="inl">w1*x1 + w2*x2 + b</code>，
+      大于等于 0 就返回 <code class="inl">+1</code>，否则 <code class="inl">-1</code>。
+      <b>先随便给 w1、w2、b 一些值，看看这条线把空间分成了什么样。</b></p>
+    </li>
+    <li>
+      <b>让它自己学</b>
+      <p>造两组数据（一组在右上、一组在左下），然后写训练循环：
+      对每个样本预测一次，<b>如果错了，就按 <code class="inl">w += 学习率 × 正确答案 × 输入</code> 更新</b>。
+      跑完一轮，统计错了几次，再跑下一轮。<b>看着 mistakes 从几十降到 0，是这个项目最爽的一刻。</b></p>
+    </li>
+    <li>
+      <b>让它成为一个「能交付的东西」</b>
+      <p>用 <code class="inl">mt19937</code> 生成 80 个带噪声的点（固定种子）；
+      训练完之后算出准确率；把参数存进 <code class="inl">perceptron.txt</code>；
+      再新建一个对象、把参数读回来、验证它的预测和原来完全一致。
+      <b>这一步做完，你的程序就不再是一个练习，而是一个可以反复使用的工具。</b></p>
+    </li>
+  </ol>
+
+  <h3 class="h3">三、参考实现</h3>
+  <div class="code-block">
+    <div class="code-title">ways-to-cpp-code / p08_perceptron.cpp</div>
+<pre class="code"><!--CODE:08--></pre>
+  </div>
+
+  <div class="code-block dark">
+    <div class="code-title">实际运行结果（真实输出，未经修饰）</div>
+<pre class="term"><!--OUT:08--></pre>
+  </div>
+
+  <p><b>怎么读这份输出：</b>第一轮错了 1 个点，第二轮就一个都不错了。
+  最后得到的分界线是 <code class="inl">0.0215*x1 + 0.0135*x2 - 0.0100 = 0</code>，
+  也就是说这条线大致是 <code class="inl">x1 + 0.63*x2 ≈ 0.47</code>——
+  <b>它不是你想当然的 <code class="inl">x1 + x2 = 0</code>，而是数据自己选出来的一个倾斜角度。</b>
+  最后四个测试点里，<code class="inl">(3.0, -0.5)</code> 落在右下角却仍被判为 <code class="inl">+1</code>，
+  正好说明这条边界是被数据「掰」过的，而不是凭直觉划的。</p>
+
+  <div class="beauty">
+    <h5>这段代码美在哪里</h5>
+    <ol>
+      <li><b>整个模型的全部内容，就是三个 double。</b> 没有复杂的结构，没有玄妙的技巧。
+      <b>越是强大的想法，它的核心往往越是简单</b>——感知机的核心就是「错了就往正确方向挪一点」。
+      理解这一点，你对「机器学习」就不会再有神秘感。</li>
+      <li><b>三行更新规则长得一模一样。</b>
+      <code class="inl">w1_ += learningRate_ * s.label * s.x1;</code>、
+      <code class="inl">w2_ += ... * s.x2;</code>、
+      <code class="inl">b_ += ... * 1;</code>。
+      最后那个 <code class="inl">× 1</code> 是暗含的。这种规律性不是巧合，它暗示着「如果有 1000 个特征，
+      你就需要一个循环」——<b>而那正是从感知机走向真正神经网络的那一步。</b></li>
+      <li><b>predict() 是 const 成员函数，train() 不是。</b>
+      一个只读、一个会改，签名上分得清清楚楚。<b>光看函数名和 const，你就能知道哪个函数会改变世界。</b></li>
+      <li><b>固定随机种子是一种科学态度。</b> <code class="inl">std::mt19937 engine(20180101);</code>——
+      有了它，你今天的实验结果和明天的完全一致。做研究的人都知道，
+      <b>不能复现的实验等于没做</b>。</li>
+      <li><b>save / load 成对出现，而且 load 会告诉你成功还是失败。</b>
+      <code class="inl">bool load(...)</code> 返回布尔值，调用方可以据此决定是继续还是报错。
+      <b>「错误是返回值，不是沉默」——这是工程代码的分水岭。</b></li>
+      <li><b>输出精度分了两档。</b> 存文件用 <code class="inl">setprecision(17)</code>，
+      屏幕显示用 3 位小数。<b>同一个数据，面对机器和面对人，应该有不同的呈现方式。</b></li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <div class="bt">常见陷阱</div>
+    <ul>
+      <li><b>学习率是个需要手感的东西。</b> 太大（比如 10）会让参数来回震荡、永远不收敛；
+      太小（比如 0.000001）则跑到天荒地老。0.01 到 0.1 之间通常是个好起点。
+      <b>「调参」这个词，你在这里第一次体会到它的真实含义。</b></li>
+      <li>一定要给训练轮数设上限。如果数据本身不可分（两团点混在一起），感知机永远不会停下——
+      这是感知机算法本身的局限，不是 bug。</li>
+      <li><code class="inl">rand()</code> 生成的整数虽然方便，但周期短、低位随机性差。
+      既然标准库已经给了 <code class="inl">mt19937</code>，就没有理由再将就。</li>
+      <li>存文件时如果只写 <code class="inl">setprecision(6)</code>，读回来的参数会有微小误差，
+      导致重新加载后准确率变化。<b>浮点数写进文本文件时，默认精度是不够的。</b></li>
+    </ul>
+  </div>
+
+  <div class="challenge">
+    <div class="bt">进阶挑战</div>
+    <ul style="margin:0;padding-left:1.3em">
+      <li><b>把「错了才改」改成「每次都按误差大小改」</b>：<code class="inl">w += lr * (label - prediction) * x</code>，
+      注意此时 prediction 要用输出值而不是符号。这就是<b>梯度下降</b>，比感知机更通用的那一套。</li>
+      <li>把二维扩展到三维、十维。你会发现代码几乎不用改，只需要把 <code class="inl">w1_, w2_</code>
+      换成 <code class="inl">std::vector&lt;double&gt; weights_</code>，并把点积写成一个循环。
+      <b>恭喜，你刚刚完成了从「感知机」到「线性分类器」的抽象。</b></li>
+      <li>把数据换成真实数据：用项目 02 的文件读取方法，从 <code class="inl">data.txt</code> 读入点的坐标和标签。</li>
+      <li>每轮训练后把分界线画在网格上（用项目 03 的二维网格），<b>你会亲眼看到那条线是怎么一步步转过去的。</b></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= 项目 09 ======================= -->
+<section class="project" id="p09">
+  <header class="p-header">
+    <div class="p-index">09</div>
+    <div class="p-titles">
+      <h2>朴素贝叶斯垃圾信息分类器</h2>
+      <p class="p-sub">用你亲手写的代码，读一封邮件是不是垃圾</p>
+    </div>
+  </header>
+  <div class="p-meta">
+    <span class="chip">难度 ★★★★☆</span>
+    <span class="chip">建议 6–9 小时</span>
+    <span class="chip">主线：从数据里学概率</span>
+    <span class="chip">阶段三</span>
+  </div>
+  <label class="done-toggle no-print"><input type="checkbox" data-done="p09">标记为已完成</label>
+
+  <div class="newknow">
+    <h4>本板块会用到的新知识点</h4>
+    <p class="nk-note">这个项目的代码不长，但有两处「第一次遇到一定会踩」的数值陷阱。它们也是本手册最重要的新知识。</p>
+    <ul>
+      <li><b>把概率取对数</b>　一句话概率是若干个小概率相乘，几十个词乘下来，结果小到 <code class="inl">double</code> 都表示不了，
+      直接变成 0（这叫下溢）。<b>解法：取对数，乘法变加法。</b>因为对数函数是单调递增的，比大小不受影响，
+      而加法永远不会下溢。<b>这是数值计算里的必修课。</b></li>
+      <li><b>拉普拉斯平滑</b>　如果一个从没见过的词出现，它的概率算出来是 0，那么整个连乘结果立刻变成 0，
+      整条判断就此作废。<b>解法：分子加 1、分母加上词表大小</b>，给每个词留一条活路。
+      这一行小小的修正，是朴素贝叶斯能真正工作的前提。</li>
+      <li><b>std::log</b>　<em>需要 <code class="inl">#include &lt;cmath&gt;</code></em>
+      自然对数。本项目中它的唯一用途就是「把乘法变加法」。</li>
+      <li><b>map 的 find 与 const 查询</b>　<em><code class="inl">table_.find(w)</code> 返回一个迭代器，找不到就是 <code class="inl">end()</code></em>
+      项目 02 里我们用了 <code class="inl">counter[w]</code>，但那会在表里插一个新条目。
+      在<b>只读的预测函数里</b>，我们不能再改表，所以必须用 <code class="inl">find</code>。</li>
+      <li><b>map 套结构体</b>　<code class="inl">std::map&lt;std::string, WordStats&gt;</code>。
+      把「这个词在垃圾里出现几次、在正常里出现几次」打包成一个结构体，
+      于是<b>两张表合并成了一句话可以说清的一张表</b>。</li>
+      <li><b>训练与预测的彻底分离</b>　训练时更新统计量，预测时<b>只读</b>。
+      这意味着训练完的程序可以只保存那张统计表，运行时根本不需要原始语料。<b>这就是「模型」与「数据」的分家。</b></li>
+    </ul>
+  </div>
+
+  <h3 class="h3">一、这件事在真实世界里长什么样</h3>
+  <p>你每天收到的垃圾邮件，绝大多数是被这类程序拦下来的。它们的思路非常人类：</p>
+  <p><b>「这封邮件里有『免费』『中奖』『点击』这些词。我在以前看过的垃圾邮件里，这些词出现得特别多；
+  在正常邮件里几乎不出现。所以这封大概也是垃圾。」</b></p>
+  <p>把这句直觉翻译成数学，就是贝叶斯定理。而之所以叫「朴素」，是因为它做了一个明显不成立的假设：
+  <b>假设所有词之间互相独立</b>——「免」和「费」显然不是独立的。</p>
+  <p>但神奇的是，这个「错」的假设，在实际任务里效果出奇地好，而且快得不可思议。
+  <b>「理论上有瑕疵，工程上却好用」，这种取舍在人工智能里随处可见，你要早点习惯它。</b></p>
+
+  <h3 class="h3">二、任务拆解：三关</h3>
+  <ol class="levels">
+    <li>
+      <b>先学会「数案底」</b>
+      <p>用项目 02 的切词函数，统计语料里每个词在垃圾消息和正常消息里各出现了几次，
+      顺便记下两边各有多少个词、各有多少条消息。
+      <b>这一关只做统计，不做任何判断。</b></p>
+    </li>
+    <li>
+      <b>从次数算出概率</b>
+      <p>算 <code class="inl">P(这个词 | 这是垃圾)</code>：<b>分子是它出现过的次数加一，分母是垃圾消息的总词数加词表大小</b>。
+      那个「加一」和「加词表大小」就是拉普拉斯平滑。
+      <b>亲手去掉平滑那一项，看看程序会怎样崩掉——这个实验比记住规则有用得多。</b></p>
+    </li>
+    <li>
+      <b>取对数再比大小</b>
+      <p>对一条新消息：把所有词的 <code class="inl">log P(词|垃圾)</code> 加起来，再加上 <code class="inl">log P(垃圾)</code>；
+      对正常消息做同样的计算。哪个大就算哪一类。
+      <b>注意分数都是负数，比的是「谁更接近 0」。</b></p>
+    </li>
+  </ol>
+
+  <h3 class="h3">三、参考实现</h3>
+  <div class="code-block">
+    <div class="code-title">ways-to-cpp-code / p09_naive_bayes.cpp</div>
+<pre class="code"><!--CODE:09--></pre>
+  </div>
+
+  <div class="code-block dark">
+    <div class="code-title">实际运行结果（真实输出，未经修饰）</div>
+<pre class="term"><!--OUT:09--></pre>
+  </div>
+
+  <p><b>怎么读这份输出：</b>训练集只有十二条消息，而四条测试全部判对了——
+  包括 <code class="inl">"your loan is approved with no credit check"</code> 这种在训练集里从未完整出现过的句子。
+  分数都是负数，这是正常的：四五个小概率相乘，取对数之后就是若干个负数的和。
+  <b>比的不是谁大谁小，而是谁更接近 0。</b></p>
+
+  <div class="beauty">
+    <h5>这段代码美在哪里</h5>
+    <ol>
+      <li><b>一个「错」的假设，换来了极致的简单与速度。</b> 朴素贝叶斯假设词与词互不相关，
+      这在语言上显然是错的；但正因为这个假设，概率才能拆成一个个独立的乘积，计算量从「所有词的组合」降到「一次遍历」。
+      <b>教科书告诉你什么是对的，工程告诉你什么是有用的。</b></li>
+      <li><b>取对数这一步，是「换个角度看问题」的典范。</b> 概率连乘和 log 概率连加，
+      在数学上完全等价，在计算机上却是「算不出来」和「轻松算完」的差别。<b>算法工程师的功夫，一半花在这种转换上。</b></li>
+      <li><b>WordStats 结构体把两张表合成了一张。</b> 如果写成两个 <code class="inl">map</code>，
+      每次查询都要写两遍、还要保证两边同步。一个五行的小结构体，让「这个词的两边案底」变成了一个不可分割的整体。
+      <b>数据该怎么分组，本身就是一种设计。</b></li>
+      <li><b>训练改数据，预测只读数据，靠 const 强制分开。</b>
+      <code class="inl">spamScore(...) const</code> 里的 const 不是装饰，
+      它保证了「预测这件事绝对不会污染模型」——<b>而这正是「推理」和「训练」必须分开的原因。</b></li>
+      <li><b>每个数字都可以解释。</b> 随便挑一条预测，你都能手工算出那个 -19.17 是怎么来的。
+      在深度学习时代，这种「可解释性」变得非常稀有——<b>所以趁现在，先体会一次「我知道它为什么这么判断」的踏实感。</b></li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <div class="bt">常见陷阱</div>
+    <ul>
+      <li><b>不取对数一定会在真实数据上崩溃。</b> 用十二条短消息可能侥幸不溢出，
+      但换成一千封真实邮件，几百个小概率相乘会稳稳地变成 0，然后两边都是 0，程序彻底失效。</li>
+      <li><b>不平滑同样会崩溃。</b> 只要测试句子里有一个训练集没见过的词，它的概率就是 0，
+      一乘之下全盘归零。<b>你要能在不看答案的情况下说出：为什么「加一」能解决这个问题。</b></li>
+      <li>别忘记加上先验概率 <code class="inl">log P(垃圾)</code>。如果训练集里正常邮件是垃圾邮件的十倍，
+      那么一条中性消息应该更倾向于被判为正常——这个信息就藏在先验里。</li>
+      <li>这套方法对中文几乎无效，因为它依赖空格切词。
+      <b>中文需要先做分词，而分词本身就是一个不小的课题</b>——这也是你将来在 Python 里会遇到的第一个真实障碍。</li>
+      <li>训练集太小的时候，准确率高不代表模型好。
+      十二条消息上 100% 的准确率，没有任何统计意义。<b>这是你对「过拟合」最早的直觉。</b></li>
+    </ul>
+  </div>
+
+  <div class="challenge">
+    <div class="bt">进阶挑战</div>
+    <ul style="margin:0;padding-left:1.3em">
+      <li>把训练语料换成文件（每行一条，前面用 <code class="inl">spam:</code> 或 <code class="inl">ham:</code> 标注），
+      扩大到一百条以上，观察准确率的变化。</li>
+      <li>加一个「停用词表」，把 <code class="inl">the</code>、<code class="inl">a</code>、<code class="inl">is</code> 这类词排除。
+      <b>你会看到一个反直觉的结果：有些看似无用的词，其实对分类有帮助。</b></li>
+      <li>输出每个词对判断的「贡献值」<code class="inl">log P(w|spam) - log P(w|ham)</code>，按绝对值排序。
+      这份榜单就是这个模型的<b>全部知识</b>——它把自己学到的东西，用人能读懂的方式告诉了你。</li>
+      <li>把「词」升级成「词对」（项目 02 的进阶挑战做过）。准确率会上升，泛化能力会下降，
+      <b>这就是「模型复杂度」的两难，你在这里第一次亲手摸到它。</b></li>
+      <li>加一个混淆矩阵：把测试结果分成「判对/判错 × 垃圾/正常」四类。
+      你会发现「把正常邮件误判为垃圾」的代价，远比反过来高——<b>这就是「损失函数」这个概念的现实来源。</b></li>
+    </ul>
+  </div>
+</section>

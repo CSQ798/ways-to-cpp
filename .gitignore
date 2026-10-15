@@ -1,0 +1,17 @@
+# 编译产物
+*.exe
+*.o
+*.out
+a.out
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+desktop.ini
+
+# 构建时的临时目录
+_edge/
+_preview.html
+_pp*.html

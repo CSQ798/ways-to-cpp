@@ -1,0 +1,15 @@
+﻿File      : sample.txt
+Words     : 46
+Distinct  : 19
+
+----- Top 10 -----
+it              6  ######
+of              6  ######
+the             6  ######
+was             6  ######
+age             2  ##
+before          2  ##
+had             2  ##
+season          2  ##
+times           2  ##
+us              2  ##
